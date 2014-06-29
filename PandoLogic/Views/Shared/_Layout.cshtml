@@ -5,25 +5,25 @@
     <title>Pando Logic | @ViewBag.Title</title>
     <meta content='width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no' name='viewport'>
     <link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,300,600,300italic,400italic,600italic|Kaushan+Script' rel='stylesheet' type='text/css'>
-    <link href="content/bootstrap.min.css" rel="stylesheet" type="text/css" />
+    <link href="/content/bootstrap.min.css" rel="stylesheet" type="text/css" />
     <!-- bootstrap 3.0.2 -->
-    <link href="content/bootstrap.min.css" rel="stylesheet" type="text/css" />
+    <link href="/content/bootstrap.min.css" rel="stylesheet" type="text/css" />
     <!-- font Awesome -->
-    <link href="content/font-awesome.min.css" rel="stylesheet" type="text/css" />
+    <link href="/content/font-awesome.min.css" rel="stylesheet" type="text/css" />
     <!-- Ionicons -->
-    <link href="content/ionicons.min.css" rel="stylesheet" type="text/css" />
+    <link href="/content/ionicons.min.css" rel="stylesheet" type="text/css" />
     <!-- Morris chart -->
-    <link href="content/morris/morris.css" rel="stylesheet" type="text/css" />
+    <link href="/content/morris/morris.css" rel="stylesheet" type="text/css" />
     <!-- jvectormap -->
-    <link href="content/jvectormap/jquery-jvectormap-1.2.2.css" rel="stylesheet" type="text/css" />
+    <link href="/content/jvectormap/jquery-jvectormap-1.2.2.css" rel="stylesheet" type="text/css" />
     <!-- fullCalendar -->
-    <link href="content/fullcalendar/fullcalendar.css" rel="stylesheet" type="text/css" />
+    <link href="/content/fullcalendar/fullcalendar.css" rel="stylesheet" type="text/css" />
     <!-- Daterange picker -->
-    <link href="content/daterangepicker/daterangepicker-bs3.css" rel="stylesheet" type="text/css" />
+    <link href="/content/daterangepicker/daterangepicker-bs3.css" rel="stylesheet" type="text/css" />
     <!-- bootstrap wysihtml5 - text editor -->
-    <link href="content/bootstrap-wysihtml5/bootstrap3-wysihtml5.min.css" rel="stylesheet" type="text/css" />
+    <link href="/content/bootstrap-wysihtml5/bootstrap3-wysihtml5.min.css" rel="stylesheet" type="text/css" />
     <!-- Theme style -->
-    <link href="content/AdminLTE.css" rel="stylesheet" type="text/css" />
+    <link href="/content/AdminLTE.css" rel="stylesheet" type="text/css" />
 
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -276,7 +276,12 @@
                                     <a href="#" class="btn btn-default btn-flat">Profile</a>
                                 </div>
                                 <div class="pull-right">
-                                    <a href="#" class="btn btn-default btn-flat">Sign out</a>
+                                    @using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new { id = "logoutForm", @class = "navbar-right" }))
+                                    {
+                                        @Html.AntiForgeryToken()
+
+                                        <a href="javascript:document.getElementById('logoutForm').submit()" class="btn btn-default btn-flat">Sign out</a>
+                                    }
                                 </div>
                             </li>
                         </ul>

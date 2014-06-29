@@ -757,6 +757,7 @@
     <Content Include="Scripts\plugins\jqueryKnob\.DS_Store" />
     <Content Include="Scripts\plugins\jvectormap\.DS_Store" />
     <Content Include="Scripts\plugins\slimScroll\slimScroll.jquery.json" />
+    <Content Include="Views\Shared\_PublicLayout.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
