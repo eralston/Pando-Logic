@@ -1,4 +1,7 @@
-﻿using System.Security.Claims;
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Data.Entity;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
@@ -15,6 +18,25 @@ namespace PandoLogic.Models
             // Add custom user claims here
             return userIdentity;
         }
+
+        [Display(Name = "Job Title")]
+        public string JobTitle { get; set; }
+
+        [Display(Name = "Phone Number")]
+        public string Phone { get; set; }
+
+        [Required]
+        [Display(Name = "First Name")]
+        public string FirstName { get; set; }
+
+        [Required]
+        [Display(Name = "Last Name")]
+        public string LastName { get; set; }
+
+        // To-Many on PhoneNumber
+        public virtual ICollection<PhoneNumber> PhoneNumbers { get; set; }
+
+        // TODO: User image using azure blob storage!
     }
 
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
@@ -28,5 +50,9 @@ namespace PandoLogic.Models
         {
             return new ApplicationDbContext();
         }
+
+        public DbSet<Industry> Industries { get; set; }
+
+        public System.Data.Entity.DbSet<PandoLogic.Models.Company> Companies { get; set; }
     }
 }
