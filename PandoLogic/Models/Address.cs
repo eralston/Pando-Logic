@@ -14,7 +14,7 @@ namespace PandoLogic.Models
     /// </summary>
     public enum AddressType
     {
-        Office,
+        Business,
         Home,
         Other
     }
@@ -33,16 +33,20 @@ namespace PandoLogic.Models
         public DateTime? LastUpdate { get; set; }
 
         [Required]
+        [Display(Name = "Address")]
         public string Address1 { get; set; }
 
+        [Display(Name = "Address (Optional)")]
         public string Address2 { get; set; }
 
         public string City { get; set; }
 
+        [Display(Name = "State or Province")]
         public string StateOrProvince { get; set; }
 
         public string Country { get; set; }
 
+        [Display(Name = "Postal Code")]
         public string PostalCode { get; set; }
 
         public AddressType Type { get; set; }

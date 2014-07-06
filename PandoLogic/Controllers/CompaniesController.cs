@@ -57,7 +57,7 @@ namespace PandoLogic.Controllers
                 Member member = Db.Members.Create(currentUser, company);
                 Db.Companies.Add(company);
                 await Db.SaveChangesAsync();
-                return RedirectToAction("Index");
+                return RedirectToAction("CreateCompany", "Addresses", new { id = company.Id });
             }
 
             ViewBag.IndustryId = new SelectList(Db.Industries, "Id", "Title", company.IndustryId);

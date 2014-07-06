@@ -11,6 +11,14 @@ using PandoLogic.Models;
 
 namespace PandoLogic.Controllers
 {
+    /// <summary>
+    /// View model for handling address create and edit, that adds another field for the parent entity ID
+    /// </summary>
+    public class AddressViewModel : Address
+    {
+        public int ParentEntityId { get; set; }
+    }
+
     public class AddressesController : BaseController
     {
         // GET: Addresses
@@ -52,6 +60,48 @@ namespace PandoLogic.Controllers
                 Db.Addresses.Add(address);
                 await Db.SaveChangesAsync();
                 return RedirectToAction("Index");
+            }
+
+            return View(address);
+        }
+
+        // GET: Addresses/CreateCompany
+        public ActionResult CreateCompany(int id)
+        {
+            // TODO: LINQ query to make sure the person changing this company is allowed to do it
+            AddressViewModel address = new AddressViewModel();
+            address.ParentEntityId = id;
+            return View(address);
+        }
+
+        // POST: Addresses/CreateCompany
+        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
+        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> CreateCompany([Bind(Include = "ParentEntityId,Address1,Address2,City,StateOrProvince,Country,PostalCode,Type")] AddressViewModel address)
+        {
+            // TODO: Double-check parent entity is valid for the current user to change
+            if (ModelState.IsValid)
+            {
+                Address add = new Address();
+                add.CreatedDate = DateTime.Now;
+                add.LastUpdate = DateTime.Now;
+
+                add.Address1 = address.Address1;
+                add.Address2 = address.Address2;
+                add.City = address.City;
+                add.Country = address.Country;
+                add.PostalCode = address.PostalCode;
+                add.StateOrProvince = address.StateOrProvince;
+                add.Type = address.Type;
+
+                Company company = await Db.Companies.FindAsync(address.ParentEntityId);
+                company.Address = add;
+
+                Db.Addresses.Add(add);
+                await Db.SaveChangesAsync();
+                return RedirectToAction("Index", "Home");
             }
 
             return View(address);
