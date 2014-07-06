@@ -53,5 +53,7 @@ namespace PandoLogic.Models
         public System.Data.Entity.DbSet<PandoLogic.Models.Company> Companies { get; set; }
 
         public System.Data.Entity.DbSet<PandoLogic.Models.Address> Addresses { get; set; }
+
+        public System.Data.Entity.DbSet<PandoLogic.Models.Member> Members { get; set; }
     }
 }

@@ -22,6 +22,11 @@ namespace PandoLogic.Models
         [Display(Name = "Created Date")]
         public DateTime? CreatedDate { get; set; }
 
+        // To-One on ApplicationUser
+        [ForeignKey("Creator")]
+        public string CreatorId { get; set; }
+        public virtual ApplicationUser Creator { get; set; }
+
         // Required Field
         [Display(Name = "Company Name")]
         [Required]
@@ -40,7 +45,7 @@ namespace PandoLogic.Models
 
         // To-One on Address
         [ForeignKey("Address")]
-        public int AddressId { get; set; }
+        public int? AddressId { get; set; }
         public virtual Address Address { get; set; }
 
         // TODO: Company Image using Azure Blob Storage!

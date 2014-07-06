@@ -38,7 +38,6 @@ namespace PandoLogic.Controllers
         // GET: Companies/Create
         public ActionResult Create()
         {
-            ViewBag.AddressId = new SelectList(Db.Addresses, "Id", "Address1");
             ViewBag.IndustryId = new SelectList(Db.Industries, "Id", "Title");
             return View();
         }
@@ -48,16 +47,19 @@ namespace PandoLogic.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Create([Bind(Include = "Id,CreatedDate,Name,NumberOfEmployees,IndustryId,AddressId")] Company company)
+        public async Task<ActionResult> Create([Bind(Include = "Name,NumberOfEmployees,IndustryId")] Company company)
         {
             if (ModelState.IsValid)
             {
+                ApplicationUser currentUser = await GetCurrentUserAsync();
+                company.Creator = currentUser;
+                company.CreatedDate = DateTime.Now;
+                Member member = Db.Members.Create(currentUser, company);
                 Db.Companies.Add(company);
                 await Db.SaveChangesAsync();
                 return RedirectToAction("Index");
             }
 
-            ViewBag.AddressId = new SelectList(Db.Addresses, "Id", "Address1", company.AddressId);
             ViewBag.IndustryId = new SelectList(Db.Industries, "Id", "Title", company.IndustryId);
             return View(company);
         }

@@ -456,7 +456,7 @@ namespace PandoLogic.Controllers
                     // var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
                     // await UserManager.SendEmailAsync(user.Id, "Confirm your account", "Please confirm your account by clicking <a href=\"" + callbackUrl + "\">here</a>");
 
-                    return RedirectToAction("CreateProfile");
+                    return RedirectToAction("Create");
                 }
                 else
                 {
@@ -468,7 +468,7 @@ namespace PandoLogic.Controllers
             return View(model);
         }
 
-        public async Task<ActionResult> CreateProfile()
+        public async Task<ActionResult> Create()
         {
             ApplicationUser origUser = await GetCurrentUserAsync();
             return View(origUser);
@@ -476,7 +476,7 @@ namespace PandoLogic.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> CreateProfile(ApplicationUser user)
+        public async Task<ActionResult> Create(ApplicationUser user)
         {
             if (ModelState.IsValid)
             {
@@ -485,7 +485,7 @@ namespace PandoLogic.Controllers
                 origUser.LastName = user.LastName;
                 origUser.JobTitle = user.JobTitle;
                 await Db.SaveChangesAsync();
-                return RedirectToAction("CreateCompanyProfile");
+                return RedirectToAction("Create", "Companies");
             }
 
             // If we got this far, something failed, redisplay form
