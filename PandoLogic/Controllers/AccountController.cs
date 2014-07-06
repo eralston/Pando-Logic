@@ -485,6 +485,7 @@ namespace PandoLogic.Controllers
                 origUser.LastName = user.LastName;
                 origUser.JobTitle = user.JobTitle;
                 await Db.SaveChangesAsync();
+                await UpdateCurrentUserCacheAsync();
                 return RedirectToAction("Create", "Companies");
             }
 
