@@ -167,6 +167,8 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="Controllers\AccountController.cs" />
+    <Compile Include="Controllers\AddressesController.cs" />
+    <Compile Include="Controllers\BaseController.cs" />
     <Compile Include="Controllers\CompaniesController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\IndustriesController.cs" />
@@ -175,6 +177,7 @@
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
+    <Compile Include="Models\Address.cs" />
     <Compile Include="Models\Company.cs" />
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\Industry.cs" />
@@ -401,6 +404,7 @@
     <Content Include="img\credit\paypal2.png" />
     <Content Include="img\credit\visa.png" />
     <Content Include="img\icons.png" />
+    <Content Include="img\pinstripe.png" />
     <Content Include="img\sprite-skin-flat.png" />
     <Content Include="img\sprite-skin-nice.png" />
     <Content Include="img\user-bg.png" />
@@ -768,11 +772,17 @@
     <Content Include="Views\Industries\Details.cshtml" />
     <Content Include="Views\Industries\Edit.cshtml" />
     <Content Include="Views\Industries\Index.cshtml" />
+    <Content Include="Views\Addresses\Create.cshtml" />
+    <Content Include="Views\Addresses\Delete.cshtml" />
+    <Content Include="Views\Addresses\Details.cshtml" />
+    <Content Include="Views\Addresses\Edit.cshtml" />
+    <Content Include="Views\Addresses\Index.cshtml" />
     <Content Include="Views\Companies\Create.cshtml" />
     <Content Include="Views\Companies\Delete.cshtml" />
     <Content Include="Views\Companies\Details.cshtml" />
     <Content Include="Views\Companies\Edit.cshtml" />
     <Content Include="Views\Companies\Index.cshtml" />
+    <Content Include="Views\Account\CreateProfile.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

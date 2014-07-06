@@ -11,14 +11,12 @@ using PandoLogic.Models;
 
 namespace PandoLogic.Controllers
 {
-    public class IndustriesController : Controller
+    public class IndustriesController : BaseController
     {
-        private ApplicationDbContext db = new ApplicationDbContext();
-
         // GET: Industries
         public async Task<ActionResult> Index()
         {
-            return View(await db.Industries.ToListAsync());
+            return View(await Db.Industries.ToListAsync());
         }
 
         // GET: Industries/Details/5
@@ -28,7 +26,7 @@ namespace PandoLogic.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Industry industry = await db.Industries.FindAsync(id);
+            Industry industry = await Db.Industries.FindAsync(id);
             if (industry == null)
             {
                 return HttpNotFound();
@@ -52,8 +50,8 @@ namespace PandoLogic.Controllers
             if (ModelState.IsValid)
             {
                 industry.CreatedDate = DateTime.Now;
-                db.Industries.Add(industry);
-                await db.SaveChangesAsync();
+                Db.Industries.Add(industry);
+                await Db.SaveChangesAsync();
                 return RedirectToAction("Index");
             }
 
@@ -67,7 +65,7 @@ namespace PandoLogic.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Industry industry = await db.Industries.FindAsync(id);
+            Industry industry = await Db.Industries.FindAsync(id);
             if (industry == null)
             {
                 return HttpNotFound();
@@ -84,10 +82,10 @@ namespace PandoLogic.Controllers
         {
             if (ModelState.IsValid)
             {
-                Industry origIndustry = await db.Industries.FindAsync(industry.Id);
+                Industry origIndustry = await Db.Industries.FindAsync(industry.Id);
                 origIndustry.Title = industry.Title;
-                db.Entry(origIndustry).State = EntityState.Modified;
-                await db.SaveChangesAsync();
+                Db.Entry(origIndustry).State = EntityState.Modified;
+                await Db.SaveChangesAsync();
                 return RedirectToAction("Index");
             }
             return View(industry);
@@ -100,7 +98,7 @@ namespace PandoLogic.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Industry industry = await db.Industries.FindAsync(id);
+            Industry industry = await Db.Industries.FindAsync(id);
             if (industry == null)
             {
                 return HttpNotFound();
@@ -113,19 +111,10 @@ namespace PandoLogic.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> DeleteConfirmed(int id)
         {
-            Industry industry = await db.Industries.FindAsync(id);
-            db.Industries.Remove(industry);
-            await db.SaveChangesAsync();
+            Industry industry = await Db.Industries.FindAsync(id);
+            Db.Industries.Remove(industry);
+            await Db.SaveChangesAsync();
             return RedirectToAction("Index");
-        }
-
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                db.Dispose();
-            }
-            base.Dispose(disposing);
         }
     }
 }

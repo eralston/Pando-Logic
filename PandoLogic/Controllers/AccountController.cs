@@ -15,7 +15,7 @@ using PandoLogic.Models;
 namespace PandoLogic.Controllers
 {
     [Authorize]
-    public class AccountController : Controller
+    public class AccountController : BaseController
     {
         private ApplicationUserManager _userManager;
 
@@ -66,47 +66,6 @@ namespace PandoLogic.Controllers
                 else
                 {
                     ModelState.AddModelError("", "Invalid username or password.");
-                }
-            }
-
-            // If we got this far, something failed, redisplay form
-            return View(model);
-        }
-
-        //
-        // GET: /Account/Register
-        [AllowAnonymous]
-        public ActionResult Register()
-        {
-            return View();
-        }
-
-        //
-        // POST: /Account/Register
-        [HttpPost]
-        [AllowAnonymous]
-        [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Register(RegisterViewModel model)
-        {
-            if (ModelState.IsValid)
-            {
-                var user = new ApplicationUser() { UserName = model.Email, Email = model.Email };
-                IdentityResult result = await UserManager.CreateAsync(user, model.Password);
-                if (result.Succeeded)
-                {
-                    await SignInAsync(user, isPersistent: false);
-
-                    // For more information on how to enable account confirmation and password reset please visit http://go.microsoft.com/fwlink/?LinkID=320771
-                    // Send an email with this link
-                    // string code = await UserManager.GenerateEmailConfirmationTokenAsync(user.Id);
-                    // var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
-                    // await UserManager.SendEmailAsync(user.Id, "Confirm your account", "Please confirm your account by clicking <a href=\"" + callbackUrl + "\">here</a>");
-
-                    return RedirectToAction("Index", "Home");
-                }
-                else
-                {
-                    AddErrors(result);
                 }
             }
 
@@ -465,6 +424,75 @@ namespace PandoLogic.Controllers
             }
             base.Dispose(disposing);
         }
+
+        #region Account Register
+
+        //
+        // GET: /Account/Register
+        [AllowAnonymous]
+        public ActionResult Register()
+        {
+            return View();
+        }
+
+        //
+        // POST: /Account/Register
+        [HttpPost]
+        [AllowAnonymous]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> Register(RegisterViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var user = new ApplicationUser() { UserName = model.Email, Email = model.Email, FirstName = model.FirstName, LastName = model.LastName };
+                IdentityResult result = await UserManager.CreateAsync(user, model.Password);
+                if (result.Succeeded)
+                {
+                    await SignInAsync(user, isPersistent: false);
+
+                    // For more information on how to enable account confirmation and password reset please visit http://go.microsoft.com/fwlink/?LinkID=320771
+                    // Send an email with this link
+                    // string code = await UserManager.GenerateEmailConfirmationTokenAsync(user.Id);
+                    // var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
+                    // await UserManager.SendEmailAsync(user.Id, "Confirm your account", "Please confirm your account by clicking <a href=\"" + callbackUrl + "\">here</a>");
+
+                    return RedirectToAction("CreateProfile");
+                }
+                else
+                {
+                    AddErrors(result);
+                }
+            }
+
+            // If we got this far, something failed, redisplay form
+            return View(model);
+        }
+
+        public async Task<ActionResult> CreateProfile()
+        {
+            ApplicationUser origUser = await GetCurrentUserAsync();
+            return View(origUser);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> CreateProfile(ApplicationUser user)
+        {
+            if (ModelState.IsValid)
+            {
+                ApplicationUser origUser = await GetCurrentUserAsync();
+                origUser.FirstName = user.FirstName;
+                origUser.LastName = user.LastName;
+                origUser.JobTitle = user.JobTitle;
+                await Db.SaveChangesAsync();
+                return RedirectToAction("CreateCompanyProfile");
+            }
+
+            // If we got this far, something failed, redisplay form
+            return View(user);
+        }
+
+        #endregion
 
         #region Helpers
         // Used for XSRF protection when adding external logins

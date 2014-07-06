@@ -5,7 +5,7 @@
 }
 
 <div class="form-box" id="login-box">
-    <div class="header">Register New Membership</div>
+    <div class="header">Register New Account</div>
     @using (Html.BeginForm("Register", "Account", FormMethod.Post, new { role = "form" }))
     {
         @Html.AntiForgeryToken()
@@ -31,7 +31,7 @@
 
             <button type="submit" class="btn bg-olive btn-block">Sign me up</button>
 
-            @Html.ActionLink("I already have a membership", "Login", null, new { @class = "text-center" })
+            @Html.ActionLink("Already Have An Account? Login", "Login", null, new { @class = "text-center" })
         </div>
     }
 

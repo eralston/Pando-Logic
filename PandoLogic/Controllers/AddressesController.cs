@@ -11,114 +11,105 @@ using PandoLogic.Models;
 
 namespace PandoLogic.Controllers
 {
-    public class CompaniesController : BaseController
+    public class AddressesController : BaseController
     {
-        // GET: Companies
+        // GET: Addresses
         public async Task<ActionResult> Index()
         {
-            var companies = Db.Companies.Include(c => c.Address).Include(c => c.Industry);
-            return View(await companies.ToListAsync());
+            return View(await Db.Addresses.ToListAsync());
         }
 
-        // GET: Companies/Details/5
+        // GET: Addresses/Details/5
         public async Task<ActionResult> Details(int? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Company company = await Db.Companies.FindAsync(id);
-            if (company == null)
+            Address address = await Db.Addresses.FindAsync(id);
+            if (address == null)
             {
                 return HttpNotFound();
             }
-            return View(company);
+            return View(address);
         }
 
-        // GET: Companies/Create
+        // GET: Addresses/Create
         public ActionResult Create()
         {
-            ViewBag.AddressId = new SelectList(Db.Addresses, "Id", "Address1");
-            ViewBag.IndustryId = new SelectList(Db.Industries, "Id", "Title");
             return View();
         }
 
-        // POST: Companies/Create
+        // POST: Addresses/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Create([Bind(Include = "Id,CreatedDate,Name,NumberOfEmployees,IndustryId,AddressId")] Company company)
+        public async Task<ActionResult> Create([Bind(Include = "Id,CreatedDate,LastUpdate,Address1,Address2,City,StateOrProvince,Country,PostalCode,Type")] Address address)
         {
             if (ModelState.IsValid)
             {
-                Db.Companies.Add(company);
+                Db.Addresses.Add(address);
                 await Db.SaveChangesAsync();
                 return RedirectToAction("Index");
             }
 
-            ViewBag.AddressId = new SelectList(Db.Addresses, "Id", "Address1", company.AddressId);
-            ViewBag.IndustryId = new SelectList(Db.Industries, "Id", "Title", company.IndustryId);
-            return View(company);
+            return View(address);
         }
 
-        // GET: Companies/Edit/5
+        // GET: Addresses/Edit/5
         public async Task<ActionResult> Edit(int? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Company company = await Db.Companies.FindAsync(id);
-            if (company == null)
+            Address address = await Db.Addresses.FindAsync(id);
+            if (address == null)
             {
                 return HttpNotFound();
             }
-            ViewBag.AddressId = new SelectList(Db.Addresses, "Id", "Address1", company.AddressId);
-            ViewBag.IndustryId = new SelectList(Db.Industries, "Id", "Title", company.IndustryId);
-            return View(company);
+            return View(address);
         }
 
-        // POST: Companies/Edit/5
+        // POST: Addresses/Edit/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Edit([Bind(Include = "Id,CreatedDate,Name,NumberOfEmployees,IndustryId,AddressId")] Company company)
+        public async Task<ActionResult> Edit([Bind(Include = "Id,CreatedDate,LastUpdate,Address1,Address2,City,StateOrProvince,Country,PostalCode,Type")] Address address)
         {
             if (ModelState.IsValid)
             {
-                Db.Entry(company).State = EntityState.Modified;
+                Db.Entry(address).State = EntityState.Modified;
                 await Db.SaveChangesAsync();
                 return RedirectToAction("Index");
             }
-            ViewBag.AddressId = new SelectList(Db.Addresses, "Id", "Address1", company.AddressId);
-            ViewBag.IndustryId = new SelectList(Db.Industries, "Id", "Title", company.IndustryId);
-            return View(company);
+            return View(address);
         }
 
-        // GET: Companies/Delete/5
+        // GET: Addresses/Delete/5
         public async Task<ActionResult> Delete(int? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Company company = await Db.Companies.FindAsync(id);
-            if (company == null)
+            Address address = await Db.Addresses.FindAsync(id);
+            if (address == null)
             {
                 return HttpNotFound();
             }
-            return View(company);
+            return View(address);
         }
 
-        // POST: Companies/Delete/5
+        // POST: Addresses/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> DeleteConfirmed(int id)
         {
-            Company company = await Db.Companies.FindAsync(id);
-            Db.Companies.Remove(company);
+            Address address = await Db.Addresses.FindAsync(id);
+            Db.Addresses.Remove(address);
             await Db.SaveChangesAsync();
             return RedirectToAction("Index");
         }

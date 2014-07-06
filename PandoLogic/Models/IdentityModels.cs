@@ -19,12 +19,6 @@ namespace PandoLogic.Models
             return userIdentity;
         }
 
-        [Display(Name = "Job Title")]
-        public string JobTitle { get; set; }
-
-        [Display(Name = "Phone Number")]
-        public string Phone { get; set; }
-
         [Required]
         [Display(Name = "First Name")]
         public string FirstName { get; set; }
@@ -32,6 +26,9 @@ namespace PandoLogic.Models
         [Required]
         [Display(Name = "Last Name")]
         public string LastName { get; set; }
+
+        [Display(Name = "Job Title")]
+        public string JobTitle { get; set; }
 
         // To-Many on PhoneNumber
         public virtual ICollection<PhoneNumber> PhoneNumbers { get; set; }
@@ -54,5 +51,7 @@ namespace PandoLogic.Models
         public DbSet<Industry> Industries { get; set; }
 
         public System.Data.Entity.DbSet<PandoLogic.Models.Company> Companies { get; set; }
+
+        public System.Data.Entity.DbSet<PandoLogic.Models.Address> Addresses { get; set; }
     }
 }
