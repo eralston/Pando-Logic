@@ -14,12 +14,17 @@ namespace PandoLogic.Controllers
 
     public class BaseController : Controller
     {
+        #region Constants
+
+        protected const string UserInfoCacheId = "UserInfoCacheId";
+        protected const string ModelStateCacheId = "ModelStateCacheId";
+
+        #endregion
+
         #region Inner Types
 
         public class UserInfoCache
         {
-            public const string UserInfoCacheId = "UserInfoCache";
-
             public UserInfoCache() { }
 
             public UserInfoCache(ApplicationUser user)
@@ -83,7 +88,7 @@ namespace PandoLogic.Controllers
                     return null;
                 }
 
-                _userCache = HttpContext.Session[UserInfoCache.UserInfoCacheId] as UserInfoCache;
+                _userCache = HttpContext.Session[UserInfoCacheId] as UserInfoCache;
 
                 if (_userCache == null)
                     UpdateCurrentUserCache();
@@ -98,14 +103,14 @@ namespace PandoLogic.Controllers
         {
             ApplicationUser user = GetCurrentUser();
             _userCache = new UserInfoCache(user);
-            HttpContext.Session[UserInfoCache.UserInfoCacheId] = _userCache;
+            HttpContext.Session[UserInfoCacheId] = _userCache;
         }
 
         protected async Task UpdateCurrentUserCacheAsync()
         {
             ApplicationUser user = await GetCurrentUserAsync();
             _userCache = new UserInfoCache(user);
-            HttpContext.Session[UserInfoCache.UserInfoCacheId] = _userCache;
+            HttpContext.Session[UserInfoCacheId] = _userCache;
         }
 
         protected ApplicationUser GetCurrentUser()
@@ -124,7 +129,23 @@ namespace PandoLogic.Controllers
                 return Task<ApplicationUser>.FromResult(_user);
 
             return Db.Users.Where(u => u.UserName == CurrentUsername).FirstOrDefaultAsync();
-        } 
+        }
+
+        protected void StashModelState()
+        {
+            TempData[ModelStateCacheId] = ModelState;
+        }
+
+        protected void UnstashModelState()
+        {
+            ModelStateDictionary oldModelState = TempData[ModelStateCacheId] as ModelStateDictionary;
+            if (oldModelState != null)
+            {
+                ModelState.Merge(oldModelState);
+            }
+
+            TempData[ModelStateCacheId] = null;
+        }
 
         #endregion
 

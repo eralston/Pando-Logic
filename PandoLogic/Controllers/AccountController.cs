@@ -213,7 +213,7 @@ namespace PandoLogic.Controllers
 
         //
         // GET: /Account/Manage
-        public ActionResult Manage(ManageMessageId? message)
+        public async Task<ActionResult> Manage(ManageMessageId? message)
         {
             ViewBag.StatusMessage =
                 message == ManageMessageId.ChangePasswordSuccess ? "Your password has been changed."
@@ -223,6 +223,10 @@ namespace PandoLogic.Controllers
                 : "";
             ViewBag.HasLocalPassword = HasPassword();
             ViewBag.ReturnUrl = Url.Action("Manage");
+            ViewBag.CurrentApplicationUser = await GetCurrentUserAsync();
+
+            UnstashModelState();
+
             return View();
         }
 
@@ -235,6 +239,8 @@ namespace PandoLogic.Controllers
             bool hasPassword = HasPassword();
             ViewBag.HasLocalPassword = hasPassword;
             ViewBag.ReturnUrl = Url.Action("Manage");
+            
+
             if (hasPassword)
             {
                 if (ModelState.IsValid)
@@ -274,6 +280,8 @@ namespace PandoLogic.Controllers
                     }
                 }
             }
+
+            ViewBag.CurrentApplicationUser = await GetCurrentUserAsync();
 
             // If we got this far, something failed, redisplay form
             return View(model);
@@ -480,17 +488,38 @@ namespace PandoLogic.Controllers
         {
             if (ModelState.IsValid)
             {
-                ApplicationUser origUser = await GetCurrentUserAsync();
-                origUser.FirstName = user.FirstName;
-                origUser.LastName = user.LastName;
-                origUser.JobTitle = user.JobTitle;
-                await Db.SaveChangesAsync();
-                await UpdateCurrentUserCacheAsync();
+                await UpdateCurrentUser(user);
                 return RedirectToAction("Create", "Companies");
             }
 
             // If we got this far, something failed, redisplay form
             return View(user);
+        }
+
+        private async Task UpdateCurrentUser(ApplicationUser user)
+        {
+            ApplicationUser origUser = await GetCurrentUserAsync();
+            origUser.FirstName = user.FirstName;
+            origUser.LastName = user.LastName;
+            origUser.JobTitle = user.JobTitle;
+            await Db.SaveChangesAsync();
+            await UpdateCurrentUserCacheAsync();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> Edit(ApplicationUser user)
+        {
+            if (ModelState.IsValid)
+            {
+                await UpdateCurrentUser(user);
+                return RedirectToAction("Manage");
+            }
+
+            StashModelState();
+
+            // If we got this far, something failed, redisplay form
+            return RedirectToAction("Manage");
         }
 
         #endregion
