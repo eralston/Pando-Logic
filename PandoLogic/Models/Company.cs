@@ -48,6 +48,25 @@ namespace PandoLogic.Models
         public int? AddressId { get; set; }
         public virtual Address Address { get; set; }
 
-        // TODO: Company Image using Azure Blob Storage!
+        public string AvatarUrl { get; set; }
+        public string AvatarFileName { get; set; }
+    }
+
+    public static class CompanyExtensions
+    {
+        /// <summary>
+        /// Creates a query for companies where the given user is a member
+        /// </summary>
+        /// <param name="context"></param>
+        /// <param name="user"></param>
+        /// <returns></returns>
+        public static IQueryable<Company> CompaniesWhereUserIsMember(this ApplicationDbContext context, ApplicationUser user)
+        {
+            var query = from m in context.Members
+                        join c in context.Companies on m.CompanyId equals c.Id
+                        where m.UserId == user.Id
+                        select c;
+            return query;
+        }
     }
 }

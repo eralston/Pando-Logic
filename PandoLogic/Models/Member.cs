@@ -31,6 +31,9 @@ namespace PandoLogic.Models
         [ForeignKey("User")]
         public string UserId { get; set; }
         public virtual ApplicationUser User { get; set; }
+
+        [Display(Name = "Job Title")]
+        public string JobTitle { get; set; }
     }
 
     public static class MemberExtesions

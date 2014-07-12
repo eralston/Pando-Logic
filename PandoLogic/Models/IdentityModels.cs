@@ -27,9 +27,6 @@ namespace PandoLogic.Models
         [Display(Name = "Last Name")]
         public string LastName { get; set; }
 
-        [Display(Name = "Job Title")]
-        public string JobTitle { get; set; }
-
         public string AvatarUrl { get; set; }
 
         public string AvatarFileName { get; set; }

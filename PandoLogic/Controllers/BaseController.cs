@@ -33,7 +33,7 @@ namespace PandoLogic.Controllers
             {
                 FirstName = user.FirstName;
                 LastName = user.LastName;
-                JobTitle = user.JobTitle;
+                // JobTitle = user.JobTitle;
                 Id = user.Id;
                 AvatarUrl = user.AvatarUrl;
             }

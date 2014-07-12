@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Data;
 using System.Data.Entity;
 using System.Linq;
@@ -7,10 +9,18 @@ using System.Threading.Tasks;
 using System.Net;
 using System.Web;
 using System.Web.Mvc;
+
 using PandoLogic.Models;
 
 namespace PandoLogic.Controllers
 {
+    [NotMapped]
+    public class CompanyViewModel : Company
+    {
+        [Display(Name = "Job Title")]
+        public string JobTitle { get; set; }
+    }
+
     public class CompaniesController : BaseController
     {
         // GET: Companies
@@ -39,7 +49,8 @@ namespace PandoLogic.Controllers
         public ActionResult Create()
         {
             ViewBag.IndustryId = new SelectList(Db.Industries, "Id", "Title");
-            return View();
+            CompanyViewModel viewModel = new CompanyViewModel();
+            return View(viewModel);
         }
 
         // POST: Companies/Create
@@ -47,21 +58,65 @@ namespace PandoLogic.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Create([Bind(Include = "Name,NumberOfEmployees,IndustryId")] Company company)
+        public async Task<ActionResult> Create([Bind(Include = "Name,NumberOfEmployees,IndustryId")] CompanyViewModel companyViewModel)
         {
             if (ModelState.IsValid)
             {
+                // Create a new company and capture viewModel fields
+                Company company = new Company();
+                await UpdateCompany(companyViewModel, company);
+
+                // Add in implied data
                 ApplicationUser currentUser = await GetCurrentUserAsync();
                 company.Creator = currentUser;
                 company.CreatedDate = DateTime.Now;
+
+                // Creates a member to link to companies
                 Member member = Db.Members.Create(currentUser, company);
+                member.JobTitle = companyViewModel.JobTitle;
                 Db.Companies.Add(company);
+
+                // Save changes
                 await Db.SaveChangesAsync();
+
+                // Continue to setting the company address
                 return RedirectToAction("CreateCompany", "Addresses", new { id = company.Id });
             }
 
-            ViewBag.IndustryId = new SelectList(Db.Industries, "Id", "Title", company.IndustryId);
-            return View(company);
+            ViewBag.IndustryId = new SelectList(Db.Industries, "Id", "Title", companyViewModel.IndustryId);
+            return View(companyViewModel);
+        }
+
+        /// <summary>
+        /// Updates the given company
+        /// </summary>
+        /// <param name="company"></param>
+        /// <param name="origCompany"></param>
+        /// <returns></returns>
+        private async Task UpdateCompany(Company company, Company origCompany)
+        {
+            // Set properties
+            origCompany.Name = company.Name;
+            origCompany.NumberOfEmployees = company.NumberOfEmployees;
+            origCompany.IndustryId = company.IndustryId;
+
+            // Check for avatar upload
+            if (Request.Files.Count > 0)
+            {
+                var file = Request.Files[0];
+
+                if (file.ContentLength > 0)
+                {
+                    // If we have one, then upload to Azure
+                    string fileName = StorageManager.GenerateUniqueName(file.FileName);
+                    await StorageManager.CompanyImages.UploadBlobAsync(fileName, file.InputStream);
+
+                    // Set the URL
+                    string fileUrl = StorageManager.GetCompanyImageUrl(fileName);
+                    origCompany.AvatarUrl = fileUrl;
+                    origCompany.AvatarFileName = file.FileName;
+                }
+            }
         }
 
         // GET: Companies/Edit/5

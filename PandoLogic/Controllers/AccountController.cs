@@ -1,15 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
+using System.Data.Entity;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
+
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
+
 using Owin;
+
 using PandoLogic.Models;
 
 namespace PandoLogic.Controllers
@@ -225,9 +230,19 @@ namespace PandoLogic.Controllers
             ViewBag.ReturnUrl = Url.Action("Manage");
             ViewBag.CurrentApplicationUser = await GetCurrentUserAsync();
 
+            // Merge in any errors from redirecting actions
             UnstashModelState();
 
+            // Find the list of companies the current user is a member of
+            await LoadCompaniesForCurrentUserIntoViewBag();
+
             return View();
+        }
+
+        private async Task LoadCompaniesForCurrentUserIntoViewBag()
+        {
+            ApplicationUser currentUser = await GetCurrentUserAsync();
+            ViewBag.Companies = await Db.CompaniesWhereUserIsMember(currentUser).ToArrayAsync();
         }
 
         //
@@ -282,6 +297,9 @@ namespace PandoLogic.Controllers
             }
 
             ViewBag.CurrentApplicationUser = await GetCurrentUserAsync();
+            
+            // Find the list of companies the current user is a member of
+            await LoadCompaniesForCurrentUserIntoViewBag();
 
             // If we got this far, something failed, redisplay form
             return View(model);
@@ -528,7 +546,6 @@ namespace PandoLogic.Controllers
             // Set properties
             origUser.FirstName = user.FirstName;
             origUser.LastName = user.LastName;
-            origUser.JobTitle = user.JobTitle;
 
             // Save changes
             await Db.SaveChangesAsync();
