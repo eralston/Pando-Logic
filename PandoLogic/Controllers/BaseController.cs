@@ -7,6 +7,8 @@ using System.Threading.Tasks;
 using System.Net;
 using System.Web;
 using System.Web.Mvc;
+
+using PandoLogic;
 using PandoLogic.Models;
 
 namespace PandoLogic.Controllers
@@ -33,12 +35,14 @@ namespace PandoLogic.Controllers
                 LastName = user.LastName;
                 JobTitle = user.JobTitle;
                 Id = user.Id;
+                AvatarUrl = user.AvatarUrl;
             }
 
             public string FirstName { get; set; }
             public string LastName { get; set; }
             public string JobTitle { get; set; }
             public string Id { get; set; }
+            public string AvatarUrl { get; set; }
         }
         
         #endregion
@@ -49,6 +53,9 @@ namespace PandoLogic.Controllers
         private ApplicationUser _user = null;
 
         #endregion
+
+
+        #region Properties
 
         public ApplicationDbContext Db
         {
@@ -96,6 +103,19 @@ namespace PandoLogic.Controllers
                 return _userCache;
             }
         }
+
+        PandoStorageManager _storageManager = null;
+        public PandoStorageManager StorageManager
+        {
+            get
+            {
+                _storageManager = _storageManager ?? new PandoStorageManager();
+
+                return _storageManager;
+            }
+        }
+
+        #endregion
 
         #region Methods
 
@@ -178,6 +198,7 @@ namespace PandoLogic.Controllers
                 ViewBag.CurrentUserLastName = cache.LastName;
                 ViewBag.CurrentUserJobTitle = cache.JobTitle;
                 ViewBag.CurrentUserId = cache.Id;
+                ViewBag.CurrentUserAvatarUrl = cache.AvatarUrl;
             }            
         }
 

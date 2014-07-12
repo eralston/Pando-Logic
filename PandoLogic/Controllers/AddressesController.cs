@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Data;
 using System.Data.Entity;
 using System.Linq;
@@ -7,6 +8,7 @@ using System.Threading.Tasks;
 using System.Net;
 using System.Web;
 using System.Web.Mvc;
+
 using PandoLogic.Models;
 
 namespace PandoLogic.Controllers
@@ -14,6 +16,7 @@ namespace PandoLogic.Controllers
     /// <summary>
     /// View model for handling address create and edit, that adds another field for the parent entity ID
     /// </summary>
+    [NotMapped]
     public class AddressViewModel : Address
     {
         public int ParentEntityId { get; set; }

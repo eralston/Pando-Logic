@@ -488,6 +488,7 @@ namespace PandoLogic.Controllers
         {
             if (ModelState.IsValid)
             {
+                // Update other user fields and send onward ot create companies
                 await UpdateCurrentUser(user);
                 return RedirectToAction("Create", "Companies");
             }
@@ -496,13 +497,43 @@ namespace PandoLogic.Controllers
             return View(user);
         }
 
+        /// <summary>
+        /// Performs the update for the current user
+        /// </summary>
+        /// <param name="user"></param>
+        /// <param name="origUser"></param>
+        /// <returns></returns>
         private async Task UpdateCurrentUser(ApplicationUser user)
         {
             ApplicationUser origUser = await GetCurrentUserAsync();
+
+            // Check for avatar upload
+            if (Request.Files.Count > 0)
+            {
+                // Save it to Azure
+                var file = Request.Files[0];
+
+                if(file.ContentLength > 0)
+                {
+                    string fileName = StorageManager.GenerateUniqueName(file.FileName);
+                    await StorageManager.UserImages.UploadBlobAsync(fileName, file.InputStream);
+
+                    // Set the URL
+                    string fileUrl = StorageManager.GetUserImageUrl(fileName);
+                    origUser.AvatarUrl = fileUrl;
+                    origUser.AvatarFileName = file.FileName;
+                }
+            }
+
+            // Set properties
             origUser.FirstName = user.FirstName;
             origUser.LastName = user.LastName;
             origUser.JobTitle = user.JobTitle;
+
+            // Save changes
             await Db.SaveChangesAsync();
+
+            // Clear the cache
             await UpdateCurrentUserCacheAsync();
         }
 

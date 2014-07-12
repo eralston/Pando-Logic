@@ -30,6 +30,10 @@ namespace PandoLogic.Models
         [Display(Name = "Job Title")]
         public string JobTitle { get; set; }
 
+        public string AvatarUrl { get; set; }
+
+        public string AvatarFileName { get; set; }
+
         // To-Many on PhoneNumber
         public virtual ICollection<PhoneNumber> PhoneNumbers { get; set; }
 

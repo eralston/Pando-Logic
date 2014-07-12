@@ -41,7 +41,7 @@
             <div class="box-header">
                 <h3 class="box-title">Account Profile</h3>
             </div>
-            @using (Html.BeginForm("Edit", "Account", FormMethod.Post, new { @class = "", role = "form" }))
+            @using (Html.BeginForm("Edit", "Account", FormMethod.Post, new { @class = "", role = "form", enctype = "multipart/form-data" }))
             {
                 @Html.AntiForgeryToken()
                 <div class="box-body">

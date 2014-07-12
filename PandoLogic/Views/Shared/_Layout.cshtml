@@ -65,6 +65,7 @@
                                         <!-- start message -->
                                         <a href="#">
                                             <div class="pull-left">
+    
                                                 <img src="img/avatar3.png" class="img-circle" alt="User Image" />
                                             </div>
                                             <h4>
@@ -252,9 +253,18 @@
                         <ul class="dropdown-menu">
                             <!-- User image -->
                             <li class="user-header bg-light-blue">
-                                <img src="img/avatar3.png" class="img-circle" alt="User Image" />
+
+                                @if (!string.IsNullOrEmpty(ViewBag.CurrentUserAvatarUrl))
+                                {
+                                    <img src="@ViewBag.CurrentUserAvatarUrl" class="img-circle" alt="User Image" />
+                                }
+
                                 <p>
-                                    @ViewBag.CurrentUserFirstName @ViewBag.CurrentUserLastName - @ViewBag.CurrentUserJobTitle
+                                    @ViewBag.CurrentUserFirstName @ViewBag.CurrentUserLastName
+                                    @if(!string.IsNullOrEmpty(ViewBag.CurrentUserJobTitle))
+                                    {
+                                        <span> - </span>@ViewBag.CurrentUserJobTitle
+                                    }
                                 </p>
                             </li>
                             <!-- Menu Body -->
@@ -284,6 +294,7 @@
                                 </div>
                             </li>
                         </ul>
+
                     </li>
                 </ul>
             </div>
@@ -297,12 +308,13 @@
                 <!-- Sidebar user panel -->
                 <div class="user-panel">
                     <div class="pull-left image">
-                        <img src="img/avatar3.png" class="img-circle" alt="User Image" />
+                        @if (!string.IsNullOrEmpty(ViewBag.CurrentUserAvatarUrl))
+                        {
+                            <img src="@ViewBag.CurrentUserAvatarUrl" class="img-circle" alt="User Image" />
+                        }
                     </div>
                     <div class="pull-left info">
                         <p>Hello, @ViewBag.CurrentUserFirstName</p>
-
-                        <a href="#"><i class="fa fa-circle text-success"></i> Online</a>
                     </div>
                 </div>
                 <!-- search form -->
