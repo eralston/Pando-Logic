@@ -26,6 +26,18 @@ a:focus {
   text-decoration: none;
   color: #72afd2;
 }
+
+.force-a {
+  color: #3c8dbc !important;
+}
+.force-a:hover,
+.force-a:active,
+.force-a:focus {
+  outline: none !important;
+  text-decoration: none !important;
+  color: #72afd2 !important;
+}
+
 /* Layouts */
 .wrapper {
   min-height: 100%;

@@ -5,6 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Data.Entity;
 using System.Globalization;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Web.Security;
 
 namespace PandoLogic.Models
@@ -34,6 +35,22 @@ namespace PandoLogic.Models
 
         [Display(Name = "Job Title")]
         public string JobTitle { get; set; }
+
+        /// <summary>
+        /// A flag for which company is currently selected as the context for the UI
+        /// The member with 
+        /// NOTE: In practice, this is secondary to the user's session information
+        /// </summary>
+        public DateTime? LastSelectedDate { get; set; }
+
+        /// <summary>
+        /// Sets the last selected date for this member record
+        /// NOTE: Be sure to save changes to the active DB context after calling this function
+        /// </summary>
+        public void SetSelected()
+        {
+            LastSelectedDate = DateTime.Now;
+        }
     }
 
     public static class MemberExtesions
@@ -45,10 +62,32 @@ namespace PandoLogic.Models
             member.CreatedDate = DateTime.Now;
             member.Company = company;
             member.User = user;
+            member.LastSelectedDate = member.CreatedDate;
 
             members.Add(member);
 
             return member;
+        }
+
+        /// <summary>
+        /// Finds the most recently selected member record for the given user
+        /// </summary>
+        /// <param name="members"></param>
+        /// <param name="user"></param>
+        /// <returns></returns>
+        public static IQueryable<Member> FindSelectedForUser(this DbSet<Member> members, ApplicationUser user)
+        {
+            // Find all members for the current user
+            var userMembers = members.WhererUserIsMember(user).OrderByDescending(m => m.LastSelectedDate).Include(m => m.Company);
+            return userMembers;
+        }
+
+        public static IQueryable<Member> WhererUserIsMember(this DbSet<Member> members, ApplicationUser user)
+        {
+            string userId = user.Id;
+            // Find all members for the current user
+            var userMembers = members.Where(m => m.UserId == userId);
+            return userMembers;
         }
     }
 }

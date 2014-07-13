@@ -25,17 +25,46 @@ namespace PandoLogic.Controllers
 
         #region Inner Types
 
+        public class CompanyInfoCache
+        {
+            public CompanyInfoCache() { }
+
+            public CompanyInfoCache(Company company)
+            {
+                Name = company.Name;
+                Id = company.Id;
+            }
+
+            public string Name { get; set; }
+            public int Id { get; set; }
+        }
+
         public class UserInfoCache
         {
             public UserInfoCache() { }
 
-            public UserInfoCache(ApplicationUser user)
+            public UserInfoCache(ApplicationUser user, Company[] userCompanies, Member selectedMember)
             {
+                // Load user data
                 FirstName = user.FirstName;
                 LastName = user.LastName;
-                // JobTitle = user.JobTitle;
                 Id = user.Id;
                 AvatarUrl = user.AvatarUrl;
+
+                // Load selected member data
+                SelectedCompanyId = selectedMember.CompanyId;
+                JobTitle = selectedMember.JobTitle;
+                SelectedCompanyName = selectedMember.Company.Name;
+                SelectedCompanyAvatarUrl = selectedMember.Company.AvatarUrl;
+
+                // Load up the companies
+                CompanyInfoCache[] companies = new CompanyInfoCache[userCompanies.Length];
+                for(int i = 0; i < userCompanies.Length; ++i)
+                {
+                    Company company = userCompanies[i];
+                    companies[i] = new CompanyInfoCache(company);
+                }
+                Companies = companies;
             }
 
             public string FirstName { get; set; }
@@ -43,6 +72,11 @@ namespace PandoLogic.Controllers
             public string JobTitle { get; set; }
             public string Id { get; set; }
             public string AvatarUrl { get; set; }
+
+            public int SelectedCompanyId { get; set; }
+            public string SelectedCompanyName { get; set; }
+            public string SelectedCompanyAvatarUrl { get; set; }
+            public CompanyInfoCache[] Companies { get; set; }
         }
         
         #endregion
@@ -122,14 +156,21 @@ namespace PandoLogic.Controllers
         protected void UpdateCurrentUserCache()
         {
             ApplicationUser user = GetCurrentUser();
-            _userCache = new UserInfoCache(user);
+            Company[] userCompanies = Db.CompaniesWhereUserIsMember(user).ToArray();
+            Member selectedMember = Db.Members.FindSelectedForUser(user).FirstOrDefault();
+            _userCache = new UserInfoCache(user, userCompanies,selectedMember);
             HttpContext.Session[UserInfoCacheId] = _userCache;
         }
 
         protected async Task UpdateCurrentUserCacheAsync()
         {
             ApplicationUser user = await GetCurrentUserAsync();
-            _userCache = new UserInfoCache(user);
+
+            // TODO: Make these requests parallel
+            Company[] companies = await Db.CompaniesWhereUserIsMember(user).ToArrayAsync();
+            Member member = await Db.Members.FindSelectedForUser(user).FirstOrDefaultAsync();
+
+            _userCache = new UserInfoCache(user, companies, member);
             HttpContext.Session[UserInfoCacheId] = _userCache;
         }
 
@@ -194,11 +235,20 @@ namespace PandoLogic.Controllers
 
             if (cache != null)
             {
+                // User properties
                 ViewBag.CurrentUserFirstName = cache.FirstName;
                 ViewBag.CurrentUserLastName = cache.LastName;
-                ViewBag.CurrentUserJobTitle = cache.JobTitle;
                 ViewBag.CurrentUserId = cache.Id;
                 ViewBag.CurrentUserAvatarUrl = cache.AvatarUrl;
+
+                // Select member properties
+                ViewBag.CurrentUserJobTitle = cache.JobTitle;
+                ViewBag.CurrentUserSelectedCompanyName = cache.SelectedCompanyName;
+                ViewBag.CurrentUserSelectedCompanyId = cache.SelectedCompanyId;
+                ViewBag.CurrentUserSelectedCompanyAvatarUrl = cache.SelectedCompanyAvatarUrl;
+
+                // Companies
+                ViewBag.CurrentUserCompanies = cache.Companies;                
             }            
         }
 

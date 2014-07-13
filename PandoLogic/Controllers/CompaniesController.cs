@@ -208,5 +208,41 @@ namespace PandoLogic.Controllers
             await Db.SaveChangesAsync();
             return RedirectToAction("Index");
         }
+
+        /// <summary>
+        /// Changes the user's current context to company with the given ID
+        /// Then redirect to the URL at the "ReturnUrl" querystring
+        /// NOTE: This will do nothing if the current user is NOT a member of that company
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public async Task<ActionResult> Change(int id)
+        {
+            // Double-check user is member of company
+            ApplicationUser user = await GetCurrentUserAsync();
+            Member[] memberships = await Db.Members.WhererUserIsMember(user).ToArrayAsync();
+
+            // Pull out the URL to which we will redirect
+            string url = Request.QueryString["returnurl"];
+            if(string.IsNullOrEmpty(url))
+            {
+                url = Url.Action("Index", "Home");
+            }
+
+            // Try to find the membership for the desired company
+            foreach(Member member in memberships)
+            {
+                if(member.CompanyId == id)
+                {
+                    member.SetSelected();
+                    await Db.SaveChangesAsync();
+                    await UpdateCurrentUserCacheAsync();
+                    return Redirect(url);
+                }
+            }
+
+            // If we didn't find anything, then let's just redirect without having done anything
+            return Redirect(url);
+        }
     }
 }
