@@ -186,6 +186,7 @@
     <Compile Include="App_Start\IdentityConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
+    <Compile Include="Code\DateTimeValidationAttribute.cs" />
     <Compile Include="Code\PandoStorageManager.cs" />
     <Compile Include="Code\StorageManager.cs" />
     <Compile Include="Controllers\AccountController.cs" />

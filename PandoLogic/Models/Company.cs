@@ -20,6 +20,7 @@ namespace PandoLogic.Models
         public int Id { get; set; }
 
         [Display(Name = "Created Date")]
+        [DataType(DataType.DateTime)]
         public DateTime? CreatedDate { get; set; }
 
         // To-One on ApplicationUser
@@ -50,6 +51,10 @@ namespace PandoLogic.Models
 
         public string AvatarUrl { get; set; }
         public string AvatarFileName { get; set; }
+
+        [Display(Name = "Founded Date")]
+        [DataType(DataType.DateTime)]
+        public DateTime? FoundedDate { get; set; }
     }
 
     public static class CompanyExtensions

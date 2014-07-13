@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Data;
 using System.Data.Entity;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Net;
@@ -17,8 +18,26 @@ namespace PandoLogic.Controllers
     [NotMapped]
     public class CompanyViewModel : Company
     {
+        const string FoundedDateFormat = "MM/dd/yyyy";
+
         [Display(Name = "Job Title")]
         public string JobTitle { get; set; }
+
+        [Display(Name = "Founded Date")]
+        [DateTimeStringValidation(Format = FoundedDateFormat)]
+        public string FoundedDateString { get; set; }
+
+        public bool HasFoundedDate()
+        {
+            return !string.IsNullOrEmpty(FoundedDateString);
+        }
+
+
+        public DateTime ParsedDateTime()
+        {
+            CultureInfo provider = CultureInfo.InvariantCulture;
+            return DateTime.ParseExact(FoundedDateString, FoundedDateFormat, provider);
+        }
     }
 
     public class CompaniesController : BaseController
@@ -58,7 +77,7 @@ namespace PandoLogic.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Create([Bind(Include = "Name,NumberOfEmployees,IndustryId")] CompanyViewModel companyViewModel)
+        public async Task<ActionResult> Create([Bind(Include = "Name,NumberOfEmployees,IndustryId,JobTitle,FoundedDateString")] CompanyViewModel companyViewModel)
         {
             if (ModelState.IsValid)
             {
@@ -93,12 +112,22 @@ namespace PandoLogic.Controllers
         /// <param name="company"></param>
         /// <param name="origCompany"></param>
         /// <returns></returns>
-        private async Task UpdateCompany(Company company, Company origCompany)
+        private async Task UpdateCompany(CompanyViewModel company, Company origCompany)
         {
             // Set properties
             origCompany.Name = company.Name;
             origCompany.NumberOfEmployees = company.NumberOfEmployees;
             origCompany.IndustryId = company.IndustryId;
+
+            if (company.HasFoundedDate())
+            {
+                origCompany.FoundedDate = company.ParsedDateTime();
+            }
+            else
+            {
+                origCompany.FoundedDate = null;
+            }
+
 
             // Check for avatar upload
             if (Request.Files.Count > 0)
