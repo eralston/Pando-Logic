@@ -13,33 +13,54 @@ namespace PandoLogic.Controllers
 {
     public class ActivitiesController : BaseController
     {
+        #region Methods
+        private async Task<bool> IsActivityFromCurrentCompany(Activity activity)
+        {
+            // Pull out the current company to compare to the activity
+            Member member = await GetCurrentMemberAsync();
+            Company currentCompany = member.Company;
+            bool isActivitySafe = activity.CompanyId == currentCompany.Id;
+            return isActivitySafe;
+        }
+
+        private async Task<Activity> FindSafeActivity(int id)
+        {
+            // Pull the activity from the database
+            Activity activity = await Db.Activities.FindAsync(id);
+
+            // Ensure it exists
+            if (activity == null)
+            {
+                return null;
+            }
+
+            bool isActivitySafe = await IsActivityFromCurrentCompany(activity);
+
+            // If this activity it not for the current company
+            if (!isActivitySafe)
+            {
+                return null;
+            }
+
+            return activity;
+        }
+
+        private async Task LoadFeedActivities()
+        {
+            Member member = await GetCurrentMemberAsync();
+            Company company = member.Company;
+            int companyId = company.Id;
+
+            ViewBag.FeedActivities = await Db.Activities.Include(a => a.Author).Include(a => a.Company).Where(a => a.CompanyId == companyId).OrderByDescending(a => a.CreatedDate).ToArrayAsync();
+        }
+
+        #endregion
+
         // GET: Activities
         public async Task<ActionResult> Index()
         {
-            var activities = Db.Activities.Include(a => a.Author).Include(a => a.Company);
-            return View(await activities.ToListAsync());
-        }
+            await LoadFeedActivities();
 
-        // GET: Activities/Details/5
-        public async Task<ActionResult> Details(int? id)
-        {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            Activity activity = await Db.Activities.FindAsync(id);
-            if (activity == null)
-            {
-                return HttpNotFound();
-            }
-            return View(activity);
-        }
-
-        // GET: Activities/Create
-        public ActionResult Create()
-        {
-            ViewBag.AuthorId = new SelectList(Db.Users, "Id", "FirstName");
-            ViewBag.CompanyId = new SelectList(Db.Companies, "Id", "CreatorId");
             return View();
         }
 
@@ -48,34 +69,42 @@ namespace PandoLogic.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Create([Bind(Include = "Id,CreatedDate,Title,Description,ActivityType,AuthorId,CompanyId")] Activity activity)
+        public async Task<ActionResult> Index([Bind(Include = "Title,Description")] Activity activity)
         {
             if (ModelState.IsValid)
             {
-                Db.Activities.Add(activity);
+                // Pull out the relevant data to the context
+                ApplicationUser user = await GetCurrentUserAsync();
+                Member member = await GetCurrentMemberAsync();
+
+                // Setup the new activity and save
+                Activity newActivity = Db.Activities.Create(user, member.Company, activity.Title);
+                newActivity.Description = activity.Description;
+                newActivity.Type = ActivityType.TeamNotification;
                 await Db.SaveChangesAsync();
+
+                // Return to the list action for this 
                 return RedirectToAction("Index");
             }
 
-            ViewBag.AuthorId = new SelectList(Db.Users, "Id", "FirstName", activity.AuthorId);
-            ViewBag.CompanyId = new SelectList(Db.Companies, "Id", "CreatorId", activity.CompanyId);
+            await LoadFeedActivities();
+
             return View(activity);
         }
 
         // GET: Activities/Edit/5
-        public async Task<ActionResult> Edit(int? id)
+        public async Task<ActionResult> Edit(int id)
         {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            Activity activity = await Db.Activities.FindAsync(id);
+            // Pull the activity from the database
+            Activity activity = await FindSafeActivity(id);
+
+            // Ensure it exists
             if (activity == null)
             {
                 return HttpNotFound();
             }
-            ViewBag.AuthorId = new SelectList(Db.Users, "Id", "FirstName", activity.AuthorId);
-            ViewBag.CompanyId = new SelectList(Db.Companies, "Id", "CreatorId", activity.CompanyId);
+
+            // Send down the edit form
             return View(activity);
         }
 
@@ -84,31 +113,43 @@ namespace PandoLogic.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Edit([Bind(Include = "Id,CreatedDate,Title,Description,ActivityType,AuthorId,CompanyId")] Activity activity)
+        public async Task<ActionResult> Edit([Bind(Include = "Id,Title,Description")] Activity activityViewModel)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                Db.Entry(activity).State = EntityState.Modified;
-                await Db.SaveChangesAsync();
-                return RedirectToAction("Index");
+                return View(activityViewModel);
             }
-            ViewBag.AuthorId = new SelectList(Db.Users, "Id", "FirstName", activity.AuthorId);
-            ViewBag.CompanyId = new SelectList(Db.Companies, "Id", "CreatorId", activity.CompanyId);
-            return View(activity);
-        }
 
-        // GET: Activities/Delete/5
-        public async Task<ActionResult> Delete(int? id)
-        {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            Activity activity = await Db.Activities.FindAsync(id);
+            // Pull the activity from the database
+            Activity activity = await FindSafeActivity(activityViewModel.Id);
+
+            // Ensure it exists
             if (activity == null)
             {
                 return HttpNotFound();
             }
+
+            activity.Title = activityViewModel.Title;
+            activity.Description = activityViewModel.Description;
+            Db.Entry(activity).State = EntityState.Modified;
+
+            await Db.SaveChangesAsync();
+
+            return RedirectToAction("Index");
+        }
+
+        // GET: Activities/Delete/5
+        public async Task<ActionResult> Delete(int id)
+        {
+            // Pull the activity from the database
+            Activity activity = await FindSafeActivity(id);
+
+            // Ensure it exists
+            if (activity == null)
+            {
+                return HttpNotFound();
+            }
+
             return View(activity);
         }
 
@@ -117,9 +158,19 @@ namespace PandoLogic.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> DeleteConfirmed(int id)
         {
-            Activity activity = await Db.Activities.FindAsync(id);
+            // Pull the activity from the database
+            Activity activity = await FindSafeActivity(id);
+
+            // Ensure it exists
+            if (activity == null)
+            {
+                return HttpNotFound();
+            }
+
             Db.Activities.Remove(activity);
+
             await Db.SaveChangesAsync();
+
             return RedirectToAction("Index");
         }
     }

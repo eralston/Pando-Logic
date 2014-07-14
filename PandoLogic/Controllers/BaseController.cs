@@ -56,6 +56,7 @@ namespace PandoLogic.Controllers
                 JobTitle = selectedMember.JobTitle;
                 SelectedCompanyName = selectedMember.Company.Name;
                 SelectedCompanyAvatarUrl = selectedMember.Company.AvatarUrl;
+                SelectedMemberId = selectedMember.Id;
 
                 // Load up the companies
                 CompanyInfoCache[] companies = new CompanyInfoCache[userCompanies.Length];
@@ -73,6 +74,7 @@ namespace PandoLogic.Controllers
             public string Id { get; set; }
             public string AvatarUrl { get; set; }
 
+            public int SelectedMemberId { get; set; }
             public int SelectedCompanyId { get; set; }
             public string SelectedCompanyName { get; set; }
             public string SelectedCompanyAvatarUrl { get; set; }
@@ -85,9 +87,10 @@ namespace PandoLogic.Controllers
 
         private ApplicationDbContext _db = null;
         private ApplicationUser _user = null;
+        private Company _company = null;
+        private Member _member = null;
 
         #endregion
-
 
         #region Properties
 
@@ -168,7 +171,7 @@ namespace PandoLogic.Controllers
 
             // TODO: Make these requests parallel
             Company[] companies = await Db.CompaniesWhereUserIsMember(user).ToArrayAsync();
-            Member member = await Db.Members.FindSelectedForUser(user).FirstOrDefaultAsync();
+            Member member = await GetCurrentMemberAsync();
 
             _userCache = new UserInfoCache(user, companies, member);
             HttpContext.Session[UserInfoCacheId] = _userCache;
@@ -176,22 +179,41 @@ namespace PandoLogic.Controllers
 
         protected ApplicationUser GetCurrentUser()
         {
-            if (_user != null)
-                return _user;
-
-            _user = Db.Users.Where(u => u.UserName == CurrentUsername).FirstOrDefault();
+            _user = _user ?? Db.Users.Where(u => u.UserName == CurrentUsername).FirstOrDefault();
 
             return _user;
         }
 
-        protected Task<ApplicationUser> GetCurrentUserAsync()
+        protected async Task<ApplicationUser> GetCurrentUserAsync()
         {
-            if (_user != null)
-                return Task<ApplicationUser>.FromResult(_user);
+            _user = _user ?? await Db.Users.Where(u => u.UserName == CurrentUsername).FirstOrDefaultAsync();
 
-            return Db.Users.Where(u => u.UserName == CurrentUsername).FirstOrDefaultAsync();
+            return _user;
         }
 
+        protected Member GetCurrentMember()
+        {
+            if (_member != null)
+                return _member;
+
+            ApplicationUser user = GetCurrentUser();
+
+            int selectedMemberId = UserCache.SelectedMemberId;
+            _member = Db.Members.Find(selectedMemberId);
+            return _member;
+        }
+
+        protected async Task<Member> GetCurrentMemberAsync()
+        {
+            if(_member != null)
+                return _member;
+
+            int selectedMemberId = UserCache.SelectedMemberId;
+            _member = await Db.Members.FindAsync(selectedMemberId);
+
+            return _member;
+        }
+             
         protected void StashModelState()
         {
             TempData[ModelStateCacheId] = ModelState;

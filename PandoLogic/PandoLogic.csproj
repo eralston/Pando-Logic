@@ -811,7 +811,6 @@
     <Content Include="Views\Account\Create.cshtml" />
     <Content Include="Views\Addresses\CreateCompany.cshtml" />
     <Content Include="Views\Account\_ApplicationUserProfile.cshtml" />
-    <Content Include="Views\Activities\Create.cshtml" />
     <Content Include="Views\Activities\Delete.cshtml" />
     <Content Include="Views\Activities\Details.cshtml" />
     <Content Include="Views\Activities\Edit.cshtml" />

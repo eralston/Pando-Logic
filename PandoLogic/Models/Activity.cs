@@ -19,7 +19,8 @@ namespace PandoLogic.Models
         WorkAdded,          // fa-plus bg-aqua
         WorkCompleted,      // fa-check bg-green
         WorkDeleted,        // fa-times bg-red
-        UserAction          // fa-user bg-purple        EG: Register, Accept Invite Into System, Assigning Task, etc
+        UserAction,         // fa-user bg-purple        EG: Register, Accept Invite Into System, Assigning Task, etc
+        TeamNotification    // fa-users bg-yellow
     }
 
     /// <summary>
@@ -27,6 +28,43 @@ namespace PandoLogic.Models
     /// </summary>
     public class Activity
     {
+        /// <summary>
+        /// Returns the class names for the given activity type
+        /// </summary>
+        /// <param name="type"></param>
+        /// <returns></returns>
+        public static string ClassesForActivityType(ActivityType type)
+        {
+            string ret = "";
+
+            switch (type)
+            {
+                case ActivityType.Message:
+                    ret = "fa-envelope bg-blue";
+                    break;
+                case ActivityType.Comment:
+                    ret = "fa-comments bg-yellow";
+                    break;
+                case ActivityType.WorkAdded:
+                    ret = "fa-plus bg-aqua";
+                    break;
+                case ActivityType.WorkCompleted:
+                    ret = "fa-check bg-green";
+                    break;
+                case ActivityType.WorkDeleted:
+                    ret = "fa-times bg-red";
+                    break;
+                case ActivityType.UserAction:
+                    ret = "fa-user bg-purple";
+                    break;
+                case ActivityType.TeamNotification:
+                    ret = "fa-users bg-yellow";
+                    break;
+            }
+
+            return ret;
+        }
+
         // Primary Key
         [Key]
         [DatabaseGeneratedAttribute(DatabaseGeneratedOption.Identity)]
@@ -38,9 +76,10 @@ namespace PandoLogic.Models
         [Required]
         public string Title { get; set; }
 
+        [DataType(DataType.MultilineText)]
         public string Description { get; set; }
 
-        public ActivityType ActivityType { get; set; }
+        public ActivityType Type { get; set; }
 
         // To-One on User Who Originated this action
         // This is optional, since some activities are done by the system
@@ -52,5 +91,22 @@ namespace PandoLogic.Models
         [ForeignKey("Company")]
         public int CompanyId { get; set; }
         public virtual Company Company { get; set; }
+    }
+
+    public static class ActivityExtensions
+    {
+        public static Activity Create(this DbSet<Activity> activities, ApplicationUser authorUser, Company company, string title)
+        {
+            Activity activity = activities.Create();
+
+            activity.CreatedDate = DateTime.Now;
+            activity.Author = authorUser;
+            activity.Company = company;
+            activity.Title = title;
+
+            activities.Add(activity);
+
+            return activity;
+        }
     }
 }
