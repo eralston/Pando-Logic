@@ -29,6 +29,7 @@ a:focus {
 
 .force-a {
   color: #3c8dbc !important;
+  cursor: pointer !important;
 }
 .force-a:hover,
 .force-a:active,

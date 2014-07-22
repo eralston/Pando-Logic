@@ -1,0 +1,34 @@
+﻿@using PandoLogic.Models
+@model IEnumerable<Activity>
+
+<ul class="timeline">
+
+    @*<li class="time-label">
+            <span class="bg-red">
+                10 Feb. 2014
+            </span>
+        </li>*@
+
+    @foreach (Activity activity in Model)
+    {
+
+        bool hasDescription = !string.IsNullOrEmpty(activity.Description);
+        string headerClass = hasDescription ? "" : " no-border ";
+
+        <li>
+            <i class="fa @Activity.ClassesForActivityType(activity.Type)"></i>
+            <div class="timeline-item">
+                <span class="time"><i class="fa fa-clock-o"></i> @activity.CreatedDate.Value.ToString("t")</span>
+
+                <h3 class="timeline-header @headerClass">@activity.Title</h3>
+
+                @if (hasDescription)
+                {
+                    <div class="timeline-body">
+                        @activity.Description
+                    </div>
+                }
+            </div>
+        </li>
+    }
+</ul>

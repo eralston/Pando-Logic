@@ -108,5 +108,14 @@ namespace PandoLogic.Models
 
             return activity;
         }
+
+        public static IOrderedQueryable<Activity> WhereCompany(this DbSet<Activity> activities, int companyId)
+        {
+            return activities
+                        .Include(a => a.Author)
+                        .Include(a => a.Company)
+                        .Where(a => a.CompanyId == companyId)
+                        .OrderByDescending(a => a.CreatedDate);
+        }
     }
 }

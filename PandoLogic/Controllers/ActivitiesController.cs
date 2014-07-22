@@ -51,7 +51,7 @@ namespace PandoLogic.Controllers
             Company company = member.Company;
             int companyId = company.Id;
 
-            ViewBag.FeedActivities = await Db.Activities.Include(a => a.Author).Include(a => a.Company).Where(a => a.CompanyId == companyId).OrderByDescending(a => a.CreatedDate).ToArrayAsync();
+            ViewBag.FeedActivities = await Db.Activities.WhereCompany(companyId).ToArrayAsync();
         }
 
         #endregion
@@ -172,6 +172,20 @@ namespace PandoLogic.Controllers
             await Db.SaveChangesAsync();
 
             return RedirectToAction("Index");
+        }
+
+        /// <summary>
+        /// GET action for the activities widget
+        /// </summary>
+        /// <returns></returns>
+        public ActionResult Widget()
+        {
+            Member member = GetCurrentMember();
+            Company company = member.Company;
+            int companyId = company.Id;
+
+            IEnumerable<Activity> activities = Db.Activities.WhereCompany(companyId).Take(5).ToArray();
+            return View(activities);
         }
     }
 }
