@@ -1,34 +1,45 @@
 ﻿@using PandoLogic.Models
 @model IEnumerable<Activity>
 
-<ul class="timeline">
 
-    @*<li class="time-label">
-            <span class="bg-red">
-                10 Feb. 2014
-            </span>
-        </li>*@
+@{
+    DateTime? currentDateTime = null;
+}
 
-    @foreach (Activity activity in Model)
-    {
+@if (Model.Count() > 0)
+{
+    <ul class="timeline">
 
-        bool hasDescription = !string.IsNullOrEmpty(activity.Description);
-        string headerClass = hasDescription ? "" : " no-border ";
+        @foreach (Activity activity in Model)
+        {
+            if (!currentDateTime.HasValue || currentDateTime.Value.Date != activity.CreatedDate.Value.Date)
+            {
+                currentDateTime = activity.CreatedDate;
+                <li class="time-label">
+                    <span class="bg-aqua">
+                        @currentDateTime.Value.ToString("D")
+                    </span>
+                </li>
+            }
 
-        <li>
-            <i class="fa @Activity.ClassesForActivityType(activity.Type)"></i>
-            <div class="timeline-item">
-                <span class="time"><i class="fa fa-clock-o"></i> @activity.CreatedDate.Value.ToString("t")</span>
+            bool hasDescription = !string.IsNullOrEmpty(activity.Description);
+            string headerClass = hasDescription ? "" : " no-border ";
 
-                <h3 class="timeline-header @headerClass">@activity.Title</h3>
+            <li>
+                <i class="fa @Activity.ClassesForActivityType(activity.Type)"></i>
+                <div class="timeline-item">
+                    <span class="time"><i class="fa fa-clock-o"></i> @activity.CreatedDate.Value.ToString("t")</span>
 
-                @if (hasDescription)
-                {
-                    <div class="timeline-body">
-                        @activity.Description
-                    </div>
-                }
-            </div>
-        </li>
-    }
-</ul>
+                    <h3 class="timeline-header @headerClass">@activity.Title</h3>
+
+                    @if (hasDescription)
+                    {
+                        <div class="timeline-body">
+                            @activity.Description
+                        </div>
+                    }
+                </div>
+            </li>
+        }
+    </ul>
+}

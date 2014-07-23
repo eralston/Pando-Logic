@@ -246,6 +246,50 @@
                             </li>
                         </ul>
                     </li>
+                    <li class="dropdown user user-menu">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                            <i class="fa fa-building"></i>
+                            <span>@ViewBag.CurrentUserSelectedCompanyName<i class="caret"></i></span>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <!-- User image -->
+                            <li class="user-header bg-light-blue">
+
+                                @if (!string.IsNullOrEmpty(ViewBag.CurrentUserSelectedCompanyAvatarUrl))
+                                {
+                                    <img src="@ViewBag.CurrentUserSelectedCompanyAvatarUrl" class="img-circle" alt="Company Image" />
+                                }
+
+                                <p>
+                                    @ViewBag.CurrentUserSelectedCompanyName
+                                </p>
+                            </li>
+                            <!-- Menu Footer-->
+                            <li class="user-footer">
+
+                                <div class="box-body no-padding">
+                                    <div class="table-responsive">
+                                        <table class="table table-striped">
+                                            <tbody>
+                                                <tr>
+                                                    <th>Companies</th>
+                                                </tr>
+                                                @foreach (BaseController.CompanyInfoCache company in ViewBag.CurrentUserCompanies)
+                                                {
+                                                    <tr>
+                                                        <td>
+                                                            @Html.ActionLink(company.Name, "Change", "Companies", new { id = company.Id, returnurl = Url.RouteUrl(ViewContext.RouteData.Values) }, new { @class = "force-a" })
+                                                        </td>
+                                                    </tr>
+                                                }
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </li>
+                        </ul>
+
+                    </li>
                     @*Top-Right User Drop-down*@
                     <li class="dropdown user user-menu">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown">
@@ -285,50 +329,7 @@
                             </li>
                         </ul>
                         @*Top-Right Company  Drop-down*@
-                    <li class="dropdown user user-menu">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                            <i class="fa fa-building"></i>
-                            <span>@ViewBag.CurrentUserSelectedCompanyName<i class="caret"></i></span>
-                        </a>
-                        <ul class="dropdown-menu">
-                            <!-- User image -->
-                            <li class="user-header bg-light-blue">
 
-                                @if (!string.IsNullOrEmpty(ViewBag.CurrentUserSelectedCompanyAvatarUrl))
-                                {
-                                    <img src="@ViewBag.CurrentUserSelectedCompanyAvatarUrl" class="img-circle" alt="Company Image" />
-                                }
-
-                                <p>
-                                    @ViewBag.CurrentUserSelectedCompanyName
-                                </p>
-                            </li>
-                            <!-- Menu Footer-->
-                            <li class="user-footer">
-                                
-                                <div class="box-body no-padding">
-                                    <div class="table-responsive">
-                                        <table class="table table-striped">
-                                            <tbody>
-                                                <tr>
-                                                    <th>Companies</th>
-                                                </tr>
-                                                @foreach (BaseController.CompanyInfoCache company in ViewBag.CurrentUserCompanies)
-                                                {
-                                                    <tr>
-                                                        <td>
-                                                            @Html.ActionLink(company.Name, "Change", "Companies", new { id = company.Id, returnurl = Url.RouteUrl(ViewContext.RouteData.Values) }, new { @class = "force-a" })
-                                                        </td>
-                                                    </tr>
-                                                }
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
-                            </li>
-                        </ul>
-
-                    </li>
                 </ul>
             </div>
         </nav>
@@ -363,7 +364,7 @@
                 <!-- sidebar menu: : style can be found in sidebar.less -->
                 <ul class="sidebar-menu">
                     <li class="active">
-                        <a href="@Url.Action("Index","Home")">
+                        <a href="@Url.Action("index","home")">
                             <i class="fa fa-dashboard"></i> <span>Dashboard</span>
                         </a>
                     </li>
@@ -447,7 +448,7 @@
                         </ul>
                     </li>
                     <li class="">
-                        <a href="@Url.Action("Index","Activities")">
+                        <a href="@Url.Action("index","activities")">
                             <i class="fa fa-list-ul"></i> <span>Activity Feed</span>
                         </a>
                     </li>
@@ -470,6 +471,14 @@
 
             <!-- Main content -->
             <section class="content">
+                @*Error messages*@
+                @if (!ViewData.ModelState.IsValid)
+                {
+                    <div class="callout callout-danger">
+                        <h4>Error Saving Changes, Please Try Again</h4>
+                        @Html.ValidationSummary("", new { @class = "text-danger" })
+                    </div>
+                }
                 @RenderBody()
             </section>
         </aside>

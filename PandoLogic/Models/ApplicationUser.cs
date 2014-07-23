@@ -1,10 +1,14 @@
-﻿using System.Collections.Generic;
+﻿using Microsoft.AspNet.Identity;
+using Microsoft.AspNet.Identity.EntityFramework;
+
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Data.Entity;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using Microsoft.AspNet.Identity;
-using Microsoft.AspNet.Identity.EntityFramework;
+
+using InviteOnly;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace PandoLogic.Models
 {
@@ -34,29 +38,19 @@ namespace PandoLogic.Models
         // To-Many on PhoneNumber
         public virtual ICollection<PhoneNumber> PhoneNumbers { get; set; }
 
-        // TODO: User image using azure blob storage!
-    }
+        // To-One on Invite
+        [ForeignKey("VerificationInvite")]
+        public int? VerificationInviteId { get; set; }
+        public virtual Invite VerificationInvite { get; set; }
 
-    public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
-    {
-        public ApplicationDbContext()
-            : base("DefaultConnection", throwIfV1Schema: false)
+        #region Methods
+
+        [NotMapped]
+        public bool IsVerified
         {
+            get { return VerificationInvite == null; }
         }
 
-        public static ApplicationDbContext Create()
-        {
-            return new ApplicationDbContext();
-        }
-
-        public DbSet<Industry> Industries { get; set; }
-
-        public System.Data.Entity.DbSet<PandoLogic.Models.Company> Companies { get; set; }
-
-        public System.Data.Entity.DbSet<PandoLogic.Models.Address> Addresses { get; set; }
-
-        public System.Data.Entity.DbSet<PandoLogic.Models.Member> Members { get; set; }
-
-        public System.Data.Entity.DbSet<PandoLogic.Models.Activity> Activities { get; set; }
+        #endregion
     }
 }

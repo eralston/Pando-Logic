@@ -181,11 +181,18 @@ namespace PandoLogic.Controllers
         public ActionResult Widget()
         {
             Member member = GetCurrentMember();
-            Company company = member.Company;
-            int companyId = company.Id;
 
-            IEnumerable<Activity> activities = Db.Activities.WhereCompany(companyId).Take(5).ToArray();
-            return View(activities);
+            if(member != null)
+            {
+                Company company = member.Company;
+                int companyId = company.Id;
+                IEnumerable<Activity> activities = Db.Activities.WhereCompany(companyId).Take(5).ToArray();
+                return View(activities);
+            }
+            else
+            {
+                return null;
+            }           
         }
     }
 }

@@ -11,10 +11,12 @@ using System.Web.Mvc;
 using PandoLogic;
 using PandoLogic.Models;
 
+using InviteOnly;
+
 namespace PandoLogic.Controllers
 {
 
-    public class BaseController : Controller
+    public class BaseController : Controller, IInviteContextProvider
     {
         #region Constants
 
@@ -51,12 +53,15 @@ namespace PandoLogic.Controllers
                 Id = user.Id;
                 AvatarUrl = user.AvatarUrl;
 
-                // Load selected member data
-                SelectedCompanyId = selectedMember.CompanyId;
-                JobTitle = selectedMember.JobTitle;
-                SelectedCompanyName = selectedMember.Company.Name;
-                SelectedCompanyAvatarUrl = selectedMember.Company.AvatarUrl;
-                SelectedMemberId = selectedMember.Id;
+                if(selectedMember != null)
+                {
+                    // Load selected member data
+                    SelectedCompanyId = selectedMember.CompanyId;
+                    JobTitle = selectedMember.JobTitle;
+                    SelectedCompanyName = selectedMember.Company.Name;
+                    SelectedCompanyAvatarUrl = selectedMember.Company.AvatarUrl;
+                    SelectedMemberId = selectedMember.Id;
+                }
 
                 // Load up the companies
                 CompanyInfoCache[] companies = new CompanyInfoCache[userCompanies.Length];
@@ -161,7 +166,7 @@ namespace PandoLogic.Controllers
             ApplicationUser user = GetCurrentUser();
             Company[] userCompanies = Db.CompaniesWhereUserIsMember(user).ToArray();
             Member selectedMember = Db.Members.FindSelectedForUser(user).FirstOrDefault();
-            _userCache = new UserInfoCache(user, userCompanies,selectedMember);
+            _userCache = new UserInfoCache(user, userCompanies, selectedMember);
             HttpContext.Session[UserInfoCacheId] = _userCache;
         }
 
@@ -276,5 +281,13 @@ namespace PandoLogic.Controllers
 
         #endregion
 
+        #region IInviteContextProvider
+
+        public IInviteContext InviteContext
+        {
+            get { return Db; }
+        }
+
+        #endregion
     }
 }

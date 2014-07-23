@@ -98,6 +98,9 @@ namespace PandoLogic.Controllers
                 // Save changes
                 await Db.SaveChangesAsync();
 
+                // Load the user cache
+                await UpdateCurrentUserCacheAsync();
+
                 // Continue to setting the company address
                 return RedirectToAction("CreateCompany", "Addresses", new { id = company.Id });
             }

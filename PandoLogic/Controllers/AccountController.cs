@@ -17,6 +17,8 @@ using Owin;
 
 using PandoLogic.Models;
 
+using InviteOnly;
+
 namespace PandoLogic.Controllers
 {
     [Authorize]
@@ -417,8 +419,6 @@ namespace PandoLogic.Controllers
 
         //
         // POST: /Account/LogOff
-        [HttpPost]
-        [ValidateAntiForgeryToken]
         public ActionResult LogOff()
         {
             AuthenticationManager.SignOut();
@@ -475,6 +475,11 @@ namespace PandoLogic.Controllers
                 if (result.Succeeded)
                 {
                     await SignInAsync(user, isPersistent: false);
+
+                    user.VerificationInvite = Invite.Create(Db);
+                    await Db.SaveChangesAsync();
+
+                    EmailTemplates.SendWelcomeEmail(user, this);
 
                     // For more information on how to enable account confirmation and password reset please visit http://go.microsoft.com/fwlink/?LinkID=320771
                     // Send an email with this link
