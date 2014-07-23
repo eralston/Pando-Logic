@@ -364,8 +364,13 @@
                 <!-- sidebar menu: : style can be found in sidebar.less -->
                 <ul class="sidebar-menu">
                     <li class="active">
-                        <a href="@Url.Action("index","home")">
+                        <a href="@Url.Action("Index","Home")">
                             <i class="fa fa-dashboard"></i> <span>Dashboard</span>
+                        </a>
+                    </li>
+                    <li class="">
+                        <a href="@Url.Action("Index","Goals")">
+                            <i class="fa fa-check"></i> <span>Goals &amp; Tasks</span>
                         </a>
                     </li>
                     <li>
@@ -448,7 +453,7 @@
                         </ul>
                     </li>
                     <li class="">
-                        <a href="@Url.Action("index","activities")">
+                        <a href="@Url.Action("Index","Activities")">
                             <i class="fa fa-list-ul"></i> <span>Activity Feed</span>
                         </a>
                     </li>
@@ -486,7 +491,7 @@
 
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/2.0.2/jquery.min.js"></script>
     <!-- jQuery UI 1.10.3 -->
-    <script src="/scripts/jquery-ui-1.10.3.min.js" type="text/javascript"></script>
+    @*<script src="/scripts/jquery-ui-1.10.3.min.js" type="text/javascript"></script>*@
     <!-- Bootstrap -->
     <script src="/scripts/bootstrap.min.js" type="text/javascript"></script>
     <!-- Morris.js charts -->
@@ -512,10 +517,10 @@
     <script src="/scripts/AdminLTE/app.js" type="text/javascript"></script>
 
     <!-- AdminLTE dashboard demo (This is only for demo purposes) -->
-    <script src="/scripts/AdminLTE/dashboard.js" type="text/javascript"></script>
+    @*<script src="/scripts/AdminLTE/dashboard.js" type="text/javascript"></script>*@
 
     <!-- AdminLTE for demo purposes -->
-    <script src="/scripts/AdminLTE/demo.js" type="text/javascript"></script>
+    @*<script src="/scripts/AdminLTE/demo.js" type="text/javascript"></script>*@
     @RenderSection("scripts", required: false)
 
 </body>

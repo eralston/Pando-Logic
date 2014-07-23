@@ -33,5 +33,7 @@ namespace PandoLogic.Models
         public System.Data.Entity.DbSet<PandoLogic.Models.Activity> Activities { get; set; }
 
         public System.Data.Entity.DbSet<InviteOnly.Invite> Invites { get; set; }
+
+        public System.Data.Entity.DbSet<PandoLogic.Models.Goal> Goals { get; set; }
     }
 }

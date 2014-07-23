@@ -1,0 +1,68 @@
+﻿@model PandoLogic.Models.Goal
+
+@{
+    ViewBag.Title = "Delete Goal";
+}
+
+<div class="row">
+    <div class="col-md-6">
+        <!-- general form elements -->
+        <div class="box box-primary">
+            <div class="box-header">
+                <h3 class="box-title">Delete Goal</h3>
+            </div>
+            <div class="box-body">
+                <div>
+                    <span class="lead">
+                        Are You Sure You Want to Delete This Goal?
+                    </span>
+                </div>
+                <dl class="dl-horizontal">
+                    <dt>
+                        @Html.DisplayNameFor(model => model.Title)
+                    </dt>
+
+                    <dd>
+                        @Html.DisplayFor(model => model.Title)
+                    </dd>
+
+                    @if (!string.IsNullOrEmpty(Model.Description))
+                    {
+                        <dt>
+                            @Html.DisplayNameFor(model => model.Description)
+                        </dt>
+
+                        <dd>
+                            @Html.DisplayFor(model => model.Description)
+                        </dd>
+                    }
+
+                    <dt>
+                        @Html.DisplayNameFor(model => model.CreatedDate)
+                    </dt>
+
+                    <dd>
+                        @Html.DisplayFor(model => model.CreatedDate)
+                    </dd>
+
+                    <dt>
+                        @Html.DisplayNameFor(model => model.DueDate)
+                    </dt>
+
+                    <dd>
+                        @Html.DisplayFor(model => model.DueDate)
+                    </dd>
+                </dl>
+                @using (Html.BeginForm())
+                {
+                    @Html.AntiForgeryToken()
+
+                    <div class="form-actions no-color">
+                        <input type="submit" value="Delete Goal" class="btn btn-default" />
+                        @Html.ActionLink("Cancel", "Details", new { id = Model.Id })
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>

@@ -208,6 +208,7 @@
     <Compile Include="Controllers\BaseController.cs" />
     <Compile Include="Controllers\CompaniesController.cs" />
     <Compile Include="Controllers\EmailController.cs" />
+    <Compile Include="Controllers\GoalsController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\IndustriesController.cs" />
     <Compile Include="Global.asax.cs">
@@ -220,6 +221,7 @@
     <Compile Include="Models\ApplicationDbContext.cs" />
     <Compile Include="Models\Company.cs" />
     <Compile Include="Models\ApplicationUser.cs" />
+    <Compile Include="Models\Goals.cs" />
     <Compile Include="Models\Industry.cs" />
     <Compile Include="Models\Member.cs" />
     <Compile Include="Models\PhoneNumber.cs" />
@@ -834,6 +836,11 @@
     <Content Include="Views\Activities\_Timeline.cshtml" />
     <Content Include="Views\Home\Verify.cshtml" />
     <Content Include="Views\Email\Generic.cshtml" />
+    <Content Include="Views\Goals\Create.cshtml" />
+    <Content Include="Views\Goals\Delete.cshtml" />
+    <Content Include="Views\Goals\Details.cshtml" />
+    <Content Include="Views\Goals\Edit.cshtml" />
+    <Content Include="Views\Goals\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

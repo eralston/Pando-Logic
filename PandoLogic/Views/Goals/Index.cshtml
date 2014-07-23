@@ -1,0 +1,49 @@
+﻿@using PandoLogic.Models
+@model IEnumerable<PandoLogic.Models.Goal>
+
+@{
+    ViewBag.Title = "Goals";
+}
+
+<div class="row">
+    <div class="col-md-6">
+        <!-- general form elements -->
+        <div class="box box-primary">
+            <div class="box-header">
+                <h3 class="box-title">Goals</h3>
+            </div>
+            <div class="box-body">
+                <div>
+                    @Html.ActionLink("Create New Goal", "Create", null, new { @class = "btn btn-default" })
+                </div>
+            </div>
+            <div class="box-body no-padding">
+
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <tbody>
+                            <tr>
+                                <th>Title</th>
+                                <th>Due Date</th>
+                            </tr>
+
+                            @foreach (Goal goal in Model)
+                            {
+                                <tr>
+                                    <td>
+                                        <a href="@Url.Action("Details", new { id = goal.Id })">
+                                            @goal.Title
+                                        </a>
+                                    </td>
+                                    <td>
+                                        @goal.DueDate.Value.ToString("d")
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
