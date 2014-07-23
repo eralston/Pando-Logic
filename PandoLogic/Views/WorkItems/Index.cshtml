@@ -1,0 +1,12 @@
+﻿@model IEnumerable<PandoLogic.Models.WorkItem>
+
+@{
+    ViewBag.Title = "Tasks";
+}
+
+<div class="row">
+    <div class="col-md-6">
+        <!-- general form elements -->
+        @Html.Partial("_TaskBox", Model)
+    </div>
+</div>

@@ -1,7 +1,7 @@
-﻿@model PandoLogic.Models.Goal
+﻿@model PandoLogic.Models.WorkItem
 
 @{
-    ViewBag.Title = "Delete Goal";
+    ViewBag.Title = "Delete";
 }
 
 <div class="row">
@@ -9,14 +9,9 @@
         <!-- general form elements -->
         <div class="box box-primary">
             <div class="box-header">
-                <h3 class="box-title">Delete Goal</h3>
+                <h3 class="box-title">Delete Task</h3>
             </div>
             <div class="box-body">
-                <div>
-                    <span class="lead">
-                        Are You Sure You Want to Delete This Goal?
-                    </span>
-                </div>
                 <dl class="dl-horizontal">
                     <dt>
                         @Html.DisplayNameFor(model => model.Title)
@@ -34,6 +29,25 @@
 
                         <dd>
                             @Html.DisplayFor(model => model.Description)
+                        </dd>
+                    }
+                    
+                    <dt>
+                        Creator
+                    </dt>
+
+                    <dd>
+                        @Html.DisplayFor(model => model.Creator.FullName)
+                    </dd>
+
+                    @if (Model.Assignee != null)
+                    {
+                        <dt>
+                            Assignee
+                        </dt>
+
+                        <dd>
+                            @Html.DisplayFor(model => model.Assignee.FullName)
                         </dd>
                     }
 
@@ -58,7 +72,7 @@
                     @Html.AntiForgeryToken()
 
                     <div class="form-actions no-color">
-                        <input type="submit" value="Delete Goal" class="btn btn-danger" />
+                        <input type="submit" value="Delete Task" class="btn btn-danger" />
                         @Html.ActionLink("Cancel", "Details", new { id = Model.Id })
                     </div>
                 }

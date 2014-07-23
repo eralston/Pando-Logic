@@ -89,5 +89,11 @@ namespace PandoLogic.Models
             var userMembers = members.Where(m => m.UserId == userId);
             return userMembers;
         }
+
+        public static IQueryable<Member> WhereCompany(this DbSet<Member> members, Company company)
+        {
+            int companyId = company.Id;
+            return members.Where(m => m.CompanyId == companyId).Include(m => m.User);
+        }
     }
 }

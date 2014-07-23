@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 
 using InviteOnly;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Linq;
 
 namespace PandoLogic.Models
 {
@@ -30,6 +31,15 @@ namespace PandoLogic.Models
         [Required]
         [Display(Name = "Last Name")]
         public string LastName { get; set; }
+        
+        [NotMapped]
+        public string FullName
+        {
+            get
+            {
+                return string.Format("{0} {1}", FirstName, LastName);
+            }
+        }
 
         public string AvatarUrl { get; set; }
 
@@ -52,5 +62,23 @@ namespace PandoLogic.Models
         }
 
         #endregion
+    }
+
+    public static class ApplicationUserExtensions
+    {
+        /// <summary>
+        /// Gets a queryable for all users in the given company
+        /// </summary>
+        /// <param name="context"></param>
+        /// <param name="company"></param>
+        /// <returns></returns>
+        public static IQueryable<ApplicationUser> UsersInCompany(this ApplicationDbContext context, int companyId)
+        {
+            return from u in context.Users
+                   join m in context.Members on u.Id equals m.UserId
+                   join c in context.Companies on m.CompanyId equals c.Id
+                   where c.Id == companyId
+                   select u;
+        }
     }
 }

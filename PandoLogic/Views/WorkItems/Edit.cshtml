@@ -1,0 +1,71 @@
+﻿@model PandoLogic.Controllers.WorkItemViewModel
+
+@{
+    ViewBag.Title = "Edit Task";
+}
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="box box-primary">
+            <div class="box-header">
+                <h3 class="box-title">Create Task</h3>
+            </div>
+            @using (Html.BeginForm())
+            {
+                @Html.AntiForgeryToken()
+
+                <div class="box-body">
+
+                    @Html.HiddenFor(model => model.Id)
+
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.Title, htmlAttributes: new { @class = "control-label" })
+                        <div class="">
+                            @Html.EditorFor(model => model.Title, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.ValidationMessageFor(model => model.Title, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.Description, htmlAttributes: new { @class = "control-label" })
+                        <div class="">
+                            @Html.EditorFor(model => model.Description, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.ValidationMessageFor(model => model.Description, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.AssigneeId, "AssigneeId", htmlAttributes: new { @class = "control-label" })
+                        <div class="">
+                            @Html.DropDownList("AssigneeId", null, htmlAttributes: new { @class = "form-control" })
+                            @Html.ValidationMessageFor(model => model.AssigneeId, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.DueDateString, htmlAttributes: new { @class = "control-label" })
+                        <div class="">
+                            @Html.EditorFor(model => model.DueDateString, new { htmlAttributes = new { @class = "form-control date-mask" } })
+                            @Html.ValidationMessageFor(model => model.DueDateString, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+
+                    <div class="box-footer">
+                        <button type="submit" class="btn btn-primary">Save Task</button>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@section scripts {
+    <script src="~/Scripts/plugins/input-mask/jquery.inputmask.js"></script>
+    <script src="~/Scripts/plugins/input-mask/jquery.inputmask.date.extensions.js"></script>
+    <script src="~/Scripts/plugins/input-mask/jquery.inputmask.extensions.js"></script>
+    <script type="text/javascript">
+        $(function () {
+            $(".date-mask").inputmask("mm/dd/yyyy", { "placeholder": "mm/dd/yyyy" });
+        });
+    </script>
+}

@@ -1,23 +1,24 @@
-﻿@model PandoLogic.Models.Goal
+﻿@model PandoLogic.Models.WorkItem
 
 @{
-    ViewBag.Title = "Delete Goal";
+    ViewBag.Title = "Details";
 }
+
 
 <div class="row">
     <div class="col-md-6">
         <!-- general form elements -->
         <div class="box box-primary">
             <div class="box-header">
-                <h3 class="box-title">Delete Goal</h3>
+                <h3 class="box-title">Task Details</h3>
             </div>
             <div class="box-body">
-                <div>
-                    <span class="lead">
-                        Are You Sure You Want to Delete This Goal?
-                    </span>
+                <div class="pull-right">
+                    @Html.ActionLink("Edit", "Edit", new { id = Model.Id }) |
+                    @Html.ActionLink("Delete", "Delete", new { id = Model.Id })
                 </div>
                 <dl class="dl-horizontal">
+
                     <dt>
                         @Html.DisplayNameFor(model => model.Title)
                     </dt>
@@ -38,6 +39,25 @@
                     }
 
                     <dt>
+                        Creator
+                    </dt>
+
+                    <dd>
+                        @Html.DisplayFor(model => model.Creator.FullName)
+                    </dd>
+
+                    @if (Model.Assignee != null)
+                    {
+                        <dt>
+                            Assignee
+                        </dt>
+
+                        <dd>
+                            @Html.DisplayFor(model => model.Assignee.FullName)
+                        </dd>
+                    }
+
+                    <dt>
                         @Html.DisplayNameFor(model => model.CreatedDate)
                     </dt>
 
@@ -53,15 +73,6 @@
                         @Html.DisplayFor(model => model.DueDate)
                     </dd>
                 </dl>
-                @using (Html.BeginForm())
-                {
-                    @Html.AntiForgeryToken()
-
-                    <div class="form-actions no-color">
-                        <input type="submit" value="Delete Goal" class="btn btn-danger" />
-                        @Html.ActionLink("Cancel", "Details", new { id = Model.Id })
-                    </div>
-                }
             </div>
         </div>
     </div>
