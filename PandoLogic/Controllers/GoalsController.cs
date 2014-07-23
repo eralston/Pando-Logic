@@ -53,8 +53,7 @@ namespace PandoLogic.Controllers
         public async Task<ActionResult> Index()
         {
             Member currentMember = await GetCurrentMemberAsync();
-            int companyId = currentMember.CompanyId;
-            var goals = await Db.Goals.Where(g => g.CompanyId == companyId).ToListAsync();
+            var goals = await Db.Goals.WhereMember(currentMember).ToArrayAsync();
             return View(goals);
         }
 
@@ -175,6 +174,17 @@ namespace PandoLogic.Controllers
             Db.Goals.Remove(goals);
             await Db.SaveChangesAsync();
             return RedirectToAction("Index");
+        }
+
+        /// <summary>
+        /// Preview widget for the dashboard
+        /// </summary>
+        /// <returns></returns>
+        public ActionResult Widget()
+        {
+            Member currentMember = GetCurrentMember();
+            var goals = Db.Goals.WhereMember(currentMember).ToArray();
+            return View(goals);
         }
     }
 }

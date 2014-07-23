@@ -43,4 +43,19 @@ namespace PandoLogic.Models
         [DataType(DataType.MultilineText)]
         public string Description { get; set; }
     }
+
+    public static class GoalExtensions
+    {
+        /// <summary>
+        /// Returns all goals corresponding to that member
+        /// </summary>
+        /// <param name="goals"></param>
+        /// <param name="member"></param>
+        /// <returns></returns>
+        public static IQueryable<Goal> WhereMember(this DbSet<Goal> goals, Member member)
+        {
+            int companyId = member.CompanyId;
+            return goals.Where(g => g.CompanyId == companyId);
+        }
+    }
 }

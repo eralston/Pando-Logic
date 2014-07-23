@@ -841,6 +841,8 @@
     <Content Include="Views\Goals\Details.cshtml" />
     <Content Include="Views\Goals\Edit.cshtml" />
     <Content Include="Views\Goals\Index.cshtml" />
+    <Content Include="Views\Goals\Widget.cshtml" />
+    <Content Include="Views\Goals\_GoalBox.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
