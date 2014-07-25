@@ -125,11 +125,11 @@ namespace PandoLogic.Controllers
         {
             await LoadAssigneeOptions();
 
-            if(id.HasValue)
+            if (id.HasValue)
             {
                 ViewBag.Goal = await Db.Goals.FindAsync(id.Value);
             }
-            
+
             return View();
         }
 
@@ -146,12 +146,6 @@ namespace PandoLogic.Controllers
             {
                 WorkItem workItem = Db.WorkItems.Create();
 
-                if(workItemViewModel.GoalId != null)
-                {
-                    Goal goal = await Db.Goals.FindAsync(workItemViewModel.GoalId.Value);
-                    workItem.Goal = goal;
-                }
-
                 Member currentMember = await GetCurrentMemberAsync();
 
                 workItem.CreatedDate = DateTime.Now;
@@ -163,10 +157,13 @@ namespace PandoLogic.Controllers
                 workItem.DueDate = workItemViewModel.ParsedDueDateTime();
                 workItem.AssigneeId = workItemViewModel.AssigneeId;
 
-                if(id.HasValue)
+                if (id.HasValue)
                 {
                     // TODO: Validate this goal ID is appropo to the user
-                    workItem.GoalId = id;
+                    Goal goal = await Db.Goals.FindAsync(workItemViewModel.GoalId.Value);
+                    workItem.Goal = goal;
+
+                    goal.WorkItems.Add(workItem);
                 }
 
                 Db.WorkItems.Add(workItem);
@@ -180,7 +177,7 @@ namespace PandoLogic.Controllers
                 {
                     return RedirectToAction("Index");
                 }
-                
+
             }
 
             await LoadAssigneeOptions(workItemViewModel.AssigneeId);
@@ -257,9 +254,18 @@ namespace PandoLogic.Controllers
         public async Task<ActionResult> DeleteConfirmed(int id)
         {
             WorkItem workItem = await Db.WorkItems.FindAsync(id);
+            int? goalId = workItem.GoalId;
             Db.WorkItems.Remove(workItem);
             await Db.SaveChangesAsync();
-            return RedirectToAction("Index");
+
+            if (goalId.HasValue)
+            {
+                return RedirectToAction("Details", "Goals", new { id = goalId.Value });
+            }
+            else
+            {
+                return RedirectToAction("Index");
+            }
         }
     }
 }

@@ -5,6 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Data.Entity;
 using System.Globalization;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Web.Security;
 
 namespace PandoLogic.Models
@@ -70,6 +71,15 @@ namespace PandoLogic.Models
         public static IQueryable<WorkItem> WhereGoal(this DbSet<WorkItem> workItems, int goalId)
         {
             return workItems.Where(w => w.GoalId == goalId).Include(w => w.Assignee).Include(w => w.Creator);
+        }
+
+        public static async Task RemoveWorkItemsForGoal(this ApplicationDbContext context, int goalId)
+        {
+            WorkItem[] workItems = await context.WorkItems.WhereGoal(goalId).ToArrayAsync();
+            foreach(WorkItem item in workItems)
+            {
+                context.WorkItems.Remove(item);
+            }
         }
     }
 }

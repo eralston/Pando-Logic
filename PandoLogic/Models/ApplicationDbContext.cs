@@ -22,6 +22,11 @@ namespace PandoLogic.Models
             return new ApplicationDbContext();
         }
 
+        protected override void OnModelCreating(DbModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+        }
+
         public DbSet<Industry> Industries { get; set; }
 
         public System.Data.Entity.DbSet<PandoLogic.Models.Company> Companies { get; set; }

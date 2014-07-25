@@ -101,6 +101,7 @@ namespace PandoLogic.Controllers
             if (ModelState.IsValid)
             {
                 Goal goal = Db.Goals.Create();
+                
                 Member currentMember = await GetCurrentMemberAsync();
                 ApplicationUser user = await GetCurrentUserAsync();
 
@@ -113,8 +114,14 @@ namespace PandoLogic.Controllers
                 goal.CreatorId = user.Id;
 
                 Db.Goals.Add(goal);
+
+                // Add an activity model
+                Activity newActivity = Db.Activities.Create(user, currentMember.Company, goal.Title);
+                newActivity.Description = goal.Description;
+                newActivity.Type = ActivityType.WorkAdded;
+
                 await Db.SaveChangesAsync();
-                
+
                 return RedirectToAction("Index");
             }
 
@@ -183,8 +190,19 @@ namespace PandoLogic.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> DeleteConfirmed(int id)
         {
-            Goal goals = await Db.Goals.FindAsync(id);
-            Db.Goals.Remove(goals);
+            // Remove the goal
+            Goal goal = await Db.Goals.FindAsync(id);
+            Db.Goals.Remove(goal);
+
+            await Db.RemoveWorkItemsForGoal(goal.Id);
+
+            // Add an activity model
+            ApplicationUser user = await GetCurrentUserAsync();
+            Member currentMember = await GetCurrentMemberAsync();
+            Activity newActivity = Db.Activities.Create(user, currentMember.Company, goal.Title);
+            newActivity.Description = goal.Description;
+            newActivity.Type = ActivityType.WorkDeleted;
+
             await Db.SaveChangesAsync();
             return RedirectToAction("Index");
         }

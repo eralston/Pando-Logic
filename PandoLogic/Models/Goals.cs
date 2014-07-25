@@ -42,6 +42,9 @@ namespace PandoLogic.Models
 
         [DataType(DataType.MultilineText)]
         public string Description { get; set; }
+
+        // To-Many on Post
+        public virtual ICollection<WorkItem> WorkItems { get; set; }
     }
 
     public static class GoalExtensions
