@@ -2,13 +2,32 @@
 
 @{
     ViewBag.Title = "Edit Task";
+    if (Model.GoalId == null)
+    {
+        ViewBag.Breadcrumb = new Breadcrumb(new Crumb[] {
+            new Crumb("Dashboard", Url.Action("Index","Home"), "fa-dashboard"),
+            new Crumb("Goals", Url.Action("Index","Goals"), "fa-check"),
+            new Crumb("Task Details", Url.Action("Details","Tasks", new { id = Model.Id }), ""),
+            new Crumb("Delete Task")
+        });
+    }
+    else
+    {
+        ViewBag.Breadcrumb = new Breadcrumb(new Crumb[] {
+            new Crumb("Dashboard", Url.Action("Index","Home"), "fa-dashboard"),
+            new Crumb("Goals", Url.Action("Index","Goals"), "fa-check"),
+            new Crumb("Goal Details", Url.Action("Details","Goals", new { id = Model.GoalId}), ""),
+            new Crumb("Task Details", Url.Action("Details","Tasks", new { id = Model.Id }), ""),
+            new Crumb("Delete Task")
+        });
+    }
 }
 
 <div class="row">
     <div class="col-md-6">
         <div class="box box-primary">
             <div class="box-header">
-                <h3 class="box-title">Create Task</h3>
+                <h3 class="box-title">Edit Task</h3>
             </div>
             @using (Html.BeginForm())
             {

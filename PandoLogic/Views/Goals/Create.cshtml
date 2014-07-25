@@ -1,7 +1,14 @@
 ﻿@model PandoLogic.Controllers.GoalViewModel
 
 @{
-    ViewBag.Title = "Create";
+    ViewBag.Title = "Create Goal";
+    ViewBag.TitleMinor = "";
+
+    ViewBag.Breadcrumb = new Breadcrumb(new Crumb[] {
+        new Crumb("Dashboard", Url.Action("Index","Home"), "fa-dashboard"),
+        new Crumb("Goals", Url.Action("Index","Goals"), "fa-check"),
+        new Crumb("Create Goal")
+    });
 }
 
 <div class="row">

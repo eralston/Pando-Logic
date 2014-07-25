@@ -1,9 +1,26 @@
 ﻿@model PandoLogic.Models.WorkItem
 
 @{
-    ViewBag.Title = "Details";
-}
+    ViewBag.Title = "Task Details";
 
+    if (Model.GoalId == null)
+    {
+        ViewBag.Breadcrumb = new Breadcrumb(new Crumb[] {
+            new Crumb("Dashboard", Url.Action("Index","Home"), "fa-dashboard"),
+            new Crumb("Goals", Url.Action("Index","Goals"), "fa-check"),
+            new Crumb("Task Details")
+        });
+    }
+    else
+    {
+        ViewBag.Breadcrumb = new Breadcrumb(new Crumb[] {
+            new Crumb("Dashboard", Url.Action("Index","Home"), "fa-dashboard"),
+            new Crumb("Goals", Url.Action("Index","Goals"), "fa-check"),
+            new Crumb("Goal Details", Url.Action("Details","Goals", new { id = Model.GoalId}), ""),
+            new Crumb("Task Details")
+        });
+    }
+}
 
 <div class="row">
     <div class="col-md-6">

@@ -3,6 +3,12 @@
 
 @{
     ViewBag.Title = "Activity Feed";
+    ViewBag.TitleMinor = "";
+
+    ViewBag.Breadcrumb = new Breadcrumb(new Crumb[] {
+        new Crumb("Dashboard", Url.Action("Index","Home"), "fa-dashboard"),
+        new Crumb("Activity Feed")
+    });
 }
 
 <div class="row">

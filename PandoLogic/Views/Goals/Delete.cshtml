@@ -2,6 +2,14 @@
 
 @{
     ViewBag.Title = "Delete Goal";
+    ViewBag.TitleMinor = "";
+
+    ViewBag.Breadcrumb = new Breadcrumb(new Crumb[] {
+        new Crumb("Dashboard", Url.Action("Index","Home"), "fa-dashboard"),
+        new Crumb("Goals", Url.Action("Index","Goals"), "fa-check"),
+        new Crumb("Goal Details", Url.Action("Details", "Goals", new { id = Model.Id}), ""),
+        new Crumb("Delete Goal")
+    });
 }
 
 <div class="row">

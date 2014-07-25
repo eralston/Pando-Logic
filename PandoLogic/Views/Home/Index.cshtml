@@ -1,5 +1,10 @@
 ﻿@{
-    ViewBag.Title = "Home Page";
+    // Breadcrumb
+    ViewBag.Title = "Dashboard";
+
+    ViewBag.Breadcrumb = new Breadcrumb(new Crumb[] {
+        new Crumb("Dashboard", "", "fa-dashboard")
+    });
 }
 
 <div class="row">

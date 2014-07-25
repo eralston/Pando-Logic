@@ -3,6 +3,12 @@
 
 @{
     ViewBag.Title = "Goals";
+    ViewBag.TitleMinor = "";
+
+    ViewBag.Breadcrumb = new Breadcrumb(new Crumb[] {
+        new Crumb("Dashboard", Url.Action("Index","Home"), "fa-dashboard"),
+        new Crumb("Goals", "", "fa-check")
+    });
 }
 
 <div class="row">
