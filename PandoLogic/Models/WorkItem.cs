@@ -54,4 +54,22 @@ namespace PandoLogic.Models
         [DataType(DataType.MultilineText)]
         public string Description { get; set; }
     }
+
+    public static class WorkItemExtensions
+    {
+        public static IQueryable<WorkItem> WhereCompany(this DbSet<WorkItem> workItems, int companyId)
+        {
+            return workItems.Where(w => w.CompanyId == companyId).Include(w => w.Assignee).Include(w => w.Creator);
+        }
+
+        public static IQueryable<WorkItem> WhereCompanyNonGoal(this DbSet<WorkItem> workItems, int companyId)
+        {
+            return workItems.Where(w => w.CompanyId == companyId && w.GoalId == null).Include(w => w.Assignee).Include(w => w.Creator);
+        }
+
+        public static IQueryable<WorkItem> WhereGoal(this DbSet<WorkItem> workItems, int goalId)
+        {
+            return workItems.Where(w => w.GoalId == goalId).Include(w => w.Assignee).Include(w => w.Creator);
+        }
+    }
 }

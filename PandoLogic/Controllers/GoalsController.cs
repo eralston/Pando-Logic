@@ -49,6 +49,16 @@ namespace PandoLogic.Controllers
 
     public class GoalsController : BaseController
     {
+        #region Methods
+
+        private async Task ApplyGoalToViewBag(Goal goal)
+        {
+            ViewBag.GoalId = goal.Id;
+            ViewBag.Tasks = await Db.WorkItems.WhereGoal(goal.Id).ToArrayAsync();
+        }
+
+        #endregion
+
         // GET: Goals
         public async Task<ActionResult> Index()
         {
@@ -64,12 +74,15 @@ namespace PandoLogic.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Goal goals = await Db.Goals.FindAsync(id);
-            if (goals == null)
+            Goal goal = await Db.Goals.FindAsync(id);
+            if (goal == null)
             {
                 return HttpNotFound();
             }
-            return View(goals);
+
+            await ApplyGoalToViewBag(goal);
+
+            return View(goal);
         }
 
         // GET: Goals/Create

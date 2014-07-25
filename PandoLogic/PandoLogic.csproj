@@ -851,6 +851,7 @@
     <Content Include="Views\WorkItems\Edit.cshtml" />
     <Content Include="Views\WorkItems\Index.cshtml" />
     <Content Include="Views\WorkItems\_TaskBox.cshtml" />
+    <Content Include="Views\Shared\_TaskBox.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

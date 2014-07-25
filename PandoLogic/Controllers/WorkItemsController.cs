@@ -68,12 +68,32 @@ namespace PandoLogic.Controllers
 
         #endregion
 
-        // GET: WorkItems
-        [Route]
-        public async Task<ActionResult> Index()
+        /// <summary>
+        /// Gets all tasks for the current company (no ID)
+        /// OR all tasks for the goal with the given ID
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [Route("{id}")]
+        public async Task<ActionResult> Index(int? id)
         {
-            var workItems = Db.WorkItems.Include(w => w.Assignee).Include(w => w.Company).Include(w => w.Creator).Include(w => w.Goal);
-            return View(await workItems.ToListAsync());
+            WorkItem[] workItems = null;
+            if (id.HasValue)
+            {
+                Goal goal = await Db.Goals.FindAsync(id.Value);
+                if (goal.CompanyId != UserCache.SelectedCompanyId)
+                    return RedirectToAction("Index");
+
+                ViewBag.GoalId = id;
+                workItems = await Db.WorkItems.WhereGoal(id.Value).ToArrayAsync();
+            }
+            else
+            {
+                int companyId = UserCache.SelectedCompanyId;
+                workItems = await Db.WorkItems.WhereCompany(companyId).ToArrayAsync();
+            }
+
+            return View(workItems);
         }
 
         // GET: WorkItems/Details/5
@@ -93,10 +113,23 @@ namespace PandoLogic.Controllers
         }
 
         // GET: WorkItems/Create
-        [Route("Create")]
-        public async Task<ActionResult> Create()
+        /// <summary>
+        /// Creates a new task
+        /// If id == null, then this is not assigned to a goal
+        /// Otherwise, it is assigned to a goal
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [Route("Create/{id}")]
+        public async Task<ActionResult> Create(int? id)
         {
             await LoadAssigneeOptions();
+
+            if(id.HasValue)
+            {
+                ViewBag.Goal = await Db.Goals.FindAsync(id.Value);
+            }
+            
             return View();
         }
 
@@ -104,13 +137,20 @@ namespace PandoLogic.Controllers
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [Route("Create")]
+        [Route("Create/{id}")]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Create([Bind(Include = "AssigneeId,DueDateString,Title,Description")] WorkItemViewModel workItemViewModel)
+        public async Task<ActionResult> Create(int? id, [Bind(Include = "AssigneeId,DueDateString,Title,Description,GoalId")] WorkItemViewModel workItemViewModel)
         {
             if (ModelState.IsValid)
             {
                 WorkItem workItem = Db.WorkItems.Create();
+
+                if(workItemViewModel.GoalId != null)
+                {
+                    Goal goal = await Db.Goals.FindAsync(workItemViewModel.GoalId.Value);
+                    workItem.Goal = goal;
+                }
 
                 Member currentMember = await GetCurrentMemberAsync();
 
@@ -123,10 +163,24 @@ namespace PandoLogic.Controllers
                 workItem.DueDate = workItemViewModel.ParsedDueDateTime();
                 workItem.AssigneeId = workItemViewModel.AssigneeId;
 
+                if(id.HasValue)
+                {
+                    // TODO: Validate this goal ID is appropo to the user
+                    workItem.GoalId = id;
+                }
+
                 Db.WorkItems.Add(workItem);
                 await Db.SaveChangesAsync();
 
-                return RedirectToAction("Index");
+                if (id.HasValue)
+                {
+                    return RedirectToAction("Details", "Goals", new { id = workItemViewModel.GoalId.Value });
+                }
+                else
+                {
+                    return RedirectToAction("Index");
+                }
+                
             }
 
             await LoadAssigneeOptions(workItemViewModel.AssigneeId);

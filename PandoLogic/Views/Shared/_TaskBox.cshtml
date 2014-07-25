@@ -1,0 +1,42 @@
+﻿@using PandoLogic.Models
+@model IEnumerable<WorkItem>
+
+<div class="box box-primary">
+    <div class="box-header">
+        <h3 class="box-title">Tasks</h3>
+    </div>
+    <div class="box-body">
+        <div>
+            @Html.ActionLink("Create New Task", "Create", "Tasks", new { id = ViewBag.GoalId }, new { @class = "btn btn-default" })
+        </div>
+    </div>
+    <div class="box-body no-padding">
+
+        <div class="table-responsive">
+            <table class="table table-striped">
+                <tbody>
+                    <tr>
+                        <th>Title</th>
+                        <th>Due Date</th>
+                    </tr>
+
+                    @foreach (WorkItem item in Model)
+                    {
+                        <tr>
+                            <td>
+                                <a href="@Url.Action("Details", "Tasks", new { id = item.Id })">
+                                    @item.Title
+                                </a>
+                            </td>
+                            <td>
+                                @item.DueDate.Value.ToString("d")
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+

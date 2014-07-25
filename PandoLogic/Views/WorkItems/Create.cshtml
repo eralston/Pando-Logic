@@ -8,11 +8,28 @@
     <div class="col-md-6">
         <div class="box box-primary">
             <div class="box-header">
-                <h3 class="box-title">Create Task</h3>
+                <h3 class="box-title">
+                    Create Task
+                    @if (ViewBag.Goal != null)
+                    {
+                        <span>For Goal</span>
+                    }
+                </h3>
             </div>
             @using (Html.BeginForm())
             {
                 @Html.AntiForgeryToken()
+
+                
+
+                if (ViewBag.Goal != null)
+                {
+                    @Html.Hidden("GoalId", (int)ViewBag.Goal.Id)
+                    <div class="callout callout-info">
+                        <h4>@ViewBag.Goal.Title</h4>
+                        @ViewBag.Goal.Description
+                    </div>
+                }
 
                 <div class="box-body">
 

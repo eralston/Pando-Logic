@@ -1,4 +1,5 @@
-﻿@model PandoLogic.Models.Goal
+﻿@using PandoLogic.Models
+@model PandoLogic.Models.Goal
 
 @{
     ViewBag.Title = "Goal Details";
@@ -54,5 +55,6 @@
                 </dl>
             </div>
         </div>
+        @Html.Partial("_TaskBox", (IEnumerable<WorkItem>)ViewBag.Tasks)
     </div>
 </div>
