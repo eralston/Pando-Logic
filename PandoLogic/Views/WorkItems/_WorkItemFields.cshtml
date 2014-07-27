@@ -1,0 +1,41 @@
+﻿@model PandoLogic.Controllers.WorkItemViewModel
+
+<div class="form-group">
+    @Html.LabelFor(model => model.Title, htmlAttributes: new { @class = "control-label" })
+    <div class="">
+        @Html.EditorFor(model => model.Title, new { htmlAttributes = new { @class = "form-control", placeholder = Html.DisplayNameFor(model => model.Title) } })
+        @Html.ValidationMessageFor(model => model.Title, "", new { @class = "text-danger" })
+    </div>
+</div>
+
+<div class="form-group">
+    @Html.LabelFor(model => model.Description, htmlAttributes: new { @class = "control-label" })
+    <div class="">
+        @Html.EditorFor(model => model.Description, new { htmlAttributes = new { @class = "form-control", placeholder = Html.DisplayNameFor(model => model.Description) } })
+        @Html.ValidationMessageFor(model => model.Description, "", new { @class = "text-danger" })
+    </div>
+</div>
+
+<div class="form-group">
+    @Html.LabelFor(model => model.AssigneeId, "Assignee", htmlAttributes: new { @class = "control-label" })
+    <div class="">
+        @Html.DropDownList("AssigneeId", null, htmlAttributes: new { @class = "form-control" })
+        @Html.ValidationMessageFor(model => model.AssigneeId, "", new { @class = "text-danger" })
+    </div>
+</div>
+
+<div class="form-group">
+    @Html.LabelFor(model => model.EstimatedTime, htmlAttributes: new { @class = "control-label" })
+    <div class="">
+        @Html.EditorFor(model => model.EstimatedTime, new { htmlAttributes = new { @class = "form-control", placeholder = Html.DisplayNameFor(model => model.EstimatedTime) } })
+        @Html.ValidationMessageFor(model => model.EstimatedTime, "", new { @class = "text-danger" })
+    </div>
+</div>
+
+<div class="form-group">
+    @Html.LabelFor(model => model.DueDateString, htmlAttributes: new { @class = "control-label" })
+    <div class="">
+        @Html.EditorFor(model => model.DueDateString, new { htmlAttributes = new { @class = "form-control date-mask", placeholder = Html.DisplayNameFor(model => model.DueDateString) } })
+        @Html.ValidationMessageFor(model => model.DueDateString, "", new { @class = "text-danger" })
+    </div>
+</div>

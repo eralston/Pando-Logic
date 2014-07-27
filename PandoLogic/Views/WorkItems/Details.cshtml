@@ -83,6 +83,17 @@
                         @Html.DisplayFor(model => model.CreatedDate)
                     </dd>
 
+                    @if (Model.EstimatedTime.HasValue)
+                    {
+                        <dt>
+                            @Html.DisplayNameFor(model => model.EstimatedTime)
+                        </dt>
+
+                        <dd>
+                            @Html.DisplayFor(model => model.EstimatedTime)
+                        </dd>
+                    }
+
                     <dt>
                         @Html.DisplayNameFor(model => model.DueDate)
                     </dt>

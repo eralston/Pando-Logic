@@ -57,6 +57,9 @@ namespace PandoLogic.Models
 
         // To-Many on Activity
         public virtual ICollection<Activity> Comments { get; set; }
+
+        [Display(Name = "Estimated Hours")]
+        public float? EstimatedTime { get; set; }
     }
 
     public static class WorkItemExtensions

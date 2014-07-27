@@ -146,7 +146,7 @@ namespace PandoLogic.Controllers
         [Route("Create/{id}")]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Create(int? id, [Bind(Include = "AssigneeId,DueDateString,Title,Description,GoalId")] WorkItemViewModel workItemViewModel)
+        public async Task<ActionResult> Create(int? id, [Bind(Include = "AssigneeId,EstimatedTime,DueDateString,Title,Description,GoalId")] WorkItemViewModel workItemViewModel)
         {
             if (ModelState.IsValid)
             {
@@ -162,6 +162,7 @@ namespace PandoLogic.Controllers
                 workItem.Description = workItemViewModel.Description;
                 workItem.DueDate = workItemViewModel.ParsedDueDateTime();
                 workItem.AssigneeId = workItemViewModel.AssigneeId;
+                workItem.EstimatedTime = workItemViewModel.EstimatedTime;
 
                 if (id.HasValue)
                 {
@@ -217,7 +218,7 @@ namespace PandoLogic.Controllers
         [Route("Edit/{id}")]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Edit([Bind(Include = "Id,AssigneeId,DueDateString,Title,Description")] WorkItemViewModel workItemViewModel)
+        public async Task<ActionResult> Edit([Bind(Include = "Id,AssigneeId,EstimatedTime,DueDateString,Title,Description")] WorkItemViewModel workItemViewModel)
         {
             if (ModelState.IsValid)
             {
@@ -226,6 +227,7 @@ namespace PandoLogic.Controllers
                 workItem.Title = workItemViewModel.Title;
                 workItem.Description = workItemViewModel.Description;
                 workItem.DueDate = workItemViewModel.ParsedDueDateTime();
+                workItem.EstimatedTime = workItemViewModel.EstimatedTime;
 
                 Db.Entry(workItem).State = EntityState.Modified;
                 await Db.SaveChangesAsync();
