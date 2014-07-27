@@ -1,0 +1,52 @@
+﻿@using PandoLogic.Models
+@model PandoLogic.Models.Activity
+
+@{
+}
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="box box-primary">
+            <div class="box-header">
+                <a href="@Url.Action("Index","Activities")">
+                    <h3 class="box-title force-a">Comments</h3>
+                </a>
+            </div>
+
+            <div class="box-body">
+                @using (Html.BeginForm(ViewBag.CommentAction as string, "Comments",
+                                        new { id = ViewBag.CommentId },
+                                        FormMethod.Post))
+                {
+                    @Html.AntiForgeryToken()
+
+                    <div class="form-group">
+                        <label for="Description" class="control-label">Comment</label>
+                        <div class="">
+                            @Html.TextAreaFor(model => model.Title, new { @class = "form-control", placeholder = "Comment" })
+                            @Html.ValidationMessageFor(model => model.Title, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+
+                    <div class="">
+                        <button type="submit" class="btn btn-primary">Create Comment</button>
+                    </div>
+                }
+            </div>
+            @{
+                IEnumerable<Activity> comment = ViewBag.Comments;
+            }
+                @if (comment != null && comment.Count() > 0)
+                {
+                    <div class="box-footer">
+                        <div class="row">
+                            <div class="col-md-12">
+                                @Html.Partial("_Timeline", ViewBag.Comments as IEnumerable<Activity>)
+                            </div>
+                        </div>
+                    </div>
+                }
+
+            </div>
+        </div>
+    </div>

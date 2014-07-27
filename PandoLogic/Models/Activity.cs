@@ -74,7 +74,7 @@ namespace PandoLogic.Models
         public DateTime? CreatedDate { get; set; }
 
         [Required]
-        public string Title { get; set; }
+        public virtual string Title { get; set; }
 
         [DataType(DataType.MultilineText)]
         public string Description { get; set; }

@@ -207,6 +207,7 @@
     <Compile Include="Controllers\ActivitiesController.cs" />
     <Compile Include="Controllers\AddressesController.cs" />
     <Compile Include="Controllers\BaseController.cs" />
+    <Compile Include="Controllers\CommentsController.cs" />
     <Compile Include="Controllers\CompaniesController.cs" />
     <Compile Include="Controllers\EmailController.cs" />
     <Compile Include="Controllers\GoalsController.cs" />
@@ -224,6 +225,7 @@
     <Compile Include="Models\Company.cs" />
     <Compile Include="Models\ApplicationUser.cs" />
     <Compile Include="Models\Goals.cs" />
+    <Compile Include="Models\ICommentable.cs" />
     <Compile Include="Models\Industry.cs" />
     <Compile Include="Models\Member.cs" />
     <Compile Include="Models\PhoneNumber.cs" />
@@ -834,7 +836,7 @@
     <Content Include="Views\Activities\Edit.cshtml" />
     <Content Include="Views\Activities\Index.cshtml" />
     <Content Include="Views\Activities\Widget.cshtml" />
-    <Content Include="Views\Activities\_Timeline.cshtml" />
+    <Content Include="Views\Shared\_Timeline.cshtml" />
     <Content Include="Views\Home\Verify.cshtml" />
     <Content Include="Views\Email\Generic.cshtml" />
     <Content Include="Views\Goals\Create.cshtml" />
@@ -851,6 +853,11 @@
     <Content Include="Views\WorkItems\Index.cshtml" />
     <Content Include="Views\WorkItems\_TaskBox.cshtml" />
     <Content Include="Views\Shared\_TaskBox.cshtml" />
+    <Content Include="Views\Comments\Create.cshtml" />
+    <Content Include="Views\Comments\Delete.cshtml" />
+    <Content Include="Views\Comments\Details.cshtml" />
+    <Content Include="Views\Comments\Edit.cshtml" />
+    <Content Include="Views\Shared\_Comments.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

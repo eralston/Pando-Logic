@@ -12,7 +12,7 @@ namespace PandoLogic.Models
     /// <summary>
     /// A unit of high-level planning for an organization
     /// </summary>
-    public class Goal
+    public class Goal : PandoLogic.Models.ICommentable
     {
         // Primary Key
         [Key]
@@ -43,8 +43,11 @@ namespace PandoLogic.Models
         [DataType(DataType.MultilineText)]
         public string Description { get; set; }
 
-        // To-Many on Post
+        // To-Many on WorkItems
         public virtual ICollection<WorkItem> WorkItems { get; set; }
+
+        // To-Many on Activity
+        public virtual ICollection<Activity> Comments { get; set; }
     }
 
     public static class GoalExtensions

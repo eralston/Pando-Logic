@@ -53,8 +53,10 @@ namespace PandoLogic.Controllers
 
         private async Task ApplyGoalToViewBag(Goal goal)
         {
-            ViewBag.GoalId = goal.Id;
             ViewBag.Tasks = await Db.WorkItems.WhereGoal(goal.Id).ToArrayAsync();
+            ViewBag.GoalId = goal.Id;
+
+            goal.LoadComments(this, "CreateGoal");
         }
 
         #endregion

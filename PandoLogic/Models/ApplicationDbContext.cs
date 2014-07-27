@@ -29,18 +29,18 @@ namespace PandoLogic.Models
 
         public DbSet<Industry> Industries { get; set; }
 
-        public System.Data.Entity.DbSet<PandoLogic.Models.Company> Companies { get; set; }
+        public DbSet<Company> Companies { get; set; }
 
-        public System.Data.Entity.DbSet<PandoLogic.Models.Address> Addresses { get; set; }
+        public DbSet<Address> Addresses { get; set; }
 
-        public System.Data.Entity.DbSet<PandoLogic.Models.Member> Members { get; set; }
+        public DbSet<Member> Members { get; set; }
 
-        public System.Data.Entity.DbSet<PandoLogic.Models.Activity> Activities { get; set; }
+        public DbSet<Activity> Activities { get; set; }
 
-        public System.Data.Entity.DbSet<InviteOnly.Invite> Invites { get; set; }
+        public DbSet<Invite> Invites { get; set; }
 
-        public System.Data.Entity.DbSet<PandoLogic.Models.Goal> Goals { get; set; }
+        public DbSet<Goal> Goals { get; set; }
 
-        public System.Data.Entity.DbSet<PandoLogic.Models.WorkItem> WorkItems { get; set; }
+        public DbSet<WorkItem> WorkItems { get; set; }
     }
 }
