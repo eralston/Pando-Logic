@@ -125,6 +125,7 @@ namespace PandoLogic.Controllers
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
+        [Route("Create")]
         [Route("Create/{id}")]
         public async Task<ActionResult> Create(int? id)
         {
@@ -271,6 +272,21 @@ namespace PandoLogic.Controllers
             {
                 return RedirectToAction("Index");
             }
+        }
+
+        /// <summary>
+        /// Gets all tasks for the current company (no ID)
+        /// OR all tasks for the goal with the given ID
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [Route("Widget")]
+        public ActionResult Widget()
+        {
+            ApplicationUser user = GetCurrentUser();
+            WorkItem[] workItems = Db.WorkItems.WhereAssignedUser(user.Id).ToArray();
+
+            return View(workItems);
         }
     }
 }

@@ -1,0 +1,10 @@
+﻿@using PandoLogic.Models
+@model IEnumerable<WorkItem>
+
+@{
+    ViewBag.TaskBoxTitle = "Tasks Assigned To You";
+    Layout = null;
+}
+
+@Html.Partial("_TaskBox", Model)
+

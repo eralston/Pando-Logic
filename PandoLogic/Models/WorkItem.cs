@@ -76,6 +76,11 @@ namespace PandoLogic.Models
             return workItems.Where(w => w.GoalId == goalId).Include(w => w.Assignee).Include(w => w.Creator);
         }
 
+        public static IQueryable<WorkItem> WhereAssignedUser(this DbSet<WorkItem> workItems, string userId)
+        {
+            return workItems.Where(w => w.AssigneeId == userId);
+        }
+
         public static async Task RemoveWorkItemsForGoal(this ApplicationDbContext context, int goalId)
         {
             WorkItem[] workItems = await context.WorkItems.WhereGoal(goalId).ToArrayAsync();

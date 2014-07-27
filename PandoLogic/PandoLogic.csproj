@@ -859,6 +859,7 @@
     <Content Include="Views\Comments\Edit.cshtml" />
     <Content Include="Views\Shared\_Comments.cshtml" />
     <Content Include="Views\Activities\_Cancel.cshtml" />
+    <Content Include="Views\WorkItems\Widget.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
