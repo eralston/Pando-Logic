@@ -32,7 +32,11 @@
                         @{
                              bool? isFomActivityFeed = ViewBag.IsFromActivityFeed;
                              string deleteActionName = isFomActivityFeed.HasValue && isFomActivityFeed.Value ? "DeleteActivity" : "Delete";
+                             string editActionName = isFomActivityFeed.HasValue && isFomActivityFeed.Value ? "EditActivity" : "Edit";
                         }
+                        <a href="@Url.Action(editActionName, "Activities", new { id = activity.Id })">
+                            <i class="fa fa-pencil"></i>
+                        </a>
                         <a href="@Url.Action(deleteActionName, "Activities", new { id = activity.Id })">
                             <i class="fa fa-trash-o"></i>
                         </a>

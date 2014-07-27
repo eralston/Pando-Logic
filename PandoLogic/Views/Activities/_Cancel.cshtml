@@ -1,0 +1,33 @@
+﻿@model PandoLogic.Models.Activity
+
+@{
+    bool? isFromActivityFeed = ViewBag.IsFromActivityFeed;
+}
+
+@if (isFromActivityFeed.HasValue && isFromActivityFeed.Value)
+{
+    <span>
+        @Html.ActionLink("Cancel", "Index")
+    </span>
+}
+else
+{
+    if (Model.GoalId.HasValue)
+    {
+        <span>
+            @Html.ActionLink("Cancel", "Details", "Goals", new { id = Model.GoalId }, null)
+        </span>
+    }
+    else if (Model.WorkItemId.HasValue)
+    {
+        <span>
+            @Html.ActionLink("Cancel", "Details", "Tasks", new { id = Model.WorkItemId }, null)
+        </span>
+    }
+    else
+    {
+        <span>
+            @Html.ActionLink("Cancel", "Index")
+        </span>
+    }
+}

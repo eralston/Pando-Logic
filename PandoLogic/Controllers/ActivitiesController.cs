@@ -54,6 +54,40 @@ namespace PandoLogic.Controllers
             ViewBag.FeedActivities = await Db.Activities.WhereCompany(companyId).ToArrayAsync();
         }
 
+        private async Task<ActionResult> Delete(Activity activity, ActionResult result)
+        {
+            Db.Activities.Remove(activity);
+
+            await Db.SaveChangesAsync();
+
+            return result;
+        }
+
+        private ActionResult ResultForActivity(Activity activity)
+        {
+            if (activity.GoalId.HasValue)
+            {
+                return RedirectToAction("Details", "Goals", new { id = activity.GoalId.Value });
+            }
+            else if (activity.WorkItemId.HasValue)
+            {
+                return RedirectToAction("Details", "Tasks", new { id = activity.WorkItemId.Value });
+            }
+            else
+            {
+                return RedirectToAction("Index");
+            }
+        }
+
+        private async Task EditActivity(Activity activityViewModel, Activity activity)
+        {
+            activity.Title = activityViewModel.Title;
+            activity.Description = activityViewModel.Description;
+            Db.Entry(activity).State = EntityState.Modified;
+
+            await Db.SaveChangesAsync();
+        }
+
         #endregion
 
         // GET: Activities
@@ -95,6 +129,50 @@ namespace PandoLogic.Controllers
         }
 
         // GET: Activities/Edit/5
+        public async Task<ActionResult> EditActivity(int id)
+        {
+            // Pull the activity from the database
+            Activity activity = await FindSafeActivity(id);
+
+            // Ensure it exists
+            if (activity == null)
+            {
+                return HttpNotFound();
+            }
+
+            ViewBag.IsFromActivityFeed = true;
+
+            // Send down the edit form
+            return View("Edit",activity);
+        }
+
+        // POST: Activities/Edit/5
+        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
+        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> EditActivity([Bind(Include = "Id,Title,Description")] Activity activityViewModel)
+        {
+            if (!ModelState.IsValid)
+            {
+                ViewBag.IsFromActivityFeed = true;
+                return View("Edit", activityViewModel);
+            }
+
+            // Pull the activity from the database
+            Activity activity = await FindSafeActivity(activityViewModel.Id);
+            // Ensure it exists
+            if (activity == null)
+            {
+                return HttpNotFound();
+            }
+
+            ActionResult result = RedirectToAction("Index");
+            await EditActivity(activityViewModel, activity);
+            return result;
+        }
+
+        // GET: Activities/Edit/5
         public async Task<ActionResult> Edit(int id)
         {
             // Pull the activity from the database
@@ -124,20 +202,15 @@ namespace PandoLogic.Controllers
 
             // Pull the activity from the database
             Activity activity = await FindSafeActivity(activityViewModel.Id);
-
             // Ensure it exists
             if (activity == null)
             {
                 return HttpNotFound();
             }
 
-            activity.Title = activityViewModel.Title;
-            activity.Description = activityViewModel.Description;
-            Db.Entry(activity).State = EntityState.Modified;
-
-            await Db.SaveChangesAsync();
-
-            return RedirectToAction("Index");
+            ActionResult result = ResultForActivity(activity);
+            await EditActivity(activityViewModel, activity);
+            return result;
         }
 
         // GET: Activities/DeleteActivity/5
@@ -152,6 +225,8 @@ namespace PandoLogic.Controllers
                 return HttpNotFound();
             }
 
+            ViewBag.IsFromActivityFeed = true;
+
             return View("Delete", activity);
         }
 
@@ -162,20 +237,15 @@ namespace PandoLogic.Controllers
         {
             // Pull the activity from the database
             Activity activity = await FindSafeActivity(id);
-
-            ActionResult result = RedirectToAction("Index");
-
             // Ensure it exists
             if (activity == null)
             {
                 return HttpNotFound();
             }
 
-            Db.Activities.Remove(activity);
+            ActionResult result = RedirectToAction("Index");
 
-            await Db.SaveChangesAsync();
-
-            return result;
+            return await Delete(activity, result);
         }
 
         // GET: Activities/Delete/5
@@ -200,32 +270,16 @@ namespace PandoLogic.Controllers
         {
             // Pull the activity from the database
             Activity activity = await FindSafeActivity(id);
-
-            ActionResult result = null;
-            if (activity.GoalId.HasValue)
-            {
-                result = RedirectToAction("Details", "Goals", new { id = activity.GoalId.Value });
-            }
-            else if (activity.WorkItemId.HasValue)
-            {
-                result = RedirectToAction("Details", "Tasks", new { id = activity.WorkItemId.Value });
-            }
-            else
-            {
-                result = RedirectToAction("Index");
-            }
-
+            
             // Ensure it exists
             if (activity == null)
             {
                 return HttpNotFound();
             }
 
-            Db.Activities.Remove(activity);
+            ActionResult result = ResultForActivity(activity);
 
-            await Db.SaveChangesAsync();
-
-            return result;
+            return await Delete(activity, result);
         }
 
         /// <summary>
