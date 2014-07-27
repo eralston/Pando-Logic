@@ -61,6 +61,8 @@ namespace PandoLogic.Controllers
         {
             await LoadFeedActivities();
 
+            ViewBag.IsFromActivityFeed = true;
+
             return View();
         }
 
@@ -138,6 +140,44 @@ namespace PandoLogic.Controllers
             return RedirectToAction("Index");
         }
 
+        // GET: Activities/DeleteActivity/5
+        public async Task<ActionResult> DeleteActivity(int id)
+        {
+            // Pull the activity from the database
+            Activity activity = await FindSafeActivity(id);
+
+            // Ensure it exists
+            if (activity == null)
+            {
+                return HttpNotFound();
+            }
+
+            return View("Delete", activity);
+        }
+
+        // POST: Activities/DeleteActivity/5
+        [HttpPost, ActionName("DeleteActivity")]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> DeleteActivityConfirmed(int id)
+        {
+            // Pull the activity from the database
+            Activity activity = await FindSafeActivity(id);
+
+            ActionResult result = RedirectToAction("Index");
+
+            // Ensure it exists
+            if (activity == null)
+            {
+                return HttpNotFound();
+            }
+
+            Db.Activities.Remove(activity);
+
+            await Db.SaveChangesAsync();
+
+            return result;
+        }
+
         // GET: Activities/Delete/5
         public async Task<ActionResult> Delete(int id)
         {
@@ -150,7 +190,7 @@ namespace PandoLogic.Controllers
                 return HttpNotFound();
             }
 
-            return View(activity);
+            return View("Delete", activity);
         }
 
         // POST: Activities/Delete/5
@@ -160,6 +200,20 @@ namespace PandoLogic.Controllers
         {
             // Pull the activity from the database
             Activity activity = await FindSafeActivity(id);
+
+            ActionResult result = null;
+            if (activity.GoalId.HasValue)
+            {
+                result = RedirectToAction("Details", "Goals", new { id = activity.GoalId.Value });
+            }
+            else if (activity.WorkItemId.HasValue)
+            {
+                result = RedirectToAction("Details", "Tasks", new { id = activity.WorkItemId.Value });
+            }
+            else
+            {
+                result = RedirectToAction("Index");
+            }
 
             // Ensure it exists
             if (activity == null)
@@ -171,7 +225,7 @@ namespace PandoLogic.Controllers
 
             await Db.SaveChangesAsync();
 
-            return RedirectToAction("Index");
+            return result;
         }
 
         /// <summary>

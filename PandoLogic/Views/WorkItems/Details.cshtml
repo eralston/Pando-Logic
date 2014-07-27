@@ -1,4 +1,5 @@
-﻿@model PandoLogic.Models.WorkItem
+﻿@using PandoLogic.Models
+@model PandoLogic.Models.WorkItem
 
 @{
     ViewBag.Title = "Task Details";
@@ -93,4 +94,5 @@
             </div>
         </div>
     </div>
+    @Html.Partial("_Comments", new Activity())
 </div>

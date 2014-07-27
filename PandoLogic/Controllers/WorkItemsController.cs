@@ -104,11 +104,16 @@ namespace PandoLogic.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
+
             WorkItem workItem = await Db.WorkItems.FindAsync(id);
+
             if (workItem == null)
             {
                 return HttpNotFound();
             }
+
+            workItem.LoadComments(this, "CreateTask");
+
             return View(workItem);
         }
 
@@ -160,7 +165,7 @@ namespace PandoLogic.Controllers
                 if (id.HasValue)
                 {
                     // TODO: Validate this goal ID is appropo to the user
-                    Goal goal = await Db.Goals.FindAsync(workItemViewModel.GoalId.Value);
+                    Goal goal = await Db.Goals.FindAsync(id.Value);
                     workItem.Goal = goal;
 
                     goal.WorkItems.Add(workItem);
@@ -171,7 +176,7 @@ namespace PandoLogic.Controllers
 
                 if (id.HasValue)
                 {
-                    return RedirectToAction("Details", "Goals", new { id = workItemViewModel.GoalId.Value });
+                    return RedirectToAction("Details", "Goals", new { id = id.Value });
                 }
                 else
                 {

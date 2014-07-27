@@ -1,3 +1,12 @@
 ﻿.bg-pinstripe {
     background-image: url("/img/pinstripe.png");
 }
+
+.circle {
+    width: 2em;
+    height: 2em;
+    font-size: 0.7em;
+    line-height: 2em;
+    text-align: center;
+    border-radius: 50%;
+}

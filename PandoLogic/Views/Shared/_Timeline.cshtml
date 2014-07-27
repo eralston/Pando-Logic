@@ -26,9 +26,19 @@
             string headerClass = hasDescription ? "" : " no-border ";
 
             <li>
-                <i class="fa @Activity.ClassesForActivityType(activity.Type)"></i>
+                <i class="fa @activity.IconClass"></i>
                 <div class="timeline-item">
-                    <span class="time"><i class="fa fa-clock-o"></i> @activity.CreatedDate.Value.ToString("t")</span>
+                    <span class="time">
+                        @{
+                             bool? isFomActivityFeed = ViewBag.IsFromActivityFeed;
+                             string deleteActionName = isFomActivityFeed.HasValue && isFomActivityFeed.Value ? "DeleteActivity" : "Delete";
+                        }
+                        <a href="@Url.Action(deleteActionName, "Activities", new { id = activity.Id })">
+                            <i class="fa fa-trash-o"></i>
+                        </a>
+                        <i class="fa fa-clock-o"></i>
+                        @activity.CreatedDate.Value.ToString("t")
+                    </span>
 
                     <h3 class="timeline-header @headerClass">@activity.Title</h3>
 

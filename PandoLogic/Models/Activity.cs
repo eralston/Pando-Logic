@@ -81,6 +81,12 @@ namespace PandoLogic.Models
 
         public ActivityType Type { get; set; }
 
+        [NotMapped]
+        public string IconClass
+        {
+            get { return Activity.ClassesForActivityType(this.Type); }
+        }
+
         // To-One on User Who Originated this action
         // This is optional, since some activities are done by the system
         [ForeignKey("Author")]
@@ -91,6 +97,9 @@ namespace PandoLogic.Models
         [ForeignKey("Company")]
         public int CompanyId { get; set; }
         public virtual Company Company { get; set; }
+
+        public int? GoalId { get; set; }
+        public int? WorkItemId { get; set; }
     }
 
     public static class ActivityExtensions

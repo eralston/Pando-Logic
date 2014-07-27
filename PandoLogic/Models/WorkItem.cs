@@ -14,7 +14,7 @@ namespace PandoLogic.Models
     /// These are called "Tasks" in the UIs
     /// A single unit of work, usually under a goal
     /// </summary>
-    public class WorkItem
+    public class WorkItem : ICommentable
     {
         // Primary Key
         [Key]
@@ -54,6 +54,9 @@ namespace PandoLogic.Models
 
         [DataType(DataType.MultilineText)]
         public string Description { get; set; }
+
+        // To-Many on Activity
+        public virtual ICollection<Activity> Comments { get; set; }
     }
 
     public static class WorkItemExtensions
