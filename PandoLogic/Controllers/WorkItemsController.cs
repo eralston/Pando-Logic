@@ -85,7 +85,7 @@ namespace PandoLogic.Controllers
         [Route("{id}")]
         public async Task<ActionResult> Index(int? id)
         {
-            WorkItem[] workItems = null;
+            IQueryable<WorkItem> query = null;
             if (id.HasValue)
             {
                 Goal goal = await Db.Goals.FindAsync(id.Value);
@@ -93,13 +93,31 @@ namespace PandoLogic.Controllers
                     return RedirectToAction("Index");
 
                 ViewBag.GoalId = id;
-                workItems = await Db.WorkItems.WhereGoal(id.Value).ToArrayAsync();
+                query = Db.WorkItems.WhereGoal(id.Value).OrderBy(w=>w.DueDate);
             }
             else
             {
                 int companyId = UserCache.SelectedCompanyId;
-                workItems = await Db.WorkItems.WhereCompany(companyId).ToArrayAsync();
+                query = Db.WorkItems.WhereCompany(companyId).OrderBy(w=>w.DueDate);
             }
+
+            var showAll = (Request.QueryString["ShowAll"] ?? "").ToUpper() == "TRUE";
+
+            if(!showAll)
+            {
+                query = query.Where(w => w.CompletedDate == null);
+                ViewBag.TaskBoxShowAll = true;
+                ViewBag.TaskBoxShowAllUrl = Url.Action("Index", new { ShowAll = true });
+                ViewBag.TaskBoxShowAllTitle = "Show Archived";
+            }
+            else
+            {
+                ViewBag.TaskBoxShowAll = true;
+                ViewBag.TaskBoxShowAllUrl = Url.Action("Index");
+                ViewBag.TaskBoxShowAllTitle = "Hide Archived";
+            }
+
+            WorkItem[] workItems = await query.ToArrayAsync();
 
             return View(workItems);
         }
@@ -324,7 +342,10 @@ namespace PandoLogic.Controllers
         public ActionResult Widget()
         {
             ApplicationUser user = GetCurrentUser();
-            WorkItem[] workItems = Db.WorkItems.WhereAssignedUser(user.Id).ToArray();
+            WorkItem[] workItems = Db.WorkItems.WhereAssignedUser(user.Id).Where(w => w.CompletedDate == null).ToArray();
+
+            ViewBag.TaskBoxShowAll = true;
+            ViewBag.TaskBoxShowAllUrl = Url.Action("Index");
 
             return View(workItems);
         }

@@ -60,10 +60,12 @@
                     }
                     @if (showAll.HasValue && showAll.Value)
                     {
+                        string showAllTitle = ViewBag.TaskBoxShowAllTitle ?? "Show All";
+                        
                         <tr>
                             <td colspan="3" class="text-center">
                                 <a href="@ViewBag.TaskBoxShowAllUrl">
-                                    Show All
+                                    @showAllTitle
                                 </a>
                             </td>
                         </tr>

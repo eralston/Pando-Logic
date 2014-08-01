@@ -854,7 +854,6 @@
     <Content Include="Views\WorkItems\Details.cshtml" />
     <Content Include="Views\WorkItems\Edit.cshtml" />
     <Content Include="Views\WorkItems\Index.cshtml" />
-    <Content Include="Views\WorkItems\_TaskBox.cshtml" />
     <Content Include="Views\Shared\_TaskBox.cshtml" />
     <Content Include="Views\Comments\Create.cshtml" />
     <Content Include="Views\Comments\Delete.cshtml" />
