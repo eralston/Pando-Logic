@@ -104,12 +104,12 @@ namespace PandoLogic.Models
 
     public static class ActivityExtensions
     {
-        public static Activity Create(this DbSet<Activity> activities, ApplicationUser authorUser, Company company, string title)
+        public static Activity Create(this DbSet<Activity> activities, string authorUserId, Company company, string title)
         {
             Activity activity = activities.Create();
 
             activity.CreatedDate = DateTime.Now;
-            activity.Author = authorUser;
+            activity.AuthorId = authorUserId;
             activity.Company = company;
             activity.Title = title;
 

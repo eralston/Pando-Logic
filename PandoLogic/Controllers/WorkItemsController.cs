@@ -66,6 +66,13 @@ namespace PandoLogic.Controllers
             }
         }
 
+        private async Task ApplyCompleteDateToWorkItem(int id, DateTime? completedDate)
+        {
+            WorkItem item = await Db.WorkItems.FindAsync(id);
+            item.CompletedDate = completedDate;
+            await Db.SaveChangesAsync();
+        }
+
         #endregion
 
         /// <summary>
@@ -74,6 +81,7 @@ namespace PandoLogic.Controllers
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
+        [Route("")]
         [Route("{id}")]
         public async Task<ActionResult> Index(int? id)
         {
@@ -139,6 +147,22 @@ namespace PandoLogic.Controllers
             return View();
         }
 
+        [HttpPost]
+        [Route("Complete/{id}")]
+        public async Task<ActionResult> Complete(int id)
+        {
+            await ApplyCompleteDateToWorkItem(id, DateTime.Now);
+            return new HttpStatusCodeResult(200);
+        }
+
+        [HttpPost]
+        [Route("Uncomplete/{id}")]
+        public async Task<ActionResult> Uncomplete(int id)
+        {
+            await ApplyCompleteDateToWorkItem(id, null);
+            return new HttpStatusCodeResult(200);
+        }
+
         // POST: WorkItems/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
@@ -158,6 +182,7 @@ namespace PandoLogic.Controllers
                 workItem.CompanyId = currentMember.CompanyId;
                 workItem.CreatorId = currentMember.UserId;
 
+                workItem.CompletedDate = null;
                 workItem.Title = workItemViewModel.Title;
                 workItem.Description = workItemViewModel.Description;
                 workItem.DueDate = workItemViewModel.ParsedDueDateTime();
@@ -174,6 +199,12 @@ namespace PandoLogic.Controllers
                 }
 
                 Db.WorkItems.Add(workItem);
+
+                // Add an activity model
+                Activity newActivity = Db.Activities.Create(currentMember.UserId, currentMember.Company, workItem.Title);
+                newActivity.Description = workItem.Description;
+                newActivity.Type = ActivityType.WorkAdded;
+
                 await Db.SaveChangesAsync();
 
                 if (id.HasValue)
@@ -264,6 +295,13 @@ namespace PandoLogic.Controllers
             WorkItem workItem = await Db.WorkItems.FindAsync(id);
             int? goalId = workItem.GoalId;
             Db.WorkItems.Remove(workItem);
+
+            // Add an activity model
+            Member currentMember = await GetCurrentMemberAsync();
+            Activity newActivity = Db.Activities.Create(currentMember.UserId, currentMember.Company, workItem.Title);
+            newActivity.Description = workItem.Description;
+            newActivity.Type = ActivityType.WorkDeleted;
+
             await Db.SaveChangesAsync();
 
             if (goalId.HasValue)

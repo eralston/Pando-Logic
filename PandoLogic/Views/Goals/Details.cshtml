@@ -20,11 +20,20 @@
                 <h3 class="box-title">Goal Details</h3>
             </div>
             <div class="box-body">
+                <p class="text-muted">@ViewBag.GoalProgress% Complete</p>
+                <div class="progress">
+                    <div class="progress-bar progress-bar-green" role="progressbar" aria-valuenow="@ViewBag.GoalProgress" aria-valuemin="0" aria-valuemax="100" style="width: @ViewBag.GoalProgress%">
+                    </div>
+                </div>
+            </div>
+
+            <div class="box-body">
                 <div class="pull-right">
                     @Html.ActionLink("Edit", "Edit", new { id = Model.Id }) |
                     @Html.ActionLink("Delete", "Delete", new { id = Model.Id })
                 </div>
                 <dl class="dl-horizontal">
+
                     <dt>
                         @Html.DisplayNameFor(model => model.Title)
                     </dt>
@@ -58,6 +67,21 @@
 
                     <dd>
                         @Html.DisplayFor(model => model.DueDate)
+                    </dd>
+
+                    <dt>
+                        Status
+                    </dt>
+
+                    <dd>
+                        @if (ViewBag.GoalProgress == "100")
+                        {
+                            <span>Completed</span>
+                        }
+                        else
+                        {
+                            <span>Incomplete</span>
+                        }
                     </dd>
                 </dl>
             </div>

@@ -1,0 +1,20 @@
+﻿@using PandoLogic.Models
+@model Goal
+
+@{
+    ViewBag.Title = "Goal Tasks";
+    ViewBag.TitleMinor = "";
+
+    ViewBag.Breadcrumb = new Breadcrumb(new Crumb[] {
+        new Crumb("Dashboard", Url.Action("Index","Home"), "fa-dashboard"),
+        new Crumb("Goals", Url.Action("Index","Goals"), "fa-check"),
+        new Crumb("Goal Details", Url.Action("Details", "Goals", new { id = Model.Id })),
+        new Crumb("Goal Tasks")
+    });
+}
+
+<div class="row">
+    <div class="col-md-6">
+        @Html.Partial("_TaskBox", (IEnumerable<WorkItem>)ViewBag.Tasks)
+    </div>
+</div>

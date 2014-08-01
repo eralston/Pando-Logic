@@ -60,6 +60,9 @@ namespace PandoLogic.Models
 
         [Display(Name = "Estimated Hours")]
         public float? EstimatedTime { get; set; }
+
+        [Display(Name = "Completed Date")]
+        public DateTime? CompletedDate { get; set; }
     }
 
     public static class WorkItemExtensions

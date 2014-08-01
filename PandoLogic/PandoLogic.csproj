@@ -462,6 +462,7 @@
     <Content Include="Scripts\AdminLTE\app.js" />
     <Content Include="Scripts\AdminLTE\dashboard.js" />
     <Content Include="Scripts\AdminLTE\demo.js" />
+    <Content Include="Scripts\app.js" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
     <Content Include="Scripts\jquery-2.1.1.js" />
@@ -863,6 +864,7 @@
     <Content Include="Views\Activities\_Cancel.cshtml" />
     <Content Include="Views\WorkItems\Widget.cshtml" />
     <Content Include="Views\WorkItems\_WorkItemFields.cshtml" />
+    <Content Include="Views\Goals\Tasks.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

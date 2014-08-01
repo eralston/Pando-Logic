@@ -1,9 +1,15 @@
 ﻿@using PandoLogic.Models
 @model IEnumerable<WorkItem>
 
+@{
+    string title = @ViewBag.TaskBoxTitle ?? "Tasks";
+
+    DateTime now = DateTime.Now;
+}
+
 <div class="box box-primary">
     <div class="box-header">
-        <h3 class="box-title">Tasks</h3>
+        <h3 class="box-title">@title</h3>
     </div>
     <div class="box-body">
         <div>
@@ -11,32 +17,63 @@
         </div>
     </div>
     <div class="box-body no-padding">
-
         <div class="table-responsive">
             <table class="table table-striped">
                 <tbody>
                     <tr>
+                        <th></th>
                         <th>Title</th>
                         <th>Due Date</th>
                     </tr>
 
                     @foreach (WorkItem item in Model)
                     {
-                        <tr>
+                        bool isDone = item.CompletedDate.HasValue;
+                        string rowClass = isDone ? "done" : "";
+                        <tr class="@rowClass">
+                            <td>
+                                @if (isDone)
+                                {
+                                    <input type="checkbox" id="task-@item.Id" data-task-id="@item.Id" class="task-check" checked />
+                                }
+                                else
+                                {
+                                    <input type="checkbox" id="task-@item.Id" data-task-id="@item.Id" class="task-check" />
+                                }
+                            </td>
                             <td>
                                 <a href="@Url.Action("Details", "Tasks", new { id = item.Id })">
                                     @item.Title
                                 </a>
                             </td>
                             <td>
+                                @if (item.DueDate < now)
+                                {
+                                    <i class="fa fa-warning" title="This task is overdue"></i>
+                                }
                                 @item.DueDate.Value.ToString("d")
                             </td>
                         </tr>
                     }
+                    @{
+                        bool? showAll = ViewBag.TaskBoxShowAll;
+                    }
+                    @if (showAll.HasValue && showAll.Value)
+                    {
+                        <tr>
+                            <td colspan="3" class="text-center">
+                                <a href="@ViewBag.TaskBoxShowAllUrl">
+                                    Show All
+                                </a>
+                            </td>
+                        </tr>
+                    }
                 </tbody>
+
+
+
             </table>
         </div>
     </div>
 </div>
-
 

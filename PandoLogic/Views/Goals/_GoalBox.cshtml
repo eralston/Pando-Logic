@@ -1,9 +1,28 @@
 ﻿@using PandoLogic.Models
 @model IEnumerable<Goal>
 
+@{
+    DateTime now = DateTime.Now;
+}
+
 <div class="box box-primary">
     <div class="box-header">
-        <h3 class="box-title">Goals</h3>
+
+        @if (ViewBag.GoalBoxShowAllUrl == null)
+        {
+            <h3 class="box-title">
+                Goals
+            </h3>
+        }
+        else
+        {
+            <a href="@ViewBag.GoalBoxShowAllUrl">
+                <h3 class="box-title force-a">
+                    Goals
+                </h3>
+            </a>
+        }
+
     </div>
     <div class="box-body">
         <div>
@@ -29,7 +48,24 @@
                                 </a>
                             </td>
                             <td>
+                                @if (goal.DueDate < now)
+                                {
+                                    <i class="fa fa-warning" title="This task is overdue"></i>
+                                }
                                 @goal.DueDate.Value.ToString("d")
+                            </td>
+                        </tr>
+                    }
+                    @{
+                        bool? showAll = ViewBag.GoalBoxShowAll;
+                    }
+                    @if (showAll.HasValue && showAll.Value)
+                    {
+                        <tr>
+                            <td colspan="2" class="text-center">
+                                <a href="@ViewBag.GoalBoxShowAllUrl">
+                                    Show All
+                                </a>
                             </td>
                         </tr>
                     }

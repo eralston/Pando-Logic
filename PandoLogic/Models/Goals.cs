@@ -48,6 +48,33 @@ namespace PandoLogic.Models
 
         // To-Many on Activity
         public virtual ICollection<Activity> Comments { get; set; }
+
+        #region Methods
+
+        public string CalculateProgress()
+        {
+            int complete = CompletedWorkItemCount();
+            int count = this.WorkItems.Count;
+
+            float retFloat = (float)complete / (float)count;
+            retFloat = retFloat * 100f;
+            int retInt = (int)retFloat;
+            string ret = retInt.ToString();
+            return ret;
+        }
+
+        public int CompletedWorkItemCount()
+        {
+            int complete = 0;
+            foreach (WorkItem item in this.WorkItems)
+            {
+                if (item.CompletedDate.HasValue)
+                    ++complete;
+            }
+            return complete;
+        }
+
+        #endregion
     }
 
     public static class GoalExtensions

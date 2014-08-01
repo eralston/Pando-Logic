@@ -10,3 +10,7 @@
     text-align: center;
     border-radius: 50%;
 }
+
+.done td {
+    text-decoration:line-through;
+}

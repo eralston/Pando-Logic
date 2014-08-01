@@ -110,11 +110,10 @@ namespace PandoLogic.Controllers
             if (ModelState.IsValid)
             {
                 // Pull out the relevant data to the context
-                ApplicationUser user = await GetCurrentUserAsync();
                 Member member = await GetCurrentMemberAsync();
 
                 // Setup the new activity and save
-                Activity newActivity = Db.Activities.Create(user, member.Company, activity.Title);
+                Activity newActivity = Db.Activities.Create(member.UserId, member.Company, activity.Title);
                 newActivity.Description = activity.Description;
                 newActivity.Type = ActivityType.TeamNotification;
                 await Db.SaveChangesAsync();

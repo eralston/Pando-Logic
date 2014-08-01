@@ -51,12 +51,40 @@ namespace PandoLogic.Controllers
     {
         #region Methods
 
-        private async Task ApplyGoalToViewBag(Goal goal)
+        private async Task ApplyGoalToViewBag(Goal goal, bool limited = true)
         {
-            ViewBag.Tasks = await Db.WorkItems.WhereGoal(goal.Id).ToArrayAsync();
+            IQueryable<WorkItem> query = Db.WorkItems.WhereGoal(goal.Id).OrderBy(t => t.DueDate);
+
+            if(limited)
+            {
+                query = query.Take(5).Where(w => w.CompletedDate == null);
+            }                
+
+            ViewBag.Tasks = await query.ToArrayAsync();
             ViewBag.GoalId = goal.Id;
 
-            goal.LoadComments(this, "CreateGoal");
+            if(limited)
+            {
+                ViewBag.TaskBoxShowAll = true;
+                ViewBag.TaskBoxShowAllUrl = Url.Action("Tasks", "Goals", new { id = goal.Id });
+                goal.LoadComments(this, "CreateGoal");
+            }            
+        }
+
+        private IQueryable<Goal> BuildGoalQuery(bool limited, Member currentMember)
+        {
+            IQueryable<Goal> query = Db.Goals.WhereMember(currentMember).OrderBy(g => g.DueDate);
+
+            if (limited)
+            {
+                query = query.Take(5);
+
+                ViewBag.GoalBoxShowAll = true;
+                ViewBag.GoalBoxShowAllUrl = Url.Action("Index", "Goals");
+            }
+                
+
+            return query;
         }
 
         #endregion
@@ -65,7 +93,8 @@ namespace PandoLogic.Controllers
         public async Task<ActionResult> Index()
         {
             Member currentMember = await GetCurrentMemberAsync();
-            var goals = await Db.Goals.WhereMember(currentMember).ToArrayAsync();
+            IQueryable<Goal> query = BuildGoalQuery(false, currentMember);
+            var goals = await query.ToArrayAsync();
             return View(goals);
         }
 
@@ -82,7 +111,30 @@ namespace PandoLogic.Controllers
                 return HttpNotFound();
             }
 
+            ViewBag.GoalProgress = goal.CalculateProgress();
+
             await ApplyGoalToViewBag(goal);
+
+            return View(goal);
+        }
+
+        // GET: Goals/Tasks/5
+        /// <summary>
+        /// Pulls a screen that lists all of the tasks for a given goal ID
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public async Task<ActionResult> Tasks(int id)
+        {
+            Goal goal = await Db.Goals.FindAsync(id);
+            if (goal == null)
+            {
+                return HttpNotFound();
+            }
+
+            ViewBag.TaskBoxTitle = "Goal Tasks";
+
+            await ApplyGoalToViewBag(goal, false);
 
             return View(goal);
         }
@@ -105,7 +157,6 @@ namespace PandoLogic.Controllers
                 Goal goal = Db.Goals.Create();
                 
                 Member currentMember = await GetCurrentMemberAsync();
-                ApplicationUser user = await GetCurrentUserAsync();
 
                 goal.DueDate = goalViewModel.ParsedDueDateTime();
                 goal.Title = goalViewModel.Title;
@@ -113,12 +164,12 @@ namespace PandoLogic.Controllers
 
                 goal.CreatedDate = DateTime.Now;
                 goal.CompanyId = currentMember.CompanyId;
-                goal.CreatorId = user.Id;
+                goal.CreatorId = currentMember.UserId;
 
                 Db.Goals.Add(goal);
 
                 // Add an activity model
-                Activity newActivity = Db.Activities.Create(user, currentMember.Company, goal.Title);
+                Activity newActivity = Db.Activities.Create(currentMember.UserId, currentMember.Company, goal.Title);
                 newActivity.Description = goal.Description;
                 newActivity.Type = ActivityType.WorkAdded;
 
@@ -199,9 +250,8 @@ namespace PandoLogic.Controllers
             await Db.RemoveWorkItemsForGoal(goal.Id);
 
             // Add an activity model
-            ApplicationUser user = await GetCurrentUserAsync();
             Member currentMember = await GetCurrentMemberAsync();
-            Activity newActivity = Db.Activities.Create(user, currentMember.Company, goal.Title);
+            Activity newActivity = Db.Activities.Create(currentMember.UserId, currentMember.Company, goal.Title);
             newActivity.Description = goal.Description;
             newActivity.Type = ActivityType.WorkDeleted;
 
@@ -216,7 +266,8 @@ namespace PandoLogic.Controllers
         public ActionResult Widget()
         {
             Member currentMember = GetCurrentMember();
-            var goals = Db.Goals.WhereMember(currentMember).ToArray();
+            IQueryable<Goal> query = BuildGoalQuery(true, currentMember);
+            var goals = query.ToArray();
             return View(goals);
         }
     }
