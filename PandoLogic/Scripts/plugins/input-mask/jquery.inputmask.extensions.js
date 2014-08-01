@@ -120,3 +120,7 @@ Optional extensions on the jquery.inputmask base
         }
     });
 })(jQuery);
+
+$(function () {
+    $(".date-field").inputmask("mm/dd/yyyy", { "placeholder": "mm/dd/yyyy" });
+});

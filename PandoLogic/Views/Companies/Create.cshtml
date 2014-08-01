@@ -46,7 +46,7 @@
                     <div class="input-group-addon">
                         <i class="fa fa-calendar"></i>
                     </div>
-                    @Html.EditorFor(model => model.FoundedDateString, new { htmlAttributes = new { @class = "form-control date-mask", placeholder = @Html.DisplayNameFor(m => m.FoundedDateString) } })
+                    @Html.EditorFor(model => model.FoundedDateString, new { htmlAttributes = new { @class = "form-control date-field", placeholder = @Html.DisplayNameFor(m => m.FoundedDateString) } })
                 </div>
                 @Html.ValidationMessageFor(model => model.FoundedDateString, "", new { @class = "text-danger" })
             </div>
@@ -74,9 +74,5 @@
     <script src="~/Scripts/plugins/input-mask/jquery.inputmask.js"></script>
     <script src="~/Scripts/plugins/input-mask/jquery.inputmask.date.extensions.js"></script>
     <script src="~/Scripts/plugins/input-mask/jquery.inputmask.extensions.js"></script>
-    <script type="text/javascript">
-        $(function () {
-            $(".date-mask").inputmask("mm/dd/yyyy", { "placeholder": "mm/dd/yyyy" });
-        });
-    </script>
+    <script src="~/Scripts/plugins/datepicker/bootstrap-datepicker.js"></script>
 }

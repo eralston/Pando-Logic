@@ -250,6 +250,7 @@
     <Content Include="Content\datatables\images\sort_both.png" />
     <Content Include="Content\datatables\images\sort_desc.png" />
     <Content Include="Content\datatables\images\sort_desc_disabled.png" />
+    <Content Include="Content\datepicker\datepicker.css" />
     <Content Include="Content\daterangepicker\daterangepicker-bs3.css" />
     <Content Include="Content\font-awesome.css" />
     <Content Include="Content\font-awesome.min.css" />
@@ -704,6 +705,7 @@
     <Content Include="Scripts\plugins\colorpicker\bootstrap-colorpicker.min.js" />
     <Content Include="Scripts\plugins\datatables\dataTables.bootstrap.js" />
     <Content Include="Scripts\plugins\datatables\jquery.dataTables.js" />
+    <Content Include="Scripts\plugins\datepicker\bootstrap-datepicker.js" />
     <Content Include="Scripts\plugins\daterangepicker\daterangepicker.js" />
     <Content Include="Scripts\plugins\flot\excanvas.js" />
     <Content Include="Scripts\plugins\flot\excanvas.min.js" />

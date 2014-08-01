@@ -27,7 +27,7 @@
                     <div class="form-group">
                         @Html.LabelFor(model => model.DueDateString, htmlAttributes: new { @class = "control-label" })
                         <div class="">
-                            @Html.EditorFor(model => model.DueDateString, new { htmlAttributes = new { @class = "form-control date-mask", placeholder = Html.DisplayNameFor(model => model.DueDateString) } })
+                            @Html.EditorFor(model => model.DueDateString, new { htmlAttributes = new { @class = "form-control date-field", placeholder = Html.DisplayNameFor(model => model.DueDateString) } })
                             @Html.ValidationMessageFor(model => model.DueDateString, "", new { @class = "text-danger" })
                         </div>
                     </div>
@@ -61,9 +61,5 @@
     <script src="~/Scripts/plugins/input-mask/jquery.inputmask.js"></script>
     <script src="~/Scripts/plugins/input-mask/jquery.inputmask.date.extensions.js"></script>
     <script src="~/Scripts/plugins/input-mask/jquery.inputmask.extensions.js"></script>
-    <script type="text/javascript">
-        $(function () {
-            $(".date-mask").inputmask("mm/dd/yyyy", { "placeholder": "mm/dd/yyyy" });
-        });
-    </script>
+    <script src="~/Scripts/plugins/datepicker/bootstrap-datepicker.js"></script>
 }
