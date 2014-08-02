@@ -42,5 +42,7 @@ namespace PandoLogic.Models
         public DbSet<Goal> Goals { get; set; }
 
         public DbSet<WorkItem> WorkItems { get; set; }
+
+        public DbSet<Strategy> Strategies { get; set; }
     }
 }
