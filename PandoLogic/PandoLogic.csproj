@@ -224,7 +224,7 @@
     <Compile Include="Models\ApplicationDbContext.cs" />
     <Compile Include="Models\Company.cs" />
     <Compile Include="Models\ApplicationUser.cs" />
-    <Compile Include="Models\Goals.cs" />
+    <Compile Include="Models\Goal.cs" />
     <Compile Include="Models\ICommentable.cs" />
     <Compile Include="Models\Industry.cs" />
     <Compile Include="Models\Member.cs" />
@@ -864,6 +864,9 @@
     <Content Include="Views\WorkItems\Widget.cshtml" />
     <Content Include="Views\WorkItems\_WorkItemFields.cshtml" />
     <Content Include="Views\Goals\Tasks.cshtml" />
+    <Content Include="Views\Goals\Archive.cshtml" />
+    <Content Include="Views\Goals\_GoalDetails.cshtml" />
+    <Content Include="Views\Goals\UndoArchive.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

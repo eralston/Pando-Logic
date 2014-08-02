@@ -1,14 +1,15 @@
-﻿@model PandoLogic.Models.Goal
+﻿@using PandoLogic.Models
+@model PandoLogic.Models.Goal
 
 @{
-    ViewBag.Title = "Delete Goal";
+    ViewBag.Title = "Undo Archive Goal";
     ViewBag.TitleMinor = "";
 
     ViewBag.Breadcrumb = new Breadcrumb(new Crumb[] {
         new Crumb("Dashboard", Url.Action("Index","Home"), "fa-dashboard"),
         new Crumb("Goals", Url.Action("Index","Goals"), "fa-check"),
-        new Crumb("Goal Details", Url.Action("Details", "Goals", new { id = Model.Id}), ""),
-        new Crumb("Delete Goal")
+        new Crumb("Goal Details", Url.Action("Details", "Goals", new { id = Model.Id})),
+        new Crumb("Undo Archive Goal")
     });
 }
 
@@ -17,13 +18,16 @@
         <!-- general form elements -->
         <div class="box box-primary">
             <div class="box-header">
-                <h3 class="box-title">Delete Goal</h3>
+                <h3 class="box-title">Archive Goal</h3>
             </div>
             <div class="box-body">
                 <div>
-                    <span class="lead">
-                        Are You Sure You Want to Delete This Goal?
+                    <span class="lead text-muted">
+                        Are You Sure You Want to Undo Archiving This Goal?
                     </span>
+                    <p class="text-muted">
+                        Undo marking this as complete. Any tasks there were completed as part of marking this goal.
+                    </p>
                 </div>
                 @Html.Partial("_GoalDetails", Model)
                 @using (Html.BeginForm())
@@ -31,7 +35,7 @@
                     @Html.AntiForgeryToken()
 
                     <div class="form-actions no-color">
-                        <input type="submit" value="Delete Goal" class="btn btn-danger" />
+                        <input type="submit" value="Undo Archive Goal" class="btn btn-danger" />
                         @Html.ActionLink("Cancel", "Details", new { id = Model.Id })
                     </div>
                 }

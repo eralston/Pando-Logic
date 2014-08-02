@@ -49,12 +49,21 @@ namespace PandoLogic.Models
         // To-Many on Activity
         public virtual ICollection<Activity> Comments { get; set; }
 
+        [Display(Name = "Archive Date")]
+        public DateTime? ArchiveDate { get; set; }
+
         #region Methods
 
         public string CalculateProgress()
         {
+            if (this.ArchiveDate.HasValue)
+                return "100";
+
             int complete = CompletedWorkItemCount();
             int count = this.WorkItems.Count;
+
+            if (count == 0)
+                return "0";
 
             float retFloat = (float)complete / (float)count;
             retFloat = retFloat * 100f;
@@ -72,6 +81,45 @@ namespace PandoLogic.Models
                     ++complete;
             }
             return complete;
+        }
+
+        /// <summary>
+        /// Archives this goal, also setting all unfinished tasks as completed with the same date
+        /// </summary>
+        public void Archive()
+        {
+            DateTime archiveDate = DateTime.Now;
+
+            ArchiveDate = archiveDate;
+
+            foreach(WorkItem task in WorkItems)
+            {
+                if(!task.CompletedDate.HasValue)
+                {
+                    task.CompletedDate = archiveDate;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Undoes the archive of this task, also rendering the closed tasks incomplete
+        /// </summary>
+        public void UndoArchive()
+        {
+            DateTime? archiveDate = this.ArchiveDate;
+
+            if (!archiveDate.HasValue)
+                return;
+
+            this.ArchiveDate = null;
+
+            foreach (WorkItem task in WorkItems)
+            {
+                if (task.CompletedDate.HasValue && task.CompletedDate.Value == archiveDate.Value)
+                {
+                    task.CompletedDate = null;
+                }
+            }
         }
 
         #endregion

@@ -82,7 +82,6 @@ namespace PandoLogic.Controllers
                 ViewBag.GoalBoxShowAll = true;
                 ViewBag.GoalBoxShowAllUrl = Url.Action("Index", "Goals");
             }
-                
 
             return query;
         }
@@ -93,8 +92,29 @@ namespace PandoLogic.Controllers
         public async Task<ActionResult> Index()
         {
             Member currentMember = await GetCurrentMemberAsync();
+
             IQueryable<Goal> query = BuildGoalQuery(false, currentMember);
+            ;
+
+            // filter on querystring logic 
+            var showAll = (Request.QueryString["ShowAll"] ?? "").ToUpper() == "TRUE";
+
+            if (!showAll)
+            {
+                query = query.Where(g =>g.ArchiveDate == null);
+                ViewBag.GoalBoxShowAll = true;
+                ViewBag.GoalBoxShowAllUrl = Url.Action("Index", new { ShowAll = true });
+                ViewBag.GoalBoxShowAllTitle = "Show Archived";
+            }
+            else
+            {
+                ViewBag.GoalBoxShowAll = true;
+                ViewBag.GoalBoxShowAllUrl = Url.Action("Index");
+                ViewBag.GoalBoxShowAllTitle = "Hide Archived";
+            }
+
             var goals = await query.ToArrayAsync();
+
             return View(goals);
         }
 
@@ -269,6 +289,61 @@ namespace PandoLogic.Controllers
             IQueryable<Goal> query = BuildGoalQuery(true, currentMember);
             var goals = query.ToArray();
             return View(goals);
+        }
+
+        /// <summary>
+        /// Archives the goal with the given ID
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public async Task<ActionResult> Archive(int id)
+        {
+            Goal goal = await Db.Goals.FindAsync(id);
+            if (goal == null)
+            {
+                return HttpNotFound();
+            }
+            return View(goal);
+        }
+
+        [HttpPost, ActionName("Archive")]
+        public async Task<ActionResult> ArchiveConfirmed(int id)
+        {
+            Goal goal = await Db.Goals.FindAsync(id);
+            if (goal == null)
+            {
+                return HttpNotFound();
+            }
+            
+            goal.Archive();
+            await Db.SaveChangesAsync();
+
+            return RedirectToAction("Details", new { id = id });
+        }
+
+        public async Task<ActionResult> UndoArchive(int id)
+        {
+            Goal goal = await Db.Goals.FindAsync(id);
+            if (goal == null)
+            {
+                return HttpNotFound();
+            }
+            return View(goal);
+        }
+
+        [HttpPost, ActionName("UndoArchive")]
+        public async Task<ActionResult> UndoArchiveConfirmed(int id)
+        {
+            Goal goal = await Db.Goals.FindAsync(id);
+            if (goal == null)
+            {
+                return HttpNotFound();
+            }
+
+            goal.UndoArchive();
+            await Db.SaveChangesAsync();
+
+            return RedirectToAction("Details", new { id = id });
         }
     }
 }

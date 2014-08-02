@@ -1,0 +1,63 @@
+﻿@using PandoLogic.Models
+@model PandoLogic.Models.Goal
+
+<dl class="dl-horizontal">
+
+    <dt>
+        @Html.DisplayNameFor(model => model.Title)
+    </dt>
+
+    <dd>
+        @Html.DisplayFor(model => model.Title)
+    </dd>
+
+    @if (!string.IsNullOrEmpty(Model.Description))
+    {
+        <dt>
+            @Html.DisplayNameFor(model => model.Description)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Description)
+        </dd>
+    }
+
+    <dt>
+        @Html.DisplayNameFor(model => model.CreatedDate)
+    </dt>
+
+    <dd>
+        @Html.DisplayFor(model => model.CreatedDate)
+    </dd>
+
+    <dt>
+        @Html.DisplayNameFor(model => model.DueDate)
+    </dt>
+
+    <dd>
+        @Html.DisplayFor(model => model.DueDate)
+    </dd>
+
+    <dt>
+        Status
+    </dt>
+
+    <dd>
+        @if (Model.ArchiveDate.HasValue)
+        {
+            <span>Archived on @Model.ArchiveDate.Value.ToString("d")</span>
+        }
+        else
+        {
+            if (ViewBag.GoalProgress == "100")
+            {
+                <span>Complete</span>
+            }
+            else
+            {
+                <span>Incomplete</span>
+            }
+        }
+        
+    </dd>
+</dl>

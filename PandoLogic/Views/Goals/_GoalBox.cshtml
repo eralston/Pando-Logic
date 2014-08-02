@@ -48,12 +48,20 @@
                                 </a>
                             </td>
                             <td>
-                                @if (goal.DueDate < now)
+                                @if (goal.ArchiveDate.HasValue)
                                 {
-                                    <i class="fa fa-warning" title="This task is overdue"></i>
+                                    <span>Archived on @goal.ArchiveDate.Value.ToString("d")</span>
                                 }
-                                @goal.DueDate.Value.ToString("d")
+                                else
+                                {
+                                    if (goal.DueDate < now)
+                                    {
+                                        <i class="fa fa-warning" title="This task is overdue"></i>
+                                    }
+                                    @goal.DueDate.Value.ToString("d")
+                                }
                             </td>
+
                         </tr>
                     }
                     @{
@@ -61,10 +69,11 @@
                     }
                     @if (showAll.HasValue && showAll.Value)
                     {
+                        string goalBoxTitle = ViewBag.GoalBoxShowAllTitle ?? "Show All";
                         <tr>
                             <td colspan="2" class="text-center">
                                 <a href="@ViewBag.GoalBoxShowAllUrl">
-                                    Show All
+                                    @goalBoxTitle
                                 </a>
                             </td>
                         </tr>

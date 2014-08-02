@@ -101,6 +101,7 @@ namespace PandoLogic.Controllers
                 query = Db.WorkItems.WhereCompany(companyId).OrderBy(w=>w.DueDate);
             }
 
+            // filter on querystring logic 
             var showAll = (Request.QueryString["ShowAll"] ?? "").ToUpper() == "TRUE";
 
             if(!showAll)
@@ -108,13 +109,13 @@ namespace PandoLogic.Controllers
                 query = query.Where(w => w.CompletedDate == null);
                 ViewBag.TaskBoxShowAll = true;
                 ViewBag.TaskBoxShowAllUrl = Url.Action("Index", new { ShowAll = true });
-                ViewBag.TaskBoxShowAllTitle = "Show Archived";
+                ViewBag.TaskBoxShowAllTitle = "Show Completed";
             }
             else
             {
                 ViewBag.TaskBoxShowAll = true;
                 ViewBag.TaskBoxShowAllUrl = Url.Action("Index");
-                ViewBag.TaskBoxShowAllTitle = "Hide Archived";
+                ViewBag.TaskBoxShowAllTitle = "Hide Completed";
             }
 
             WorkItem[] workItems = await query.ToArrayAsync();
@@ -342,7 +343,7 @@ namespace PandoLogic.Controllers
         public ActionResult Widget()
         {
             ApplicationUser user = GetCurrentUser();
-            WorkItem[] workItems = Db.WorkItems.WhereAssignedUser(user.Id).Where(w => w.CompletedDate == null).ToArray();
+            WorkItem[] workItems = Db.WorkItems.WhereAssignedUser(user.Id).Where(w => w.CompletedDate == null).OrderBy(w => w.DueDate).Take(5).ToArray();
 
             ViewBag.TaskBoxShowAll = true;
             ViewBag.TaskBoxShowAllUrl = Url.Action("Index");
