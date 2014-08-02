@@ -19,8 +19,11 @@ namespace PandoLogic.Models
         WorkAdded,          // fa-plus bg-aqua
         WorkCompleted,      // fa-check bg-green
         WorkDeleted,        // fa-times bg-red
+        WorkArchived,       // fa-lock bg-green
+        WorkUndoArchived,   // fa-unlock-alt bg-yellow
         UserAction,         // fa-user bg-purple        EG: Register, Accept Invite Into System, Assigning Task, etc
         TeamNotification    // fa-users bg-yellow
+        
     }
 
     /// <summary>
@@ -53,6 +56,12 @@ namespace PandoLogic.Models
                     break;
                 case ActivityType.WorkDeleted:
                     ret = "fa-times bg-red";
+                    break;
+                case ActivityType.WorkArchived:
+                    ret = "fa-lock bg-green";
+                    break;
+                case ActivityType.WorkUndoArchived:
+                    ret = "fa-unlock-alt bg-yellow";
                     break;
                 case ActivityType.UserAction:
                     ret = "fa-user bg-purple";

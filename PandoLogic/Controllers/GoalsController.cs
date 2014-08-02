@@ -73,7 +73,7 @@ namespace PandoLogic.Controllers
 
         private IQueryable<Goal> BuildGoalQuery(bool limited, Member currentMember)
         {
-            IQueryable<Goal> query = Db.Goals.WhereMember(currentMember).OrderBy(g => g.DueDate);
+            IQueryable<Goal> query = Db.Goals.WhereMember(currentMember).OrderBy(g => g.DueDate).Include(g => g.WorkItems);
 
             if (limited)
             {
@@ -287,6 +287,7 @@ namespace PandoLogic.Controllers
         {
             Member currentMember = GetCurrentMember();
             IQueryable<Goal> query = BuildGoalQuery(true, currentMember);
+            query = query.Where(g => g.ArchiveDate == null);
             var goals = query.ToArray();
             return View(goals);
         }
@@ -316,6 +317,13 @@ namespace PandoLogic.Controllers
             }
             
             goal.Archive();
+
+            // Setup the new activity and save
+            Member member = await GetCurrentMemberAsync();
+            Activity newActivity = Db.Activities.Create(member.UserId, member.Company, goal.Title);
+            newActivity.Description = goal.Description;
+            newActivity.Type = ActivityType.WorkArchived;
+
             await Db.SaveChangesAsync();
 
             return RedirectToAction("Details", new { id = id });
@@ -341,6 +349,13 @@ namespace PandoLogic.Controllers
             }
 
             goal.UndoArchive();
+
+            // Setup the new activity and save
+            Member member = await GetCurrentMemberAsync();
+            Activity newActivity = Db.Activities.Create(member.UserId, member.Company, goal.Title);
+            newActivity.Description = goal.Description;
+            newActivity.Type = ActivityType.WorkUndoArchived;
+
             await Db.SaveChangesAsync();
 
             return RedirectToAction("Details", new { id = id });

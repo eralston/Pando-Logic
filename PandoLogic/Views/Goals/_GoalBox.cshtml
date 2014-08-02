@@ -37,6 +37,7 @@
                     <tr>
                         <th>Title</th>
                         <th>Due Date</th>
+                        <th>Progress</th>
                     </tr>
 
                     @foreach (Goal goal in Model)
@@ -61,7 +62,13 @@
                                     @goal.DueDate.Value.ToString("d")
                                 }
                             </td>
-
+                            <td>
+                                <div class="progress sm active">
+                                    <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="@goal.CalculateProgress()" aria-valuemin="0" aria-valuemax="100" style="width: @goal.CalculateProgress()%">
+                                        <span class="sr-only">@goal.CalculateProgress()% Complete</span>
+                                    </div>
+                                </div>
+                            </td>
                         </tr>
                     }
                     @{
@@ -71,7 +78,7 @@
                     {
                         string goalBoxTitle = ViewBag.GoalBoxShowAllTitle ?? "Show All";
                         <tr>
-                            <td colspan="2" class="text-center">
+                            <td colspan="3" class="text-center">
                                 <a href="@ViewBag.GoalBoxShowAllUrl">
                                     @goalBoxTitle
                                 </a>
