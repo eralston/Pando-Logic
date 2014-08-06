@@ -1,59 +1,51 @@
 ﻿@model PandoLogic.Models.Strategy
 
 @{
-    ViewBag.Title = "Create";
+    ViewBag.Title = "Create Strategy";
 }
 
-<h2>Create</h2>
-
-@using (Html.BeginForm()) 
-{
-    @Html.AntiForgeryToken()
-    
-    <div class="form-horizontal">
-        <h4>Strategy</h4>
-        <hr />
-        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-        <div class="form-group">
-            @Html.LabelFor(model => model.CreatedDate, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.CreatedDate, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.CreatedDate, "", new { @class = "text-danger" })
+<div class="row">
+    <div class="col-md-6">
+        <!-- general form elements -->
+        <div class="box box-primary">
+            <div class="box-header">
+                <h3 class="box-title">Create Strategy</h3>
             </div>
-        </div>
+            <div class="box-body">
 
-        <div class="form-group">
-            @Html.LabelFor(model => model.Title, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.Title, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.Title, "", new { @class = "text-danger" })
-            </div>
-        </div>
+                @using (Html.BeginForm())
+                {
+                    @Html.AntiForgeryToken()
 
-        <div class="form-group">
-            @Html.LabelFor(model => model.Description, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.Description, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.Description, "", new { @class = "text-danger" })
-            </div>
-        </div>
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.Title, htmlAttributes: new { @class = "control-label" })
+                        <div class="">
+                            @Html.EditorFor(model => model.Title, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.ValidationMessageFor(model => model.Title, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
 
-        <div class="form-group">
-            @Html.LabelFor(model => model.AuthorId, "AuthorId", htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.DropDownList("AuthorId", null, htmlAttributes: new { @class = "form-control" })
-                @Html.ValidationMessageFor(model => model.AuthorId, "", new { @class = "text-danger" })
-            </div>
-        </div>
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.Summary, htmlAttributes: new { @class = "control-label" })
+                        <p class="text-muted">Maximum 100 Characters</p>
+                        <div class="">
+                            @Html.EditorFor(model => model.Summary, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.ValidationMessageFor(model => model.Summary, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
 
-        <div class="form-group">
-            <div class="col-md-offset-2 col-md-10">
-                <input type="submit" value="Create" class="btn btn-default" />
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.Description, htmlAttributes: new { @class = "control-label" })
+                        <div class="">
+                            @Html.EditorFor(model => model.Description, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.ValidationMessageFor(model => model.Description, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+
+                    <input type="submit" value="Create" class="btn btn-primary" />
+                    @Html.ActionLink("Cancel", "Index")
+                }
             </div>
         </div>
     </div>
-}
-
-<div>
-    @Html.ActionLink("Back to List", "Index")
 </div>

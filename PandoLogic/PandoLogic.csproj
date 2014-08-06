@@ -196,9 +196,12 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="Code\Breadcrumb.cs" />
+    <Compile Include="Code\ObjectExtensions.cs" />
+    <Compile Include="Code\Validation\ConditionalRequiredAttribute.cs" />
     <Compile Include="Code\ControllerExtensions.cs" />
-    <Compile Include="Code\DateTimeValidationAttribute.cs" />
+    <Compile Include="Code\Validation\DateTimeValidationAttribute.cs" />
     <Compile Include="Code\EmailTemplates.cs" />
+    <Compile Include="Code\HtmlHelpers.cs" />
     <Compile Include="Code\MailExtensions.cs" />
     <Compile Include="Code\PandoStorageManager.cs" />
     <Compile Include="Code\Settings.cs" />
@@ -231,7 +234,7 @@
     <Compile Include="Models\Member.cs" />
     <Compile Include="Models\PhoneNumber.cs" />
     <Compile Include="Models\Strategy.cs" />
-    <Compile Include="Models\StrategyPhase.cs" />
+    <Compile Include="Models\StrategyGoal.cs" />
     <Compile Include="Models\WorkItem.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
@@ -875,9 +878,14 @@
     <Content Include="Views\Strategies\Details.cshtml" />
     <Content Include="Views\Strategies\Edit.cshtml" />
     <Content Include="Views\Strategies\Index.cshtml" />
+    <Content Include="Views\Strategies\CreateGoals.cshtml" />
+    <Content Include="Views\Shared\EditorTemplates\Goal.cshtml" />
+    <Content Include="Views\Strategies\EditorTemplates\Goal.cshtml" />
+    <Content Include="Views\Strategies\EditorTemplates\StrategyGoalViewModel.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="Views\Shared\DisplayTemplates\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />

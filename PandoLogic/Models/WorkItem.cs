@@ -45,6 +45,10 @@ namespace PandoLogic.Models
         public string AssigneeId { get; set; }
         public virtual ApplicationUser Assignee { get; set; }
 
+        [Display(Name = "Start Date")]
+        [DataType(DataType.DateTime)]
+        public DateTime? StartDate { get; set; }
+
         [Display(Name = "Due Date")]
         [DataType(DataType.DateTime)]
         public DateTime? DueDate { get; set; }
@@ -63,6 +67,8 @@ namespace PandoLogic.Models
 
         [Display(Name = "Completed Date")]
         public DateTime? CompletedDate { get; set; }
+
+        public bool IsTemplate { get; set; }
     }
 
     public static class WorkItemExtensions

@@ -18,7 +18,7 @@
     </div>
     <div class="box-body no-padding">
         <div class="table-responsive">
-            <table class="table table-striped">
+            <table class="table table-condensed">
                 <tbody>
                     <tr>
                         <th></th>
@@ -61,7 +61,7 @@
                     @if (showAll.HasValue && showAll.Value)
                     {
                         string showAllTitle = ViewBag.TaskBoxShowAllTitle ?? "Show All";
-                        
+
                         <tr>
                             <td colspan="3" class="text-center">
                                 <a href="@ViewBag.TaskBoxShowAllUrl">

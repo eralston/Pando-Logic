@@ -4,6 +4,9 @@
 
 @{
     DateTime? currentDateTime = null;
+
+    DateTime today = DateTime.Now;
+    DateTime yesterday = today.AddDays(-1);
 }
 
 @if (Model.Count() > 0)
@@ -17,7 +20,19 @@
                 currentDateTime = activity.CreatedDate;
                 <li class="time-label">
                     <span class="bg-aqua">
-                        @currentDateTime.Value.ToString("D")
+                        @if (currentDateTime.Value.Date == today.Date)
+                        {
+                            <span>Today</span>
+                        }
+                        else if (currentDateTime.Value.Date == yesterday.Date)
+                        {
+                            <span>Yesterday</span>
+                        }
+                        else
+                        {
+                            @currentDateTime.Value.ToString("D")
+                        }
+                        
                     </span>
                 </li>
             }
@@ -30,9 +45,9 @@
                 <div class="timeline-item">
                     <span class="time">
                         @{
-                             bool? isFomActivityFeed = ViewBag.IsFromActivityFeed;
-                             string deleteActionName = isFomActivityFeed.HasValue && isFomActivityFeed.Value ? "DeleteActivity" : "Delete";
-                             string editActionName = isFomActivityFeed.HasValue && isFomActivityFeed.Value ? "EditActivity" : "Edit";
+            bool? isFomActivityFeed = ViewBag.IsFromActivityFeed;
+            string deleteActionName = isFomActivityFeed.HasValue && isFomActivityFeed.Value ? "DeleteActivity" : "Delete";
+            string editActionName = isFomActivityFeed.HasValue && isFomActivityFeed.Value ? "EditActivity" : "Edit";
                         }
                         <a href="@Url.Action(editActionName, "Activities", new { id = activity.Id })">
                             <i class="fa fa-pencil"></i>

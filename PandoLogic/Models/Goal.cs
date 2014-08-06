@@ -30,8 +30,12 @@ namespace PandoLogic.Models
 
         // To-One on Company
         [ForeignKey("Company")]
-        public int CompanyId { get; set; }
+        public int? CompanyId { get; set; }
         public virtual Company Company { get; set; }
+
+        [Display(Name = "Start Date")]
+        [DataType(DataType.DateTime)]
+        public DateTime? StartDate { get; set; }
 
         [Display(Name = "Due Date")]
         [DataType(DataType.DateTime)]
@@ -51,6 +55,8 @@ namespace PandoLogic.Models
 
         [Display(Name = "Archive Date")]
         public DateTime? ArchiveDate { get; set; }
+
+        public bool IsTemplate { get; set; }
 
         #region Methods
 
