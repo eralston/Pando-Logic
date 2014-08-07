@@ -84,6 +84,10 @@ namespace PandoLogic.Models
             newGoalTemplate.Title = existingGoal.Title;
             newGoalTemplate.Description = existingGoal.Description;
 
+            if(Goals == null)
+            {
+                Goals = new List<StrategyGoal>();
+            }
             Goals.Add(newStrategyGoal);
         }
 

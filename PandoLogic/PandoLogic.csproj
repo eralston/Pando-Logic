@@ -878,10 +878,10 @@
     <Content Include="Views\Strategies\Details.cshtml" />
     <Content Include="Views\Strategies\Edit.cshtml" />
     <Content Include="Views\Strategies\Index.cshtml" />
-    <Content Include="Views\Strategies\CreateGoals.cshtml" />
     <Content Include="Views\Shared\EditorTemplates\Goal.cshtml" />
     <Content Include="Views\Strategies\EditorTemplates\Goal.cshtml" />
-    <Content Include="Views\Strategies\EditorTemplates\StrategyGoalViewModel.cshtml" />
+    <Content Include="Views\Strategies\EditorTemplates\ChildWorkItemViewModel.cshtml" />
+    <Content Include="Views\Strategies\CreateTasks.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

@@ -1,14 +1,15 @@
 ﻿@using PandoLogic
 @using PandoLogic.Controllers
 @using PandoLogic.Models
-@model StrategyGoalViewModel
+@model ChildWorkItemViewModel
 @{
+    string removeTitle = string.Format("Remove {0}", ViewBag.ChildModelTitle);
 }
 <div class="box-footer goal">
-    <h4>Goal <span class="index">@Model.Ordinal</span></h4>
+    <h4>@ViewBag.ChildModelTitle <span class="index">@Model.Ordinal</span></h4>
     @Html.HiddenFor(sp => sp.IsMarkedForDelete, new { @class = "mark-for-delete" })
-    @Html.RemoveLink("Remove Goal", "div.goal", "input.mark-for-delete")
-    
+    @Html.RemoveLink(removeTitle, "div.goal", "input.mark-for-delete")
+
     <div class="form-group">
         @Html.LabelFor(model => model.Title, htmlAttributes: new { @class = "control-label" })
         @Html.EditorFor(model => model.Title, new { htmlAttributes = new { @class = "form-control", placeholder = Html.DisplayNameFor(model => model.Title) } })

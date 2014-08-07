@@ -15,39 +15,80 @@ using System.ComponentModel.DataAnnotations;
 namespace PandoLogic.Controllers
 {
     [NotMapped]
-    public class StrategyViewModel : Strategy
+    public class ParentWorkItemViewModel
     {
-        public StrategyViewModel() { }
+        #region Properties
 
-        public StrategyViewModel(Strategy strategy)
+        public int Id { get; set; }
+
+        [Required]
+        [MaxLength(100)]
+        public virtual string Title { get; set; }
+
+        [ConditionalRequired(IgnoreFlagName="IsSummaryRequired", IgnoreFlagValue=false)]
+        [MaxLength(200)]
+        public string Summary { get; set; }
+
+        [Required]
+        [DataType(DataType.MultilineText)]
+        public string Description { get; set; }
+
+        public StrategyInterval Interval { get; set; }
+
+        public bool IsSummaryRequired { get; set; }
+
+        public List<ChildWorkItemViewModel> Children { get; set; }
+
+        #endregion
+
+        #region Methods
+
+        public ParentWorkItemViewModel() { }
+
+        public ParentWorkItemViewModel(Strategy strategy)
         {
-            strategy.CopyProperties(this);
-            StrategyGoals = new List<StrategyGoalViewModel>();
+            Id = strategy.Id;
+            Title = strategy.Title;
+            Summary = strategy.Summary;
+            Description = strategy.Description;
+            Children = new List<ChildWorkItemViewModel>();
         }
 
-        public List<StrategyGoalViewModel> StrategyGoals { get; set; }
-
-        public void CreatePhases(int count = 1)
+        public ParentWorkItemViewModel(Goal goal)
         {
+            Id = goal.Id;
+            Title = goal.Title;
+            Description = goal.Description;
+            Children = new List<ChildWorkItemViewModel>();
+        }
+
+        public void CreateChildren(int count = 1)
+        {
+            if (Children == null)
+            {
+                Children = new List<ChildWorkItemViewModel>();
+            }
             for (int i = 0; i < count; i++)
             {
-                StrategyGoals.Add(new StrategyGoalViewModel());
+                Children.Add(new ChildWorkItemViewModel());
             }
         }
 
-        public void MarkPhaseOrder()
+        public void MarkOrder()
         {
             int i = 1;
-            foreach (StrategyGoalViewModel phase in StrategyGoals)
+            foreach (ChildWorkItemViewModel phase in Children)
             {
                 phase.Ordinal = i;
                 ++i;
             }
         }
+
+        #endregion
     }
 
     [NotMapped]
-    public class StrategyGoalViewModel
+    public class ChildWorkItemViewModel
     {
         public int Ordinal { get; set; }
 
@@ -63,6 +104,24 @@ namespace PandoLogic.Controllers
 
     public class StrategiesController : BaseController
     {
+        #region Methods
+
+        private void ValidateHasChildren(ParentWorkItemViewModel strategyViewModel, string errorMessage)
+        {
+            // Validate children
+            if (strategyViewModel.Children != null)
+            {
+                strategyViewModel.Children = strategyViewModel.Children.Where(c => c.IsMarkedForDelete == false).ToList();
+            }
+
+            if (strategyViewModel.Children == null || strategyViewModel.Children.Count == 0)
+            {
+                ModelState.AddModelError("Custom", errorMessage);
+            }
+        }
+
+        #endregion
+
         // GET: Strategies
         public async Task<ActionResult> Index()
         {
@@ -88,7 +147,11 @@ namespace PandoLogic.Controllers
         // GET: Strategies/Create
         public ActionResult Create()
         {
-            return View();
+            ParentWorkItemViewModel viewModel = new ParentWorkItemViewModel();
+            viewModel.CreateChildren();
+            viewModel.MarkOrder();
+            viewModel.IsSummaryRequired = true;
+            return View(viewModel);
         }
 
         // POST: Strategies/Create
@@ -96,67 +159,99 @@ namespace PandoLogic.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Create([Bind(Include = "Summary,Title,Description")] Strategy strategy)
+        public async Task<ActionResult> Create(ParentWorkItemViewModel strategyViewModel)
         {
+            ValidateHasChildren(strategyViewModel, "Strategies must contain at least one goal");
+
             if (ModelState.IsValid)
             {
                 ApplicationUser user = await GetCurrentUserAsync();
 
+                Strategy strategy = Db.Strategies.Create();
                 strategy.CreatedDate = DateTime.Now;
                 strategy.AuthorId = user.Id;
+
+                strategy.Title = strategyViewModel.Title;
+                strategy.Summary = strategyViewModel.Summary;
+                strategy.Description = strategyViewModel.Description;
+                strategy.Interval = strategyViewModel.Interval;
+
                 Db.Strategies.Add(strategy);
+
+                foreach (ChildWorkItemViewModel strategyGoal in strategyViewModel.Children)
+                {
+                    Goal goal = new Goal();
+                    goal.Title = strategyGoal.Title;
+                    goal.Description = strategyGoal.Description;
+                    strategy.AddCopyOfGoalAsTemplate(goal);
+                }
 
                 await Db.SaveChangesAsync();
 
-                return RedirectToAction("CreateGoals", new { id = strategy.Id });
+                int goalId = strategy.Goals.OrderBy(g => g.Id).First().GoalId;
+
+                return RedirectToAction("CreateTasks", new { id = goalId });
             }
-            return View(strategy);
+
+            strategyViewModel.IsSummaryRequired = true;
+            strategyViewModel.MarkOrder();
+            return View(strategyViewModel);
         }
 
-        /// <summary>
-        /// Creates 
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
-        public async Task<ActionResult> CreateGoals(int id)
+        public async Task<ActionResult> CreateTasks(int id)
         {
-            Strategy strategy = await Db.Strategies.FindAsync(id);
-            StrategyViewModel strategyVm = new StrategyViewModel(strategy);
-            strategyVm.CreatePhases(1);
-
-            strategyVm.MarkPhaseOrder();
+            Goal goal = await Db.Goals.FindAsync(id);
+            ParentWorkItemViewModel strategyVm = new ParentWorkItemViewModel(goal);
+            strategyVm.CreateChildren(1);
+            strategyVm.MarkOrder();
+            strategyVm.IsSummaryRequired = false;
             return View(strategyVm);
         }
 
         [HttpPost]
-        public async Task<ActionResult> CreateGoals(StrategyViewModel strategyViewModel)
+        public async Task<ActionResult> CreateTasks(ParentWorkItemViewModel goalViewModel)
         {
+            ValidateHasChildren(goalViewModel, "Goals must contain at least one task");
+
             if (ModelState.IsValid)
             {
-                Strategy strategy = await Db.Strategies.FindAsync(strategyViewModel.Id);
-                strategy.Interval = strategyViewModel.Interval;
+                Goal goal = await Db.Goals.FindAsync(goalViewModel.Id);
 
-                foreach (StrategyGoalViewModel strategyGoal in strategyViewModel.StrategyGoals)
+                foreach (ChildWorkItemViewModel taskViewModel in goalViewModel.Children)
                 {
-                    if(!strategyGoal.IsMarkedForDelete)
+                    if (!taskViewModel.IsMarkedForDelete)
                     {
-                        Goal goal = new Goal();
-                        goal.Title = strategyGoal.Title;
-                        goal.Description = strategyGoal.Description;
-                        strategy.AddCopyOfGoalAsTemplate(goal);
+                        WorkItem task = new WorkItem();
+                        task.Title = taskViewModel.Title;
+                        task.Description = taskViewModel.Description;
+                        task.IsTemplate = true;
+                        task.Goal = goal;
                     }
                 }
 
-                Db.Entry(strategy).State = EntityState.Modified;
+                Db.Entry(goal).State = EntityState.Modified;
 
                 await Db.SaveChangesAsync();
 
-                return RedirectToAction("Index");
+                StrategyGoal strategyGoal = await Db.StrategyGoals.Where(sg => sg.GoalId == goal.Id).Include(sg => sg.Goal).Include(sg => sg.Strategy.Goals).FirstOrDefaultAsync();
+                StrategyGoal[] goals = strategyGoal.Strategy.Goals.OrderBy(g => g.Id).ToArray();
+                int index = Array.IndexOf(goals, strategyGoal);
+                int next = index + 1;
+                if (next == goals.Length)
+                {
+                    return RedirectToAction("Index");
+                }
+                else
+                {
+                    StrategyGoal sg = goals[next];
+                    return RedirectToAction("CreateTasks", new { id = sg.GoalId });
+                }
             }
 
-            strategyViewModel.MarkPhaseOrder();
+            goalViewModel.IsSummaryRequired = false;
+            goalViewModel.MarkOrder();
 
-            return View(strategyViewModel);
+            return View(goalViewModel);
         }
 
         // GET: Strategies/Edit/5

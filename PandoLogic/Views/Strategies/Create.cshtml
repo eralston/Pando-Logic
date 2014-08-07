@@ -1,7 +1,9 @@
-﻿@model PandoLogic.Models.Strategy
+﻿@using PandoLogic.Controllers
+@model ParentWorkItemViewModel
 
 @{
     ViewBag.Title = "Create Strategy";
+    ViewBag.ChildModelTitle = "Goal";
 }
 
 <div class="row">
@@ -16,9 +18,11 @@
                 @using (Html.BeginForm())
                 {
                     @Html.AntiForgeryToken()
+                    @Html.HiddenFor(model => model.IsSummaryRequired)
 
                     <div class="form-group">
                         @Html.LabelFor(model => model.Title, htmlAttributes: new { @class = "control-label" })
+                        <p class="text-muted">Maximum 100 Characters</p>
                         <div class="">
                             @Html.EditorFor(model => model.Title, new { htmlAttributes = new { @class = "form-control" } })
                             @Html.ValidationMessageFor(model => model.Title, "", new { @class = "text-danger" })
@@ -27,7 +31,7 @@
 
                     <div class="form-group">
                         @Html.LabelFor(model => model.Summary, htmlAttributes: new { @class = "control-label" })
-                        <p class="text-muted">Maximum 100 Characters</p>
+                        <p class="text-muted">Maximum 200 Characters</p>
                         <div class="">
                             @Html.EditorFor(model => model.Summary, new { htmlAttributes = new { @class = "form-control" } })
                             @Html.ValidationMessageFor(model => model.Summary, "", new { @class = "text-danger" })
@@ -41,9 +45,21 @@
                             @Html.ValidationMessageFor(model => model.Description, "", new { @class = "text-danger" })
                         </div>
                     </div>
+                    <div id="goals" class="dynamic-child-list">
+                        @Html.EditorFor(model => model.Children)
+                    </div>
 
-                    <input type="submit" value="Create" class="btn btn-primary" />
-                    @Html.ActionLink("Cancel", "Index")
+                    <div class="box-body">
+                        <div class="form-group">
+                            @Html.AddLink("Add Task", "#goals", ".goal", "Children", typeof(ChildWorkItemViewModel), "btn btn-default")
+                        </div>
+                        <div class="form-group">
+                            <button class="btn btn-primary">
+                                Create Strategy &amp; Continue
+                            </button>
+                            @Html.ActionLink("Cancel", "Index")
+                        </div>
+                    </div>
                 }
             </div>
         </div>

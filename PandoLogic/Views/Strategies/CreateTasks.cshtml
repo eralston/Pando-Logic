@@ -1,21 +1,18 @@
 ﻿@using PandoLogic.Controllers
-@model StrategyViewModel
+@model ParentWorkItemViewModel
 
 @{
-    ViewBag.Title = "Create Goals for Strategy";
+    ViewBag.Title = "Create Tasks for Goal";
+    ViewBag.ChildModelTitle = "Task";
 }
 
 <div class="row">
     <div class="col-md-6">
         <div class="box box-primary">
             <div class="box-header">
-                <h3 class="box-title">Creates Goals for Strategy "@Html.DisplayFor(s => s.Title)"</h3>
+                <h3 class="box-title">Creates Tasks for Goal "@Html.DisplayFor(s => s.Title)"</h3>
             </div>
             <div class="callout callout-info">
-                <p class="text-light-blue">Summary</p>
-                <p>
-                    @Html.DisplayFor(s => s.Summary)
-                </p>
                 @if (!string.IsNullOrEmpty(Model.Description))
                 {
                     <p class="text-light-blue">Description</p>
@@ -25,34 +22,28 @@
                 }
             </div>
 
-
             @using (Html.BeginForm())
             {
                 <div class="box-body">
                     @Html.AntiForgeryToken()
 
                     @Html.HiddenFor(s => s.Id)
-                    @Html.HiddenFor(s=> s.Title)
-                    @Html.HiddenFor(s=>s.Summary)
-                    @Html.HiddenFor(s=> s.Description)
-
-                    <div class="form-group">
-                        @Html.LabelFor(s => s.Interval)
-                        @Html.EnumDropDownListFor(s => s.Interval, new { @class = "form-control" })
-                    </div>
+                    @Html.HiddenFor(s => s.Title)
+                    @Html.HiddenFor(s => s.Description)
+                    @Html.HiddenFor(s => s.IsSummaryRequired)
                 </div>
 
                 <div id="goals" class="dynamic-child-list">
-                    @Html.EditorFor(model => model.StrategyGoals)
+                    @Html.EditorFor(model => model.Children)
                 </div>
 
                 <div class="box-body">
                     <div class="form-group">
-                        @Html.AddLink("Add Goal", "#goals", ".goal", "StrategyGoals", typeof(StrategyGoalViewModel), "btn btn-default")
+                        @Html.AddLink("Add Task", "#goals", ".goal", "Children", typeof(ChildWorkItemViewModel), "btn btn-default")
                     </div>
                     <div class="form-group">
-                        <button class="btn btn-primary btn-block">
-                            Save Goals
+                        <button class="btn btn-primary">
+                            Save Tasks &amp; Continue
                         </button>
                     </div>
                 </div>
