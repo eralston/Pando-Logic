@@ -19,6 +19,20 @@
             </div>
             <div class="box-body">
                 <div class="pull-right">
+                    @if (ViewBag.IsStrategyBookmarked)
+                    {
+                        <span>
+                            @Html.ActionLink("Unbookmark", "unbookmark", new { id = Model.Id })
+                        </span>
+                        
+                    }
+                    else
+                    {
+                        <span>
+                            @Html.ActionLink("Bookmark", "bookmark", new { id = Model.Id })
+                        </span>
+                        
+                    } |
                     @Html.ActionLink("Edit", "Edit", new { id = Model.Id }) |
                     @Html.ActionLink("Delete", "Delete", new { id = Model.Id })
                 </div>

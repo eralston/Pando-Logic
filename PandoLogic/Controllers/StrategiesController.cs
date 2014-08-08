@@ -126,6 +126,7 @@ namespace PandoLogic.Controllers
         public async Task<ActionResult> Index()
         {
             var strategies = Db.Strategies.Include(s => s.Author);
+            ViewBag.BookmarkedStrategies = await Db.StrategyBookmarks.StrategiesWhereBookmarkedByUserAsync(UserCache.Id);
             return View(await strategies.ToListAsync());
         }
 
@@ -141,6 +142,9 @@ namespace PandoLogic.Controllers
             {
                 return HttpNotFound();
             }
+
+            ViewBag.IsStrategyBookmarked = await Db.StrategyBookmarks.IsBookmarked(UserCache.Id, id.Value);
+
             strategy.LoadComments(this, "CreateStrategy");
             strategy.MarkOrder();
             return View(strategy);
@@ -309,6 +313,33 @@ namespace PandoLogic.Controllers
             Db.Strategies.Remove(strategy);
             await Db.SaveChangesAsync();
             return RedirectToAction("Index");
+        }
+
+        public async Task<ActionResult> Bookmark(int id)
+        {
+            StrategyBookmark bookmark = await Db.StrategyBookmarks.FindBookmarkAsync(UserCache.Id, id);
+            if(bookmark == null)
+            {
+                bookmark = Db.StrategyBookmarks.Create(UserCache.Id, id);
+
+                await Db.SaveChangesAsync();
+            }
+            
+
+            return RedirectToAction("Details", new { id = id });
+        }
+
+        public async Task<ActionResult> Unbookmark(int id)
+        {
+            StrategyBookmark bookmark = await Db.StrategyBookmarks.FindBookmarkAsync(UserCache.Id, id);
+            if(bookmark != null)
+            {
+                Db.StrategyBookmarks.Remove(bookmark);
+
+                await Db.SaveChangesAsync();
+            }
+
+            return RedirectToAction("Details", new { id = id });
         }
     }
 }

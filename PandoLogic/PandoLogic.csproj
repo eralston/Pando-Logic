@@ -234,6 +234,7 @@
     <Compile Include="Models\Member.cs" />
     <Compile Include="Models\PhoneNumber.cs" />
     <Compile Include="Models\Strategy.cs" />
+    <Compile Include="Models\StrategyBookmark.cs" />
     <Compile Include="Models\StrategyGoal.cs" />
     <Compile Include="Models\WorkItem.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -886,6 +887,7 @@
     <Content Include="Views\Strategies\DisplayTemplates\WorkItem.cshtml" />
     <Content Include="Views\Strategies\_StrategyDetails.cshtml" />
     <Content Include="Views\Strategies\DisplayTemplates\StrategyGoal.cshtml" />
+    <Content Include="Views\Strategies\_StrategyTable.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
