@@ -59,20 +59,20 @@ namespace PandoLogic.Models
 
         public static async Task<StrategyBookmark> FindBookmarkAsync(this DbSet<StrategyBookmark> bookmarks, string userId, int strategyId)
         {
-            StrategyBookmark bookmark = await bookmarks.Where(sb => sb.UserId == userId && sb.StrategyId == strategyId).FirstOrDefaultAsync();
+            StrategyBookmark bookmark = await bookmarks.Where(sb => sb.UserId == userId && sb.StrategyId == strategyId && !sb.Strategy.IsDeleted).FirstOrDefaultAsync();
             return bookmark;
         }
 
         public static IQueryable<StrategyBookmark> WhereUser(this DbSet<StrategyBookmark> bookmarks, string userId)
         {
-            return bookmarks.Where(b => b.UserId == userId).Include(b => b.Strategy).OrderBy(b => b.CreatedDate);
+            return bookmarks.Where(b => b.UserId == userId && !b.Strategy.IsDeleted).Include(b => b.Strategy).OrderBy(b => b.CreatedDate);
         }
 
         public static async Task<IEnumerable<Strategy>> StrategiesWhereBookmarkedByUserAsync(this DbSet<StrategyBookmark> bookmarks, string userId)
         {
             StrategyBookmark[] marks = await bookmarks.WhereUser(userId).ToArrayAsync();
             List<Strategy> strategies = new List<Strategy>();
-            foreach(StrategyBookmark mark in marks)
+            foreach (StrategyBookmark mark in marks)
             {
                 strategies.Add(mark.Strategy);
             }

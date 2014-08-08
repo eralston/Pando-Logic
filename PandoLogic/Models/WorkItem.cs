@@ -101,5 +101,29 @@ namespace PandoLogic.Models
                 context.WorkItems.Remove(item);
             }
         }
+
+        public static WorkItem Create(this DbSet<WorkItem> tasks, int companyId, string userId)
+        {
+            WorkItem task = tasks.Create();
+
+            task.CreatedDate = DateTime.Now;
+            task.CreatorId = userId;
+            task.CompanyId = companyId;
+
+            tasks.Add(task);
+
+            return task;
+        }
+
+        public static WorkItem CreateFromTemplate(this DbSet<WorkItem> tasks, WorkItem template, int companyId, string userId)
+        {
+            WorkItem task = tasks.Create(companyId, userId);
+
+            task.Title = template.Title;
+            task.Description = template.Description;
+            task.EstimatedTime = template.EstimatedTime;
+
+            return task;
+        }
     }
 }

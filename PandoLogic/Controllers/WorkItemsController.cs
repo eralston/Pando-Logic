@@ -26,7 +26,8 @@ namespace PandoLogic.Controllers
             this.Id = workItem.Id;
             this.Title = workItem.Title;
             this.Description = workItem.Description;
-            this.DueDateString = workItem.DueDate.Value.ToString("d");
+            if (workItem.DueDate.HasValue)
+                this.DueDateString = workItem.DueDate.Value.ToString("d");
         }
 
         [Required]
@@ -93,18 +94,18 @@ namespace PandoLogic.Controllers
                     return RedirectToAction("Index");
 
                 ViewBag.GoalId = id;
-                query = Db.WorkItems.WhereGoal(id.Value).OrderBy(w=>w.DueDate);
+                query = Db.WorkItems.WhereGoal(id.Value).OrderBy(w => w.DueDate);
             }
             else
             {
                 int companyId = UserCache.SelectedCompanyId;
-                query = Db.WorkItems.WhereCompany(companyId).OrderBy(w=>w.DueDate);
+                query = Db.WorkItems.WhereCompany(companyId).OrderBy(w => w.DueDate);
             }
 
             // filter on querystring logic 
             var showAll = (Request.QueryString["ShowAll"] ?? "").ToUpper() == "TRUE";
 
-            if(!showAll)
+            if (!showAll)
             {
                 query = query.Where(w => w.CompletedDate == null);
                 ViewBag.TaskBoxShowAll = true;

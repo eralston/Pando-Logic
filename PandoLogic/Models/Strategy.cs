@@ -58,6 +58,8 @@ namespace PandoLogic.Models
         // To-Many on StrategyGoal
         public virtual ICollection<StrategyGoal> Goals { get; set; }
 
+        public bool IsDeleted { get; set; }
+
 
         #region Methods For Managing Child Goals
 
@@ -70,11 +72,11 @@ namespace PandoLogic.Models
             // Make a new goal and link to strategy
             StrategyGoal newStrategyGoal = new StrategyGoal();
             Goal newGoalTemplate = new Goal();
-            
+
             // Link the objects to this strategy 
-            newStrategyGoal.Strategy = this;            
+            newStrategyGoal.Strategy = this;
             newStrategyGoal.Goal = newGoalTemplate;
-            
+
             // Set the fixed fields
             newStrategyGoal.CreatedDate = DateTime.Now;
             newGoalTemplate.CreatedDate = newStrategyGoal.CreatedDate;
@@ -84,7 +86,7 @@ namespace PandoLogic.Models
             newGoalTemplate.Title = existingGoal.Title;
             newGoalTemplate.Description = existingGoal.Description;
 
-            if(Goals == null)
+            if (Goals == null)
             {
                 Goals = new List<StrategyGoal>();
             }
@@ -94,7 +96,7 @@ namespace PandoLogic.Models
         #endregion
 
         #region Methods
-         
+
         public int ShiftForDayOfWeek(DayOfWeek day)
         {
             return (8 - (int)day) % 7;
@@ -123,7 +125,7 @@ namespace PandoLogic.Models
             if (Interval == StrategyInterval.Months)
             {
                 // Find the next start of the month
-                while(now.Day != 1)
+                while (now.Day != 1)
                 {
                     now = now.AddDays(1);
                 }
@@ -142,7 +144,7 @@ namespace PandoLogic.Models
 
                 case StrategyInterval.Days:
                     return startDate.AddDays(1);
-                    
+
                 case StrategyInterval.Weeks:
                     return startDate.AddDays(4);
 
@@ -154,9 +156,9 @@ namespace PandoLogic.Models
             }
         }
 
-        public DateTime GetNextStartDateForInterval(DateTime previousStartDate, StrategyInterval interval)
+        public DateTime GetNextStartDateForInterval(DateTime previousStartDate)
         {
-            switch(interval)
+            switch (this.Interval)
             {
                 case StrategyInterval.Days: return previousStartDate.AddDays(1);
                 case StrategyInterval.Weeks: return previousStartDate.AddDays(7);
@@ -168,16 +170,50 @@ namespace PandoLogic.Models
 
         public void MarkOrder()
         {
-            if(Goals == null)
+            if (Goals == null)
             {
                 return;
             }
 
             int order = 0;
-            foreach(StrategyGoal sg in Goals)
+            foreach (StrategyGoal sg in Goals)
             {
                 sg.Goal.Ordinal = order;
                 ++order;
+            }
+        }
+
+        #endregion
+
+        #region Adopt Methods
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="context"></param>
+        /// <param name="userId"></param>
+        /// <param name="companyId"></param>
+        public void Adopt(ApplicationDbContext context, string userId, int companyId)
+        {
+            StrategyAdoption adoption = context.StrategyAdoptions.Create(userId, companyId, this);
+
+            DateTime goalStartDate = GetFirstStartDateForIntervalFromNow();
+            DateTime? goalDueDate = GetDueDateFromStartForInterval(goalStartDate);
+
+            foreach (StrategyGoal strategyGoal in this.Goals)
+            {
+                Goal goal = strategyGoal.Goal;
+
+                Goal newGoal = context.Goals.CreateFromTemplate(context.WorkItems, goal, companyId, userId);
+
+                newGoal.StartDate = goalStartDate;
+                newGoal.DueDate = goalDueDate;
+
+                adoption.Goals.Add(newGoal);
+
+                // Calculate next
+                goalStartDate = GetNextStartDateForInterval(goalStartDate);
+                goalDueDate = GetDueDateFromStartForInterval(goalStartDate);
             }
         }
 
@@ -188,5 +224,19 @@ namespace PandoLogic.Models
         public virtual ICollection<Activity> Comments { get; set; }
 
         #endregion
+    }
+
+
+    public static class StrategyExtensions
+    {
+        public static IQueryable<Strategy> WhereMadeByUser(this DbSet<Strategy> strategies, string userId)
+        {
+            return strategies.Where(s => s.AuthorId == userId && !s.IsDeleted).Include(s => s.Goals).OrderByDescending(s => s.CreatedDate);
+        }
+
+        public static IQueryable<Strategy> WhereLatestFive(this DbSet<Strategy> strategies)
+        {
+            return strategies.Where(s => !s.IsDeleted).Include(s => s.Author).OrderByDescending(s => s.CreatedDate).Take(5);
+        }
     }
 }

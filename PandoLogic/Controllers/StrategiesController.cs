@@ -125,9 +125,10 @@ namespace PandoLogic.Controllers
         // GET: Strategies
         public async Task<ActionResult> Index()
         {
-            var strategies = Db.Strategies.Include(s => s.Author);
+            var strategies = await Db.Strategies.WhereLatestFive().ToArrayAsync();
             ViewBag.BookmarkedStrategies = await Db.StrategyBookmarks.StrategiesWhereBookmarkedByUserAsync(UserCache.Id);
-            return View(await strategies.ToListAsync());
+            ViewBag.MyStrategies = await Db.Strategies.WhereMadeByUser(UserCache.Id).ToArrayAsync();
+            return View(strategies);
         }
 
         // GET: Strategies/Details/5
@@ -144,6 +145,8 @@ namespace PandoLogic.Controllers
             }
 
             ViewBag.IsStrategyBookmarked = await Db.StrategyBookmarks.IsBookmarked(UserCache.Id, id.Value);
+
+            ViewBag.IsMyStrategy = strategy.AuthorId == UserCache.Id;
 
             strategy.LoadComments(this, "CreateStrategy");
             strategy.MarkOrder();
@@ -310,7 +313,7 @@ namespace PandoLogic.Controllers
         public async Task<ActionResult> DeleteConfirmed(int id)
         {
             Strategy strategy = await Db.Strategies.FindAsync(id);
-            Db.Strategies.Remove(strategy);
+            strategy.IsDeleted = true;
             await Db.SaveChangesAsync();
             return RedirectToAction("Index");
         }
@@ -340,6 +343,30 @@ namespace PandoLogic.Controllers
             }
 
             return RedirectToAction("Details", new { id = id });
+        }
+
+        public async Task<ActionResult> Adopt(int id)
+        {
+            Strategy strategy = await Db.Strategies.FindAsync(id);
+            if (strategy == null)
+            {
+                return HttpNotFound();
+            }
+            return View(strategy);
+        }
+
+        // POST: Strategies/Delete/5
+        [HttpPost, ActionName("Adopt")]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> AdoptConfirmed(int id)
+        {
+            Strategy strategy = await Db.Strategies.FindAsync(id);
+
+            strategy.Adopt(Db, UserCache.Id, UserCache.SelectedCompanyId);
+            
+            await Db.SaveChangesAsync();
+
+            return RedirectToAction("Index");
         }
     }
 }

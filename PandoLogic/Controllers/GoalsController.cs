@@ -27,7 +27,8 @@ namespace PandoLogic.Controllers
             this.Id = goal.Id;
             this.Title = goal.Title;
             this.Description = goal.Description;
-            this.DueDateString = goal.DueDate.Value.ToString("d");
+            if (goal.DueDate.HasValue)
+                this.DueDateString = goal.DueDate.Value.ToString("d");
         }
 
         [Required]
@@ -55,20 +56,20 @@ namespace PandoLogic.Controllers
         {
             IQueryable<WorkItem> query = Db.WorkItems.WhereGoal(goal.Id).OrderBy(t => t.DueDate);
 
-            if(limited)
+            if (limited)
             {
                 query = query.Take(5).Where(w => w.CompletedDate == null);
-            }                
+            }
 
             ViewBag.Tasks = await query.ToArrayAsync();
             ViewBag.GoalId = goal.Id;
 
-            if(limited)
+            if (limited)
             {
                 ViewBag.TaskBoxShowAll = true;
                 ViewBag.TaskBoxShowAllUrl = Url.Action("Tasks", "Goals", new { id = goal.Id });
                 goal.LoadComments(this, "CreateGoal");
-            }            
+            }
         }
 
         private IQueryable<Goal> BuildGoalQuery(bool limited, Member currentMember)
@@ -101,7 +102,7 @@ namespace PandoLogic.Controllers
 
             if (!showAll)
             {
-                query = query.Where(g =>g.ArchiveDate == null);
+                query = query.Where(g => g.ArchiveDate == null);
                 ViewBag.GoalBoxShowAll = true;
                 ViewBag.GoalBoxShowAllUrl = Url.Action("Index", new { ShowAll = true });
                 ViewBag.GoalBoxShowAllTitle = "Show Archived";
@@ -175,7 +176,7 @@ namespace PandoLogic.Controllers
             if (ModelState.IsValid)
             {
                 Goal goal = Db.Goals.Create();
-                
+
                 Member currentMember = await GetCurrentMemberAsync();
 
                 goal.DueDate = goalViewModel.ParsedDueDateTime();
@@ -315,7 +316,7 @@ namespace PandoLogic.Controllers
             {
                 return HttpNotFound();
             }
-            
+
             goal.Archive();
 
             // Setup the new activity and save

@@ -51,7 +51,14 @@
                                 {
                                     <i class="fa fa-warning" title="This task is overdue"></i>
                                 }
-                                @item.DueDate.Value.ToString("d")
+                                @if (item.DueDate.HasValue)
+                                {
+                                    <span>@item.DueDate.Value.ToString("d")</span>
+                                }
+                                else
+                                {
+                                    <span>Unassigned</span>
+                                }
                             </td>
                         </tr>
                     }

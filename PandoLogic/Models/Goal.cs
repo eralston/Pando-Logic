@@ -147,5 +147,38 @@ namespace PandoLogic.Models
             int companyId = member.CompanyId;
             return goals.Where(g => g.CompanyId == companyId);
         }
+
+        public static Goal Create(this DbSet<Goal> goals, int companyId, string userId)
+        {
+            Goal goal = goals.Create();
+
+            goal.CreatedDate = DateTime.Now;
+            goal.CompanyId = companyId;
+            goal.CreatorId = userId;
+
+            goal.WorkItems = new List<WorkItem>();
+
+            goals.Add(goal);
+
+            return goal;
+        }
+
+        public static Goal CreateFromTemplate(this DbSet<Goal> goals, DbSet<WorkItem> tasks, Goal template, int companyId, string userId)
+        {
+            Goal newGoal = goals.Create(companyId, userId);
+
+            newGoal.Title = template.Title;
+            newGoal.Description = template.Description;
+            newGoal.IsTemplate = false;
+
+            foreach(WorkItem taskTemplate in template.WorkItems)
+            {
+                WorkItem newTask = tasks.CreateFromTemplate(taskTemplate, companyId, userId);
+                newTask.Goal = newGoal;
+                newGoal.WorkItems.Add(newTask);
+            }
+
+            return newGoal;
+        }
     }
 }

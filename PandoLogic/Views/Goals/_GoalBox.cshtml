@@ -59,9 +59,20 @@
                                     {
                                         <i class="fa fa-warning" title="This task is overdue"></i>
                                     }
-                                    @goal.DueDate.Value.ToString("d")
+
+                                    if (goal.DueDate.HasValue)
+                                    {
+                                        <span>@goal.DueDate.Value.ToString("d")</span>
+                                    }
+                                    else
+                                    {
+                                        <span>Unassigned</span>
+                                    }
                                 }
                             </td>
+
+
+
                             <td>
                                 <div class="progress sm active">
                                     <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="@goal.CalculateProgress()" aria-valuemin="0" aria-valuemax="100" style="width: @goal.CalculateProgress()%">
