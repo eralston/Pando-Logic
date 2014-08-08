@@ -1,0 +1,50 @@
+﻿@using PandoLogic.Models
+@model Goal
+
+@{
+    string classes = Model.Ordinal == 0 ? "in" : "";
+    string accordionId = string.Format("collapse{0}", Model.Ordinal);
+    string accordionHref = string.Format("#{0}", accordionId);
+}
+
+<div class="panel box box-info">
+    <div class="box-header">
+        <h4 class="box-title">
+            <a data-toggle="collapse" data-parent="#accordion" href="@accordionHref">
+                @{
+                    int order = @Model.Ordinal + 1;
+                }
+                Goal @order - @Model.Title
+            </a>
+        </h4>
+    </div>
+    <div id="@accordionId" class="panel-collapse collapse @classes">
+        <div class="box-body">
+            @Html.DisplayFor(model => model.Description)
+        </div>
+        <div class="box-body no-padding">
+            <div class="table-responsive">
+                <table class="table table-condensed">
+                    <tbody>
+                        <tr>
+                            <th>Task Title</th>
+                            <th>Task Description</th>
+                        </tr>
+
+                        @foreach (WorkItem item in Model.WorkItems)
+                        {
+                            <tr class="">
+                                <td>
+                                    @item.Title
+                                </td>
+                                <td>
+                                    @item.Description
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

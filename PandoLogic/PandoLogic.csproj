@@ -882,6 +882,10 @@
     <Content Include="Views\Strategies\EditorTemplates\Goal.cshtml" />
     <Content Include="Views\Strategies\EditorTemplates\ChildWorkItemViewModel.cshtml" />
     <Content Include="Views\Strategies\CreateTasks.cshtml" />
+    <Content Include="Views\Strategies\DisplayTemplates\Goal.cshtml" />
+    <Content Include="Views\Strategies\DisplayTemplates\WorkItem.cshtml" />
+    <Content Include="Views\Strategies\_StrategyDetails.cshtml" />
+    <Content Include="Views\Strategies\DisplayTemplates\StrategyGoal.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

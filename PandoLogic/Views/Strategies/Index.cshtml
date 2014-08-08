@@ -1,7 +1,12 @@
 ﻿@model IEnumerable<PandoLogic.Models.Strategy>
 
 @{
-    ViewBag.Title = "Index";
+    ViewBag.Title = "Strategies";
+
+    ViewBag.Breadcrumb = new Breadcrumb(new Crumb[] {
+        new Crumb("Dashboard", Url.Action("Index","Home"), "fa-dashboard"),
+        new Crumb("Strategies", "", "fa-puzzle-piece")
+    });
 }
 
 <h2>Index</h2>

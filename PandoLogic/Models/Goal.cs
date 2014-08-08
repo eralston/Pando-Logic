@@ -58,6 +58,9 @@ namespace PandoLogic.Models
 
         public bool IsTemplate { get; set; }
 
+        [NotMapped]
+        public int Ordinal { get; set; }
+
         #region Methods
 
         public string CalculateProgress()
@@ -98,9 +101,9 @@ namespace PandoLogic.Models
 
             ArchiveDate = archiveDate;
 
-            foreach(WorkItem task in WorkItems)
+            foreach (WorkItem task in WorkItems)
             {
-                if(!task.CompletedDate.HasValue)
+                if (!task.CompletedDate.HasValue)
                 {
                     task.CompletedDate = archiveDate;
                 }

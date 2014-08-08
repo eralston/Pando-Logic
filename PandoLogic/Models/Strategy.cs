@@ -24,7 +24,7 @@ namespace PandoLogic.Models
     /// <summary>
     /// 
     /// </summary>
-    public class Strategy
+    public class Strategy : ICommentable
     {
         // Primary Key
         [Key]
@@ -165,6 +165,27 @@ namespace PandoLogic.Models
                     return previousStartDate;
             }
         }
+
+        public void MarkOrder()
+        {
+            if(Goals == null)
+            {
+                return;
+            }
+
+            int order = 0;
+            foreach(StrategyGoal sg in Goals)
+            {
+                sg.Goal.Ordinal = order;
+                ++order;
+            }
+        }
+
+        #endregion
+
+        #region ICommentable
+
+        public virtual ICollection<Activity> Comments { get; set; }
 
         #endregion
     }

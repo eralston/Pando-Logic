@@ -32,7 +32,7 @@ namespace PandoLogic.Models
 
         // To-One on Company
         [ForeignKey("Company")]
-        public int CompanyId { get; set; }
+        public int? CompanyId { get; set; }
         public virtual Company Company { get; set; }
 
         // To-One on Goal

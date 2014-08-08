@@ -128,6 +128,28 @@ namespace PandoLogic.Controllers
             return View(comment);
         }
 
+        // POST: Comments/CreateStrategy/{taskId}
+        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
+        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [Route("CreateStrategy/{id}")]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> CreateStrategy(int id, [Bind(Include = "Id,Title")] Activity comment)
+        {
+            if (ModelState.IsValid)
+            {
+                Strategy strategy = await Db.Strategies.FindAsync(id);
+
+                // TODO: Check goal is owned by user
+
+                await AddComment(comment, strategy);
+
+                return RedirectToAction("Details", "Strategies", new { id = id });
+            }
+
+            return View(comment);
+        }
+
         // GET: Comments/Edit/5
         public async Task<ActionResult> Edit(int? id)
         {

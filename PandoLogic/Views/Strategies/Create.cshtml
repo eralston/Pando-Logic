@@ -3,6 +3,13 @@
 
 @{
     ViewBag.Title = "Create Strategy";
+
+    ViewBag.Breadcrumb = new Breadcrumb(new Crumb[] {
+        new Crumb("Dashboard", Url.Action("Index","Home"), "fa-dashboard"),
+        new Crumb("Strategies", Url.Action("Index","Strategies"), "fa-puzzle-piece"),
+        new Crumb("Create Strategy")
+    });
+
     ViewBag.ChildModelTitle = "Goal";
 }
 

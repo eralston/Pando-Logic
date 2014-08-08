@@ -25,7 +25,7 @@ namespace PandoLogic.Controllers
         [MaxLength(100)]
         public virtual string Title { get; set; }
 
-        [ConditionalRequired(IgnoreFlagName="IsSummaryRequired", IgnoreFlagValue=false)]
+        [ConditionalRequired(IgnoreFlagName = "IsSummaryRequired", IgnoreFlagValue = false)]
         [MaxLength(200)]
         public string Summary { get; set; }
 
@@ -141,6 +141,8 @@ namespace PandoLogic.Controllers
             {
                 return HttpNotFound();
             }
+            strategy.LoadComments(this, "CreateStrategy");
+            strategy.MarkOrder();
             return View(strategy);
         }
 
@@ -216,20 +218,18 @@ namespace PandoLogic.Controllers
             if (ModelState.IsValid)
             {
                 Goal goal = await Db.Goals.FindAsync(goalViewModel.Id);
+                ApplicationUser user = await GetCurrentUserAsync();
 
                 foreach (ChildWorkItemViewModel taskViewModel in goalViewModel.Children)
                 {
-                    if (!taskViewModel.IsMarkedForDelete)
-                    {
-                        WorkItem task = new WorkItem();
-                        task.Title = taskViewModel.Title;
-                        task.Description = taskViewModel.Description;
-                        task.IsTemplate = true;
-                        task.Goal = goal;
-                    }
+                    WorkItem task = Db.WorkItems.Create();
+                    task.Title = taskViewModel.Title;
+                    task.Description = taskViewModel.Description;
+                    task.IsTemplate = true;
+                    task.CreatedDate = DateTime.Now;
+                    task.CreatorId = user.Id;
+                    goal.WorkItems.Add(task);
                 }
-
-                Db.Entry(goal).State = EntityState.Modified;
 
                 await Db.SaveChangesAsync();
 
