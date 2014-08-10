@@ -63,11 +63,11 @@ namespace PandoLogic.Models
         [Display(Name = "Community Rating")]
         public float Rating { get; set; }
 
-        public int NumberOfRatings { get; set; }
-
-        public int NumberOfAdoptions { get; set; }
-
         public string SearchText { get; set; }
+
+        public virtual ICollection<StrategyRating> Ratings { get; set; }
+
+        public virtual ICollection<StrategyAdoption> Adoptions { get; set; }
 
         #region Methods
 
@@ -258,7 +258,7 @@ namespace PandoLogic.Models
 
         public static IQueryable<Strategy> SearchStrategies(this ApplicationDbContext context)
         {
-            return context.Strategies.Where(s => s.IsDeleted == false).Include(s => s.Author);
+            return context.Strategies.Where(s => s.IsDeleted == false).Include(s => s.Author).Include(s => s.Adoptions).Include(s => s.Ratings);
         }
     }
 }

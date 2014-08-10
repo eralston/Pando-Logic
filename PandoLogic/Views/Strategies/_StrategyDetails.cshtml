@@ -42,12 +42,25 @@
         <dd>
             @Html.DisplayFor(model => model.Interval)
         </dd>
+
         <dt>
             @Html.DisplayNameFor(model => model.Rating)
         </dt>
+
         <dd>
-            @Html.Partial("_Rating", Model)
+            @Html.Partial("_ReadOnlyRating", Model)
         </dd>
+
+        @if (ViewBag.StrategyRating != null)
+        {
+            <dt>
+                Your Rating
+            </dt>
+
+            <dd>
+                @Html.Partial("_Rating", ViewBag.StrategyRating as StrategyRating)
+            </dd>
+        }
     </dl>
     <div class="box-group" id="accordion">
         @Html.DisplayFor(model => model.Goals)

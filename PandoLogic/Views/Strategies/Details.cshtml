@@ -16,7 +16,7 @@
         <div class="box box-primary">
             <div class="box-header">
                 <h3 class="box-title">Strategy Details</h3>
-                <div class="btn-group pull-right">
+                <div class="btn-group pull-right box-tools">
 
                     @if (ViewBag.IsStrategyBookmarked)
                     {
@@ -53,3 +53,47 @@
     </div>
     @Html.Partial("_Comments", new Activity())
 </div>
+
+@section scripts {
+    <script>
+
+        var currentRating = @ViewBag.StrategyRating.Rating;
+
+        function markStar($elem) {
+            $elem.addClass("fa-star").removeClass("fa-star-o");
+        }
+
+        function unmarkStar($elem) {
+            $elem.removeClass("fa-star").addClass("fa-star-o");
+        }
+
+        $(function () {
+
+            var $stars = $(".user-rating i");
+            $stars.hover(function () {
+                markStar($(this));
+                markStar($(this).prevAll());
+                unmarkStar($(this).nextAll());
+            }, function () {
+                
+                for(var i = 0; i < 5; ++i)
+                {
+                    var $star = $($stars[i]);
+                    if(i < currentRating)
+                    {
+                        markStar($star);
+                    }
+                    else 
+                    {
+                        unmarkStar($star);
+                    }
+                }
+            }).click(function () {
+                var rating = $(this).attr("data-rating");
+                $(".user-rating-target").val(rating);
+                $(".user-rating-form").submit();
+            });
+        })
+    </script>
+    
+}

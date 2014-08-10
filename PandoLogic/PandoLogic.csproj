@@ -237,6 +237,7 @@
     <Compile Include="Models\StrategyAdoption.cs" />
     <Compile Include="Models\StrategyBookmark.cs" />
     <Compile Include="Models\StrategyGoal.cs" />
+    <Compile Include="Models\StrategyRating.cs" />
     <Compile Include="Models\WorkItem.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
@@ -891,6 +892,7 @@
     <Content Include="Views\Strategies\_StrategyTable.cshtml" />
     <Content Include="Views\Strategies\Adopt.cshtml" />
     <Content Include="Views\Strategies\Exchange.cshtml" />
+    <Content Include="Views\Strategies\_ReadOnlyRating.cshtml" />
     <Content Include="Views\Strategies\_Rating.cshtml" />
   </ItemGroup>
   <ItemGroup>

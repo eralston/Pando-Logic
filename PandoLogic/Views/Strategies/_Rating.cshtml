@@ -1,18 +1,37 @@
-﻿@model PandoLogic.Models.Strategy
+﻿@model PandoLogic.Models.StrategyRating
 
-@for (float i = 0f; i < 5.0f; i += 1.0f)
-{
-    if (Model.Rating > i + 1.0f)
+<div class="text-yellow user-rating">
+    @if (Model.Rating > 0)
     {
-        <i class="fa fa-star"></i>
-    }
-    else if (Model.Rating > i + 0.5f)
-    {
-        <i class="fa fa-star-half-o"></i>
+        using (Html.BeginForm("Rate", "Strategies", FormMethod.Post, new { @class = "user-rating-form" }))
+        {
+            @Html.AntiForgeryToken()
+            @Html.HiddenFor(model => model.StrategyId)
+            @Html.HiddenFor(model => model.Rating, new { @class = "user-rating-target" })
+            for (float i = 0f; i < 5.0f; i += 1.0f)
+            {
+                if (Model.Rating >= i + 1.0f)
+                {
+                    <i class="fa fa-star" data-rating="@(i+1)"></i>
+                }
+                else
+                {
+                    <i class="fa fa-star-o" data-rating="@(i+1)"></i>
+                }
+            }
+        }
     }
     else
     {
-        <i class="fa fa-star-o"></i>
+        using (Html.BeginForm("Rate", "Strategies", FormMethod.Post, new { @class = "user-rating-form" }))
+        {
+            @Html.AntiForgeryToken()
+            @Html.HiddenFor(model => model.StrategyId)
+            @Html.HiddenFor(model => model.Rating, new { @class = "user-rating-target" })
+            for (int i = 0; i < 5; ++i)
+            {
+                <i class="fa fa-star-o" data-rating="@(i+1)"></i>
+            }
+        }
     }
-}
-<span class="text-muted">(@Model.NumberOfRatings Ratings)</span>
+</div>

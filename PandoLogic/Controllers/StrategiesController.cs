@@ -133,24 +133,35 @@ namespace PandoLogic.Controllers
         }
 
         // GET: Strategies/Details/5
-        public async Task<ActionResult> Details(int? id)
+        public async Task<ActionResult> Details(int id)
         {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
             Strategy strategy = await Db.Strategies.FindAsync(id);
             if (strategy == null)
             {
                 return HttpNotFound();
             }
 
-            ViewBag.IsStrategyBookmarked = await Db.StrategyBookmarks.IsBookmarked(UserCache.Id, id.Value);
+            // Apply bookmark state
+            ViewBag.IsStrategyBookmarked = await Db.StrategyBookmarks.IsBookmarked(UserCache.Id, id);
 
+            // Apply whether or not this is my strategy
             ViewBag.IsMyStrategy = strategy.AuthorId == UserCache.Id;
 
+            // Setup the rating
+            StrategyRating rating = await Db.StrategyRatings.FindForUserAsync(UserCache.Id, id);
+            if (rating == null)
+            {
+                rating = new StrategyRating();
+                rating.StrategyId = id;
+            }
+            ViewBag.StrategyRating = rating;
+
+            // Setup comments
             strategy.LoadComments(this, "CreateStrategy");
+
+            // Setup goals
             strategy.MarkOrder();
+            
             return View(strategy);
         }
 
@@ -221,6 +232,7 @@ namespace PandoLogic.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<ActionResult> CreateTasks(ParentWorkItemViewModel goalViewModel)
         {
             ValidateHasChildren(goalViewModel, "Goals must contain at least one task");
@@ -383,7 +395,7 @@ namespace PandoLogic.Controllers
         {
             Strategy[] strategies = await Db.Strategies.ToArrayAsync();
 
-            foreach(Strategy s in strategies)
+            foreach (Strategy s in strategies)
             {
                 s.UpdateSearchText();
             }
@@ -405,11 +417,11 @@ namespace PandoLogic.Controllers
 
             var query = Db.SearchStrategies();
 
-            switch(sort)
+            switch (sort)
             {
                 case "popularity":
                     ViewBag.SortOrder = "Popularity";
-                    query = query.OrderByDescending(s => s.NumberOfAdoptions);
+                    query = query.OrderByDescending(s => s.Adoptions.Count);
                     break;
 
                 case "rating":
@@ -433,6 +445,47 @@ namespace PandoLogic.Controllers
             IEnumerable<Strategy> strategies = await query.ToArrayAsync();
 
             return View(strategies);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> Rate(int? strategyId, float? rating)
+        {
+            if (strategyId == null || rating == null)
+                return new HttpNotFoundResult();
+
+            StrategyRating strategyRating = await Db.StrategyRatings.FindForUserAsync(UserCache.Id, strategyId.Value);
+            if(strategyRating == null)
+            {
+                strategyRating = Db.StrategyRatings.Create(UserCache.Id, strategyId.Value);
+            }
+
+            strategyRating.Rating = rating.Value;
+
+            await Db.SaveChangesAsync();
+            
+            Strategy strategy = await Db.Strategies.FindAsync(strategyId);
+            StrategyRating[] ratings = await Db.StrategyRatings.Where(sr => sr.StrategyId == strategyId).ToArrayAsync();
+            if(ratings.Length == 0)
+            {
+                strategy.Rating = 0f;
+            }
+            else
+            {
+                float total = 0f;
+                foreach (StrategyRating sRating in ratings)
+                {
+                    total += sRating.Rating;
+                }
+
+                float possible = (float)(ratings.Length);
+
+                strategy.Rating = total / possible;
+            }
+            
+            await Db.SaveChangesAsync();
+
+            return RedirectToAction("Details", new { id = strategyId });
         }
     }
 }

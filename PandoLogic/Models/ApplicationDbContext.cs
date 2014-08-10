@@ -50,5 +50,7 @@ namespace PandoLogic.Models
         public DbSet<StrategyBookmark> StrategyBookmarks { get; set; }
 
         public DbSet<StrategyAdoption> StrategyAdoptions { get; set; }
+
+        public DbSet<StrategyRating> StrategyRatings { get; set; }
     }
 }
