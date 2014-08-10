@@ -16,38 +16,37 @@
         <div class="box box-primary">
             <div class="box-header">
                 <h3 class="box-title">Strategy Details</h3>
-            </div>
-            <div class="box-body">
-                @Html.ActionLink("Back to List", "Index", null, new { @class = "btn btn-default" })
+                <div class="btn-group pull-right">
 
-                @if (ViewBag.IsStrategyBookmarked)
-                {
-                    <a class="btn btn-default" href="@Url.Action("Unbookmark", new { id = Model.Id })">
-                        <i class="fa fa-bookmark"></i>
-                        Unbookmark
-                    </a>
-                }
-                else
-                {
-                    <a class="btn btn-default" href="@Url.Action("Bookmark", new { id = Model.Id })">
-                        <i class="fa fa-bookmark-o"></i>
-                        Bookmark
-                    </a>
-                }
+                    @if (ViewBag.IsStrategyBookmarked)
+                    {
+                        <a class="btn btn-default btn-flat btn-sm" href="@Url.Action("Unbookmark", new { id = Model.Id })">
+                            <i class="fa fa-bookmark"></i>
+                            Unbookmark
+                        </a>
+                    }
+                    else
+                    {
+                        <a class="btn btn-default btn-flat btn-sm" href="@Url.Action("Bookmark", new { id = Model.Id })">
+                            <i class="fa fa-bookmark-o"></i>
+                            Bookmark
+                        </a>
+                    }
 
-                @if (ViewBag.IsMyStrategy)
-                {
-                    <a class="btn btn-default" href="@Url.Action("Edit", new { id = Model.Id })">
-                        <i class="fa fa-pencil"></i>
-                        Edit
-                    </a>
-                    <a class="btn btn-default" href="@Url.Action("Delete", new { id = Model.Id })">
-                        <i class="fa fa-trash-o"></i>
-                        Delete
-                    </a>
-                }
+                    @if (ViewBag.IsMyStrategy)
+                    {
+                        <a class="btn btn-default btn-flat btn-sm" href="@Url.Action("Edit", new { id = Model.Id })">
+                            <i class="fa fa-pencil"></i>
+                            Edit
+                        </a>
+                        <a class="btn btn-default btn-flat btn-sm" href="@Url.Action("Delete", new { id = Model.Id })">
+                            <i class="fa fa-trash-o"></i>
+                            Delete
+                        </a>
+                    }
 
-                @Html.ActionLink("Adopt Strategy", "Adopt", new { id = Model.Id }, new { @class = "btn btn-primary" })
+                    @Html.ActionLink("Adopt Strategy", "Adopt", new { id = Model.Id }, new { @class = "btn btn-primary  btn-flat btn-sm" })
+                </div>
             </div>
             @Html.Partial("_StrategyDetails", Model)
         </div>

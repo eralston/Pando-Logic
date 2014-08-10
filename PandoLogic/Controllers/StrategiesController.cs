@@ -11,6 +11,7 @@ using System.Web.Mvc;
 
 using PandoLogic.Models;
 using System.ComponentModel.DataAnnotations;
+using System.Web.Routing;
 
 namespace PandoLogic.Controllers
 {
@@ -185,6 +186,8 @@ namespace PandoLogic.Controllers
                 strategy.Description = strategyViewModel.Description;
                 strategy.Interval = strategyViewModel.Interval;
 
+                strategy.UpdateSearchText();
+
                 Db.Strategies.Add(strategy);
 
                 foreach (ChildWorkItemViewModel strategyGoal in strategyViewModel.Children)
@@ -286,6 +289,7 @@ namespace PandoLogic.Controllers
             if (ModelState.IsValid)
             {
                 Db.Entry(strategy).State = EntityState.Modified;
+                strategy.UpdateSearchText();
                 await Db.SaveChangesAsync();
                 return RedirectToAction("Index");
             }
@@ -321,13 +325,13 @@ namespace PandoLogic.Controllers
         public async Task<ActionResult> Bookmark(int id)
         {
             StrategyBookmark bookmark = await Db.StrategyBookmarks.FindBookmarkAsync(UserCache.Id, id);
-            if(bookmark == null)
+            if (bookmark == null)
             {
                 bookmark = Db.StrategyBookmarks.Create(UserCache.Id, id);
 
                 await Db.SaveChangesAsync();
             }
-            
+
 
             return RedirectToAction("Details", new { id = id });
         }
@@ -335,7 +339,7 @@ namespace PandoLogic.Controllers
         public async Task<ActionResult> Unbookmark(int id)
         {
             StrategyBookmark bookmark = await Db.StrategyBookmarks.FindBookmarkAsync(UserCache.Id, id);
-            if(bookmark != null)
+            if (bookmark != null)
             {
                 Db.StrategyBookmarks.Remove(bookmark);
 
@@ -363,10 +367,72 @@ namespace PandoLogic.Controllers
             Strategy strategy = await Db.Strategies.FindAsync(id);
 
             strategy.Adopt(Db, UserCache.Id, UserCache.SelectedCompanyId);
-            
+
+            // Setup the new activity and save
+            Member member = await GetCurrentMemberAsync();
+            Activity newActivity = Db.Activities.Create(member.UserId, member.Company, strategy.Title);
+            newActivity.Description = strategy.Description;
+            newActivity.Type = ActivityType.WorkAdded;
+
             await Db.SaveChangesAsync();
 
             return RedirectToAction("Index");
+        }
+
+        public async Task<ActionResult> RebuildIndex()
+        {
+            Strategy[] strategies = await Db.Strategies.ToArrayAsync();
+
+            foreach(Strategy s in strategies)
+            {
+                s.UpdateSearchText();
+            }
+
+            await Db.SaveChangesAsync();
+
+            return RedirectToAction("Index");
+        }
+
+        public async Task<ActionResult> Exchange(string sort, string search)
+        {
+            search = search ?? "";
+            sort = sort ?? "";
+
+            ViewBag.SearchTerm = search;
+            ViewBag.SortId = sort;
+
+            search = search.ToUpper();
+
+            var query = Db.SearchStrategies();
+
+            switch(sort)
+            {
+                case "popularity":
+                    ViewBag.SortOrder = "Popularity";
+                    query = query.OrderByDescending(s => s.NumberOfAdoptions);
+                    break;
+
+                case "rating":
+                    ViewBag.SortOrder = "Rating";
+                    query = query.OrderByDescending(s => s.Rating);
+                    break;
+
+                default:
+                    ViewBag.SortOrder = "Created Date";
+                    query = query.OrderByDescending(s => s.CreatedDate);
+                    break;
+            }
+
+            if (!string.IsNullOrEmpty(search))
+            {
+                query = query.Where(s => s.SearchText.Contains(search));
+            }
+
+            ViewBag.StrategyTableEmptyText = "No Strategies Found";
+
+            IEnumerable<Strategy> strategies = await query.ToArrayAsync();
+
+            return View(strategies);
         }
     }
 }

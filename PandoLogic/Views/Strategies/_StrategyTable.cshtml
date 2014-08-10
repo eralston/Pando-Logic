@@ -1,22 +1,24 @@
 ﻿@model IEnumerable<PandoLogic.Models.Strategy>
 
-@if (Model.Count() > 0)
-{
-    <table class="table">
-        <tr>
+<table class="table">
+    <tr>
 
-            <th>
-                @Html.DisplayNameFor(model => model.Title)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Summary)
-            </th>
-            <th>
-                Author
-            </th>
-        </tr>
-
-        @foreach (var item in Model)
+        <th>
+            @Html.DisplayNameFor(model => model.Title)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Summary)
+        </th>
+        <th>
+            Author
+        </th>
+        <th>
+            Rating
+        </th>
+    </tr>
+    @if (Model.Count() > 0)
+    {
+        foreach (var item in Model)
         {
             <tr>
                 <td>
@@ -30,7 +32,21 @@
                 <td>
                     @Html.DisplayFor(modelItem => item.Author.FullName)
                 </td>
+                <td>
+                    @Html.Partial("_Rating", item)
+                </td>
             </tr>
         }
-    </table>
-}
+    }
+    else
+    {
+        <tr>
+            <td colspan="4" class="text-center">
+                @{
+        string text = ViewBag.StrategyTableEmptyText ?? "No Strategies";
+                }
+                @text
+            </td>
+        </tr>
+    }
+</table>

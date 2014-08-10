@@ -14,3 +14,11 @@
 .done td {
     text-decoration: line-through;
 }
+
+.box-header .btn-group {
+    padding: 10px 10px 10px 0px
+}
+
+.sort-button {
+    cursor: pointer;
+}

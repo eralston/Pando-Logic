@@ -1,0 +1,84 @@
+﻿@using PandoLogic.Models
+@model IEnumerable<Strategy>
+
+@{
+    ViewBag.Title = "Strategy Exchange";
+
+    ViewBag.Breadcrumb = new Breadcrumb(new Crumb[] {
+        new Crumb("Dashboard", Url.Action("Index","Home"), "fa-dashboard"),
+        new Crumb("Strategies", Url.Action("Index","Strategies"), "fa-puzzle-piece"),
+        new Crumb("Strategy Exchange")
+    });
+}
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="box box-primary">
+            <div class="box-header">
+                <i class="fa fa-puzzle-piece"></i>
+                <h3 class="box-title">
+                    Strategy Exchange
+                </h3>
+                <div class="box-tools">
+                    <div class="input-group">
+                        <input type="text" name="table_search" class="form-control input-sm pull-right search-term" style="width: 150px;" placeholder="Search" value="@ViewBag.SearchTerm">
+                        <div class="input-group-btn pull-right">
+                            <button type="button" class="btn btn-default btn-flat dropdown-toggle btn-sm pull-right" data-toggle="dropdown">
+                                Sort by @ViewBag.SortOrder
+                                <span class="caret"></span>
+                                <span class="sr-only">Toggle Dropdown</span>
+                            </button>
+                            <ul class="dropdown-menu" role="menu">
+                                <li><a class="sort-button" data-sort-id="created-date">Created Date</a></li>
+                                <li><a class="sort-button" data-sort-id="popularity">Popularity</a></li>
+                                <li><a class="sort-button" data-sort-id="rating">Rating</a></li>
+                            </ul>
+                        </div>
+                        <div class="input-group-btn">
+                            <button class="btn btn-sm btn-primary search-button"><i class="fa fa-search"></i></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            @if (!string.IsNullOrEmpty(ViewBag.SearchTerm))
+            {
+                <div class="box-body">
+                    <button class="btn btn-sm btn-default clear-search-button"><i class="fa fa-times"></i> Clear Search</button>
+                    Searching "@ViewBag.SearchTerm"
+                </div>
+            }
+            <div class="box-body no-padding">
+                @Html.Partial("_StrategyTable", Model)
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts {
+
+    <script>
+
+        var currentSortId = "@ViewBag.SortId";
+
+        function search(orderId) {
+            var searchTerm = $(".search-term").first().val();
+            window.location.href = "@Url.Action("Exchange")" + "?search=" + searchTerm + "&sort=" + orderId;
+        }
+
+        $(function () {
+            $(".search-button").click(function () {
+                search(currentSortId);
+            });
+
+            $(".sort-button").click(function () {
+                var sortId = $(this).attr("data-sort-id");
+                search(sortId);
+            });
+
+            $(".clear-search-button").click(function () {
+                $(".search-term").first().val("");
+                search(currentSortId);
+            });
+        });
+    </script>
+}

@@ -890,6 +890,8 @@
     <Content Include="Views\Strategies\DisplayTemplates\StrategyGoal.cshtml" />
     <Content Include="Views\Strategies\_StrategyTable.cshtml" />
     <Content Include="Views\Strategies\Adopt.cshtml" />
+    <Content Include="Views\Strategies\Exchange.cshtml" />
+    <Content Include="Views\Strategies\_Rating.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

@@ -60,6 +60,23 @@ namespace PandoLogic.Models
 
         public bool IsDeleted { get; set; }
 
+        [Display(Name = "Community Rating")]
+        public float Rating { get; set; }
+
+        public int NumberOfRatings { get; set; }
+
+        public int NumberOfAdoptions { get; set; }
+
+        public string SearchText { get; set; }
+
+        #region Methods
+
+        public void UpdateSearchText()
+        {
+            SearchText = string.Format("{0} {1} {2}", Title.ToUpper(), Summary.ToUpper(), Description.ToUpper());
+        }
+
+        #endregion
 
         #region Methods For Managing Child Goals
 
@@ -237,6 +254,11 @@ namespace PandoLogic.Models
         public static IQueryable<Strategy> WhereLatestFive(this DbSet<Strategy> strategies)
         {
             return strategies.Where(s => !s.IsDeleted).Include(s => s.Author).OrderByDescending(s => s.CreatedDate).Take(5);
+        }
+
+        public static IQueryable<Strategy> SearchStrategies(this ApplicationDbContext context)
+        {
+            return context.Strategies.Where(s => s.IsDeleted == false).Include(s => s.Author);
         }
     }
 }
