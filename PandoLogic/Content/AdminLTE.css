@@ -573,25 +573,25 @@ body > .header .logo .icon {
   width: 45px;
   height: 45px;
 }
-.user-panel > .info {
+.user-panel .info {
   font-weight: 600;
   padding: 5px 5px 5px 15px;
   font-size: 14px;
   line-height: 1;
 }
-.user-panel > .info > p {
+.user-panel .info > p {
   margin-bottom: 9px;
 }
-.user-panel > .info > a {
+.user-panel .info > a {
   text-decoration: none;
   padding-right: 5px;
   margin-top: 3px;
   font-size: 11px;
   font-weight: normal;
 }
-.user-panel > .info > a > .fa,
-.user-panel > .info > a > .ion,
-.user-panel > .info > a > .glyphicon {
+.user-panel .info > a > .fa,
+.user-panel .info > a > .ion,
+.user-panel .info > a > .glyphicon {
   margin-right: 3px;
 }
 /*
@@ -872,13 +872,13 @@ body > .header .logo .icon {
   border-width: 10px;
   margin-left: -10px;
 }
-.navbar-nav > .user-menu > .dropdown-menu > li.user-header {
+.navbar-nav > .user-menu > .dropdown-menu  li.user-header {
   height: 175px;
   padding: 10px;
   background: #3c8dbc;
   text-align: center;
 }
-.navbar-nav > .user-menu > .dropdown-menu > li.user-header > img {
+.navbar-nav > .user-menu > .dropdown-menu > li.user-header img {
   z-index: 5;
   height: 90px;
   width: 90px;
@@ -886,7 +886,7 @@ body > .header .logo .icon {
   border-color: transparent;
   border-color: rgba(255, 255, 255, 0.2);
 }
-.navbar-nav > .user-menu > .dropdown-menu > li.user-header > p {
+.navbar-nav > .user-menu > .dropdown-menu > li.user-header p {
   z-index: 5;
   color: #f9f9f9;
   color: rgba(255, 255, 255, 0.8);
@@ -894,7 +894,7 @@ body > .header .logo .icon {
   text-shadow: 2px 2px 3px #333333;
   margin-top: 10px;
 }
-.navbar-nav > .user-menu > .dropdown-menu > li.user-header > p > small {
+.navbar-nav > .user-menu > .dropdown-menu > li.user-header p > small {
   display: block;
   font-size: 12px;
 }
