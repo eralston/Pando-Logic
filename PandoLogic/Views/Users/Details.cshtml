@@ -1,0 +1,77 @@
+﻿@using PandoLogic.Models
+@model PandoLogic.Models.ApplicationUser
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="box box-primary">
+            <div class="box-header">
+                <i class="fa fa-user"></i>
+                <h3 class="box-title">
+                    User Profile
+                </h3>
+                <div class="box-tools">
+                    @if (!string.IsNullOrEmpty(Model.AvatarUrl))
+                    {
+                        <div class="pull-right image">
+                            <img src="@Model.AvatarUrl" class="img-circle" alt="User Image" />
+                        </div>
+                    }
+                </div>
+            </div>
+            <div class="box-body">
+                <dl class="dl-horizontal">
+                    <dt>
+                        @Html.DisplayNameFor(model => model.FullName)
+                    </dt>
+
+                    <dd>
+                        @Html.DisplayFor(model => model.FullName)
+                    </dd>
+
+                    <dt>
+                        @Html.DisplayNameFor(model => model.Email)
+                    </dt>
+
+                    <dd>
+                        @Html.DisplayFor(model => model.Email)
+                    </dd>
+
+                    @if (!string.IsNullOrEmpty(Model.PhoneNumber))
+                    {
+                        <dt>
+                            @Html.DisplayNameFor(model => model.PhoneNumber)
+                        </dt>
+
+                        <dd>
+                            @Html.DisplayFor(model => model.PhoneNumber)
+                        </dd>
+                    }
+                </dl>
+            </div>
+        </div>
+        @if (ViewBag.UserMember != null)
+        {
+            {
+                ViewBag.TaskBoxTitle = "Active Tasks Assigned To User";
+                ViewBag.AllowCreateNewTaskBox = false;
+            }
+
+            @Html.Partial("_TaskBox", ViewBag.AssignedTasks as IEnumerable<WorkItem>)
+        }
+    </div>
+    <div class="col-md-6">
+        <div class="box box-primary">
+            <div class="box-header">
+                <i class="fa fa-puzzle-piece"></i>
+                <h3 class="box-title">Strategies</h3>
+            </div>
+            <div class="box-body no-padding">
+                @Html.Partial("_StrategyTable", ViewBag.UserStrategies as IEnumerable<Strategy>)
+            </div>
+        </div>
+    </div>
+</div>

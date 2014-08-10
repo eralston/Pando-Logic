@@ -8,7 +8,9 @@
         </dt>
 
         <dd>
-            @Html.DisplayFor(model => model.Author.FullName)
+            <a href="@Url.Action("Details", "Users", new { id = Model.AuthorId })">
+                @Html.DisplayFor(modelItem => Model.Author.FullName)
+            </a>
         </dd>
 
         <dt>

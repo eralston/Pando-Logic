@@ -61,7 +61,10 @@
                     </dt>
 
                     <dd>
-                        @Html.DisplayFor(model => model.Creator.FullName)
+                        <a href="@Url.Action("Details", "Users", new { id = Model.CreatorId })">
+                            @Html.DisplayFor(model => model.Creator.FullName)
+                        </a>
+                        
                     </dd>
 
                     @if (Model.Assignee != null)
@@ -71,7 +74,9 @@
                         </dt>
 
                         <dd>
-                            @Html.DisplayFor(model => model.Assignee.FullName)
+                            <a href="@Url.Action("Details", "Users", new { id = Model.AssigneeId })">
+                                @Html.DisplayFor(model => model.Assignee.FullName)
+                            </a>
                         </dd>
                     }
 

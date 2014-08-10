@@ -125,5 +125,10 @@ namespace PandoLogic.Models
 
             return task;
         }
+
+        public static IQueryable<WorkItem> WhereAssignedUserAndCompany(this DbSet<WorkItem> tasks, string userId, int companyId)
+        {
+            return tasks.Where(t => t.AssigneeId == userId && t.CompanyId == companyId);
+        }
     }
 }

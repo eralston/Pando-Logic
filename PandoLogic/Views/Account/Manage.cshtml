@@ -29,6 +29,9 @@
         <div class="box box-primary">
             <div class="box-header">
                 <h3 class="box-title">Account Profile</h3>
+                <div class="btn-group pull-right box-tools">
+                    @Html.ActionLink("View Public Profile", "Details", "Users", new { id = ViewBag.CurrentApplicationUser.Id }, new { @class = "btn btn-default btn-sm" })
+                </div>
             </div>
             @using (Html.BeginForm("Edit", "Account", FormMethod.Post, new { @class = "", role = "form", enctype = "multipart/form-data" }))
             {

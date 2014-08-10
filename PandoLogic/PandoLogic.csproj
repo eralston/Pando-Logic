@@ -209,6 +209,7 @@
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\ActivitiesController.cs" />
     <Compile Include="Controllers\AddressesController.cs" />
+    <Compile Include="Controllers\UsersController.cs" />
     <Compile Include="Controllers\BaseController.cs" />
     <Compile Include="Controllers\CommentsController.cs" />
     <Compile Include="Controllers\CompaniesController.cs" />
@@ -889,11 +890,16 @@
     <Content Include="Views\Strategies\DisplayTemplates\WorkItem.cshtml" />
     <Content Include="Views\Strategies\_StrategyDetails.cshtml" />
     <Content Include="Views\Strategies\DisplayTemplates\StrategyGoal.cshtml" />
-    <Content Include="Views\Strategies\_StrategyTable.cshtml" />
+    <Content Include="Views\Shared\_StrategyTable.cshtml" />
     <Content Include="Views\Strategies\Adopt.cshtml" />
     <Content Include="Views\Strategies\Exchange.cshtml" />
-    <Content Include="Views\Strategies\_ReadOnlyRating.cshtml" />
+    <Content Include="Views\Shared\_ReadOnlyRating.cshtml" />
     <Content Include="Views\Strategies\_Rating.cshtml" />
+    <Content Include="Views\Users\Create.cshtml" />
+    <Content Include="Views\Users\Delete.cshtml" />
+    <Content Include="Views\Users\Details.cshtml" />
+    <Content Include="Views\Users\Edit.cshtml" />
+    <Content Include="Views\Users\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

@@ -95,5 +95,15 @@ namespace PandoLogic.Models
             int companyId = company.Id;
             return members.Where(m => m.CompanyId == companyId).Include(m => m.User);
         }
+
+        public static Task<Member> FindPrimaryForUser(this DbSet<Member> members, string userId)
+        {
+            return members.Where(m => m.UserId == userId).FirstOrDefaultAsync();
+        }
+
+        public static Task<Member> WhereAssignedToUserAndCompany(this DbSet<Member> members, string userId, int companyId)
+        {
+            return members.Where(m => m.UserId == userId && m.CompanyId == companyId).FirstOrDefaultAsync();
+        }
     }
 }
