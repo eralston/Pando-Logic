@@ -8,6 +8,8 @@ namespace PandoLogic
     {
         public void Configuration(IAppBuilder app)
         {
+            app.MapSignalR();
+
             ConfigureAuth(app);
         }
     }

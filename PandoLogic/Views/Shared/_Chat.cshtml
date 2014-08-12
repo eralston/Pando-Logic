@@ -1,0 +1,29 @@
+﻿@model PandoLogic.Hubs.ChatInfo
+
+@{
+}
+
+<div class="box box-primary chat-box" data-chat-room-id="@Model.ChatRoomId">
+    <div class="box-header">
+        <i class="fa fa-comments-o"></i>
+        <h3 class="box-title">@Model.Title</h3>
+    </div>
+    <div class="box-body">
+        <p class="text-muted">
+            Joined Chat at @DateTime.Now.ToString("t")
+        </p>
+    </div>
+    <div class="box-body chat">
+    </div>
+    <div class="box-footer">
+        <div class="input-group">
+            <input class="form-control chat-input" placeholder="Message..." />
+            <div class="input-group-btn">
+                <button class="btn btn-success chat-button">
+                    <i class="fa fa-plus"></i>
+                    Submit
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
