@@ -43,8 +43,11 @@ namespace PandoLogic.Hubs
             msg.AvatarUrl = string.IsNullOrEmpty(user.AvatarUrl) ? "/Content/images/user-icon.png" : user.AvatarUrl;
             msg.UserName = user.FullName;
 
-            UrlHelper url = new UrlHelper(HttpContext.Current.Request.RequestContext);
-            msg.UserUrl = url.Action("Details", "Users", new { id = user.Id });
+            // TODO: Figure out how to properly make UrlHelper happy
+            // UrlHelper url = new UrlHelper(HttpContext.Current.Request.RequestContext);
+            // msg.UserUrl = url.Action("Details", "Users", new { id = user.Id });
+
+            msg.UserUrl = string.Format("/Users/Details/{0}", user.Id);
 
             Clients.All.receiveMessage(msg);
         }
