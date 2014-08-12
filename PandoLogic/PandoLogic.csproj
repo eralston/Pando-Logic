@@ -800,9 +800,16 @@
     <Content Include="Scripts\respond.matchmedia.addListener.min.js" />
     <Content Include="Scripts\respond.min.js" />
     <Content Include="Scripts\_references.js" />
+    <Content Include="Views\Shared\Error.cshtml" />
     <Content Include="Views\Shared\_Chat.cshtml" />
-    <None Include="Views\Shared\_LeftMenu.cshtml" />
-    <None Include="Views\Shared\_TopBarMenu.cshtml" />
+    <Content Include="Views\Shared\_Comments.cshtml" />
+    <Content Include="Views\Shared\_Layout.cshtml" />
+    <Content Include="Views\Shared\_LoginPartial.cshtml" />
+    <Content Include="Views\Shared\_PublicLayout.cshtml" />
+    <Content Include="Views\Shared\_ReadOnlyRating.cshtml" />
+    <Content Include="Views\Shared\_StrategyTable.cshtml" />
+    <Content Include="Views\Shared\_TaskBox.cshtml" />
+    <Content Include="Views\Shared\_Timeline.cshtml" />
     <Content Include="Web.config" />
     <Content Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
@@ -812,8 +819,6 @@
     </Content>
     <Content Include="Views\Web.config" />
     <Content Include="Views\_ViewStart.cshtml" />
-    <Content Include="Views\Shared\Error.cshtml" />
-    <Content Include="Views\Shared\_Layout.cshtml" />
     <Content Include="Views\Home\Index.cshtml" />
     <Content Include="Views\Account\_ChangePasswordPartial.cshtml" />
     <Content Include="Views\Account\_ExternalLoginsListPartial.cshtml" />
@@ -829,7 +834,6 @@
     <Content Include="Views\Account\Register.cshtml" />
     <Content Include="Views\Account\ResetPassword.cshtml" />
     <Content Include="Views\Account\ResetPasswordConfirmation.cshtml" />
-    <Content Include="Views\Shared\_LoginPartial.cshtml" />
     <Content Include="Scripts\plugins\ckeditor\CHANGES.md" />
     <Content Include="Scripts\plugins\ckeditor\LICENSE.md" />
     <Content Include="Scripts\plugins\ckeditor\plugins\scayt\LICENSE.md" />
@@ -843,7 +847,6 @@
     <Content Include="Scripts\plugins\jqueryKnob\.DS_Store" />
     <Content Include="Scripts\plugins\jvectormap\.DS_Store" />
     <Content Include="Scripts\plugins\slimScroll\slimScroll.jquery.json" />
-    <Content Include="Views\Shared\_PublicLayout.cshtml" />
     <Content Include="Views\Industries\Create.cshtml" />
     <Content Include="Views\Industries\Delete.cshtml" />
     <Content Include="Views\Industries\Details.cshtml" />
@@ -867,7 +870,6 @@
     <Content Include="Views\Activities\Edit.cshtml" />
     <Content Include="Views\Activities\Index.cshtml" />
     <Content Include="Views\Activities\Widget.cshtml" />
-    <Content Include="Views\Shared\_Timeline.cshtml" />
     <Content Include="Views\Home\Verify.cshtml" />
     <Content Include="Views\Email\Generic.cshtml" />
     <Content Include="Views\Goals\Create.cshtml" />
@@ -882,12 +884,10 @@
     <Content Include="Views\WorkItems\Details.cshtml" />
     <Content Include="Views\WorkItems\Edit.cshtml" />
     <Content Include="Views\WorkItems\Index.cshtml" />
-    <Content Include="Views\Shared\_TaskBox.cshtml" />
     <Content Include="Views\Comments\Create.cshtml" />
     <Content Include="Views\Comments\Delete.cshtml" />
     <Content Include="Views\Comments\Details.cshtml" />
     <Content Include="Views\Comments\Edit.cshtml" />
-    <Content Include="Views\Shared\_Comments.cshtml" />
     <Content Include="Views\Activities\_Cancel.cshtml" />
     <Content Include="Views\WorkItems\Widget.cshtml" />
     <Content Include="Views\WorkItems\EditorTemplates\WorkItem.cshtml" />
@@ -908,10 +908,8 @@
     <Content Include="Views\Strategies\DisplayTemplates\WorkItem.cshtml" />
     <Content Include="Views\Strategies\_StrategyDetails.cshtml" />
     <Content Include="Views\Strategies\DisplayTemplates\StrategyGoal.cshtml" />
-    <Content Include="Views\Shared\_StrategyTable.cshtml" />
     <Content Include="Views\Strategies\Adopt.cshtml" />
     <Content Include="Views\Strategies\Exchange.cshtml" />
-    <Content Include="Views\Shared\_ReadOnlyRating.cshtml" />
     <Content Include="Views\Strategies\_Rating.cshtml" />
     <Content Include="Views\Users\Create.cshtml" />
     <Content Include="Views\Users\Delete.cshtml" />
@@ -919,6 +917,8 @@
     <Content Include="Views\Users\Edit.cshtml" />
     <Content Include="Views\Users\Index.cshtml" />
     <Content Include="Views\Goals\WidgetBox.cshtml" />
+    <Content Include="Views\Shared\_LeftMenu.cshtml" />
+    <Content Include="Views\Shared\_TopBarMenu.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
