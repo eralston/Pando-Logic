@@ -92,7 +92,6 @@ namespace PandoLogic.Controllers
 
         private ApplicationDbContext _db = null;
         private ApplicationUser _user = null;
-        private Company _company = null;
         private Member _member = null;
 
         #endregion

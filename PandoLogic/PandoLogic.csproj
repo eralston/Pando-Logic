@@ -449,6 +449,7 @@
     <Content Include="fonts\ionicons.eot" />
     <Content Include="fonts\ionicons.ttf" />
     <Content Include="fonts\ionicons.woff" />
+    <None Include="Properties\PublishProfiles\PandoLogic-dev %282%29.pubxml" />
     <None Include="Properties\PublishProfiles\PandoLogic-dev.pubxml" />
     <None Include="Scripts\jquery-2.1.1.intellisense.js" />
     <Content Include="img\ajax-loader.gif" />
