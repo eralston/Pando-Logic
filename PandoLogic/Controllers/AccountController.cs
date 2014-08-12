@@ -68,6 +68,9 @@ namespace PandoLogic.Controllers
                 if (user != null)
                 {
                     await SignInAsync(user, model.RememberMe);
+
+                    await UpdateCurrentUserCacheAsync();
+
                     return RedirectToLocal(returnUrl);
                 }
                 else
@@ -421,6 +424,7 @@ namespace PandoLogic.Controllers
         // POST: /Account/LogOff
         public ActionResult LogOff()
         {
+            ClearCurrentUserCache();
             AuthenticationManager.SignOut();
             return RedirectToAction("Index", "Home");
         }

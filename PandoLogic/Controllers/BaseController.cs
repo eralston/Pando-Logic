@@ -160,6 +160,11 @@ namespace PandoLogic.Controllers
 
         #region Methods
 
+        protected void ClearCurrentUserCache()
+        {
+            HttpContext.Session[UserInfoCacheId] = null;
+        }
+
         protected void UpdateCurrentUserCache()
         {
             ApplicationUser user = GetCurrentUser();
