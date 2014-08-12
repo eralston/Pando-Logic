@@ -14,6 +14,33 @@ namespace PandoLogic.Models
     /// </summary>
     public class Goal : PandoLogic.Models.ICommentable
     {
+        /// <summary>
+        /// List of configurable colors for goals
+        /// </summary>
+        public enum GoalColor
+        {
+            Aqua,
+            Blue,
+            Green,
+            Yellow,
+            Purple
+        }
+
+        /// <summary>
+        /// List of icons for goals, shown in summary boxes
+        /// </summary>
+        public enum GoalIcon
+        {
+            Bars, // fa-bar-chart-o
+            Calendar, // fa-calendar-o 
+            Dollar, // fa-usd
+            Chart, // fa-signal
+            Key, // fa-key
+            Strategy, // fa-puzzle-piece
+            Task, // fa-check
+            Goal // fa-tasks
+        }
+
         // Primary Key
         [Key]
         [DatabaseGeneratedAttribute(DatabaseGeneratedOption.Identity)]
@@ -58,8 +85,72 @@ namespace PandoLogic.Models
 
         public bool IsTemplate { get; set; }
 
+        public GoalColor Color { get; set; }
+
+        public GoalIcon Icon { get; set; }
+
+        #region NotMapped Properties
+
         [NotMapped]
         public int Ordinal { get; set; }
+
+        #endregion
+
+        #region Derived Properties
+
+        [NotMapped]
+        public string ColorClass
+        {
+            get
+            {
+                switch (Color)
+                {
+                    case GoalColor.Aqua:
+                        return "bg-aqua";
+                    case GoalColor.Blue:
+                        return "bg-blue";
+                    case GoalColor.Green:
+                        return "bg-green";
+                    case GoalColor.Yellow:
+                        return "bg-yellow";
+                    case GoalColor.Purple:
+                        return "bg-purple";
+                    default:
+                        return "bg-aqua";
+                }
+            }
+        }
+
+        [NotMapped]
+        public string IconClass
+        {
+            get
+            {
+                switch (Icon)
+                {
+                    case GoalIcon.Bars:
+                        return "fa-bar-chart-o";
+                    case GoalIcon.Calendar:
+                        return "fa-calendar-o";
+                    case GoalIcon.Dollar:
+                        return "fa-usd";
+                    case GoalIcon.Chart:
+                        return "fa-signal";
+                    case GoalIcon.Key:
+                        return "fa-key";
+                    case GoalIcon.Strategy:
+                        return "fa-puzzle-piece";
+                    case GoalIcon.Task:
+                        return "fa-check";
+                    case GoalIcon.Goal:
+                        return "fa-tasks";
+                    default:
+                        return "fa-tasks";
+                }
+            }
+        }
+
+        #endregion
 
         #region Methods
 
@@ -171,7 +262,7 @@ namespace PandoLogic.Models
             newGoal.Description = template.Description;
             newGoal.IsTemplate = false;
 
-            foreach(WorkItem taskTemplate in template.WorkItems)
+            foreach (WorkItem taskTemplate in template.WorkItems)
             {
                 WorkItem newTask = tasks.CreateFromTemplate(taskTemplate, companyId, userId);
                 newTask.Goal = newGoal;

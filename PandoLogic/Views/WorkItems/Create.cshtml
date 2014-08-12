@@ -17,7 +17,7 @@
     {
         ViewBag.Breadcrumb = new Breadcrumb(new Crumb[] {
         new Crumb("Dashboard", Url.Action("Index","Home"), "fa-dashboard"),
-        new Crumb("Goals", Url.Action("Index","Goals"), "fa-check"),
+        new Crumb("Tasks", Url.Action("Index","Tasks"), "fa-check"),
         new Crumb("Create Task")
     });
     }
@@ -52,7 +52,7 @@
 
                 <div class="box-body">
 
-                    @Html.Partial("_WorkItemFields", Model)
+                    @Html.EditorForModel()
 
                     <div class="">
                         <button type="submit" class="btn btn-primary">Create Task</button>

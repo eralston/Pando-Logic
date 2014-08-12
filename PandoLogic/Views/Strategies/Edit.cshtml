@@ -1,7 +1,8 @@
 ﻿@model PandoLogic.Models.Strategy
 
 @{
-    ViewBag.Title = "Edit Strategy";
+    ViewBag.Title = Model.Title;
+    ViewBag.TitleMinor = "Edit Strategy";
 
     ViewBag.Breadcrumb = new Breadcrumb(new Crumb[] {
         new Crumb("Dashboard", Url.Action("Index","Home"), "fa-dashboard"),

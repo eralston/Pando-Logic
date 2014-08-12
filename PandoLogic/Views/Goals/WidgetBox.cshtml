@@ -1,0 +1,46 @@
+﻿@using PandoLogic.Models
+@model Goal[]
+
+@{
+    Layout = null;
+}
+
+@for (int i = 0; i < Math.Ceiling(((float)Model.Length / 4f)); ++i)
+{
+    <div class="row">
+        @for (int j = 0; j < 4 && ((i * 4) + j < Model.Length); ++j)
+        {
+            int index = (i * 4) + j;
+            Goal goal = Model[index];
+
+            <div class="col-lg-3 col-xs-6">
+                <a href="@Url.Action("Details", "Goals", new { id = goal.Id })">
+                    <div class="small-box @goal.ColorClass">
+                        <div class="inner">
+                            @if (goal.DueDate.HasValue)
+                            {
+                                <p class="pull-right">
+                                    @goal.DueDate.Value.ToString("d")
+                                </p>
+                            }
+                            <h3>
+                                @goal.CalculateProgress()
+                                <sup style="font-size: 20px">%</sup>
+                            </h3>
+                            <p>
+                                @goal.Title
+                            </p>
+                        </div>
+                        <div class="icon">
+                            <i class="fa @goal.IconClass"></i>
+                        </div>
+                        <div class="small-box-footer">
+                            More info <i class="fa fa-arrow-circle-right"></i>
+
+                        </div>
+                    </div>
+                </a>
+            </div>
+        }
+    </div>
+}

@@ -27,6 +27,8 @@ namespace PandoLogic.Controllers
             this.Id = goal.Id;
             this.Title = goal.Title;
             this.Description = goal.Description;
+            this.Color = goal.Color;
+            this.Icon = goal.Icon;
             if (goal.DueDate.HasValue)
                 this.DueDateString = goal.DueDate.Value.ToString("d");
         }
@@ -63,6 +65,7 @@ namespace PandoLogic.Controllers
 
             ViewBag.Tasks = await query.ToArrayAsync();
             ViewBag.GoalId = goal.Id;
+            ViewBag.IsMyGoal = goal.CreatorId == UserCache.Id;
 
             if (limited)
             {
@@ -85,6 +88,15 @@ namespace PandoLogic.Controllers
             }
 
             return query;
+        }
+
+        private Goal[] QueryActiveGoals(bool limited = true)
+        {
+            Member currentMember = GetCurrentMember();
+            IQueryable<Goal> query = BuildGoalQuery(limited, currentMember);
+            query = query.Where(g => g.ArchiveDate == null);
+            var goals = query.ToArray();
+            return goals;
         }
 
         #endregion
@@ -120,12 +132,8 @@ namespace PandoLogic.Controllers
         }
 
         // GET: Goals/Details/5
-        public async Task<ActionResult> Details(int? id)
+        public async Task<ActionResult> Details(int id)
         {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
             Goal goal = await Db.Goals.FindAsync(id);
             if (goal == null)
             {
@@ -171,7 +179,7 @@ namespace PandoLogic.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Create([Bind(Include = "DueDateString,Title,Description")] GoalViewModel goalViewModel)
+        public async Task<ActionResult> Create([Bind(Include = "DueDateString,Title,Description,Color,Icon")] GoalViewModel goalViewModel)
         {
             if (ModelState.IsValid)
             {
@@ -186,6 +194,9 @@ namespace PandoLogic.Controllers
                 goal.CreatedDate = DateTime.Now;
                 goal.CompanyId = currentMember.CompanyId;
                 goal.CreatorId = currentMember.UserId;
+
+                goal.Color = goalViewModel.Color;
+                goal.Icon = goalViewModel.Icon;
 
                 Db.Goals.Add(goal);
 
@@ -226,7 +237,7 @@ namespace PandoLogic.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Edit([Bind(Include = "Id,DueDateString,Title,Description")] GoalViewModel goalViewModel)
+        public async Task<ActionResult> Edit([Bind(Include = "Id,DueDateString,Title,Description,Color,Icon")] GoalViewModel goalViewModel)
         {
             if (ModelState.IsValid)
             {
@@ -235,6 +246,9 @@ namespace PandoLogic.Controllers
                 goal.DueDate = goalViewModel.ParsedDueDateTime();
                 goal.Title = goalViewModel.Title;
                 goal.Description = goalViewModel.Description;
+
+                goal.Color = goalViewModel.Color;
+                goal.Icon = goalViewModel.Icon;
 
                 Db.Entry(goal).State = EntityState.Modified;
                 await Db.SaveChangesAsync();
@@ -286,10 +300,13 @@ namespace PandoLogic.Controllers
         /// <returns></returns>
         public ActionResult Widget()
         {
-            Member currentMember = GetCurrentMember();
-            IQueryable<Goal> query = BuildGoalQuery(true, currentMember);
-            query = query.Where(g => g.ArchiveDate == null);
-            var goals = query.ToArray();
+            var goals = QueryActiveGoals();
+            return View(goals);
+        }
+
+        public ActionResult WidgetBox()
+        {
+            var goals = QueryActiveGoals(false);
             return View(goals);
         }
 

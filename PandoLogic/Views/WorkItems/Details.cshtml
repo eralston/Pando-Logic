@@ -2,13 +2,14 @@
 @model PandoLogic.Models.WorkItem
 
 @{
-    ViewBag.Title = "Task Details";
+    ViewBag.Title = Model.Title;
+    ViewBag.TitleMinor = "Task Details";
 
     if (Model.GoalId == null)
     {
         ViewBag.Breadcrumb = new Breadcrumb(new Crumb[] {
             new Crumb("Dashboard", Url.Action("Index","Home"), "fa-dashboard"),
-            new Crumb("Goals", Url.Action("Index","Goals"), "fa-check"),
+            new Crumb("Tasks", Url.Action("Index","Tasks"), "fa-check"),
             new Crumb("Task Details")
         });
     }
@@ -28,13 +29,23 @@
         <!-- general form elements -->
         <div class="box box-primary">
             <div class="box-header">
-                <h3 class="box-title">Task Details</h3>
+                <h3 class="box-title">@Model.Title</h3>
+                <div class="btn-group pull-right box-tools">
+
+                    @if (ViewBag.IsMyTask)
+                    {
+                        <a class="btn btn-default btn-flat btn-sm" href="@Url.Action("Edit", new { id = Model.Id })">
+                            <i class="fa fa-pencil"></i>
+                            Edit
+                        </a>
+                        <a class="btn btn-default btn-flat btn-sm" href="@Url.Action("Delete", new { id = Model.Id })">
+                            <i class="fa fa-trash-o"></i>
+                            Delete
+                        </a>
+                    }
+                </div>
             </div>
             <div class="box-body">
-                <div class="pull-right">
-                    @Html.ActionLink("Edit", "Edit", new { id = Model.Id }) |
-                    @Html.ActionLink("Delete", "Delete", new { id = Model.Id })
-                </div>
                 <dl class="dl-horizontal">
 
                     <dt>

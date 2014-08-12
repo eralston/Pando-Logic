@@ -140,6 +140,8 @@ namespace PandoLogic.Controllers
                 return HttpNotFound();
             }
 
+            ViewBag.IsMyTask = workItem.AssigneeId == UserCache.Id || workItem.AssigneeId == null;
+
             workItem.LoadComments(this, "CreateTask");
 
             return View(workItem);

@@ -872,7 +872,7 @@
     <Content Include="Views\Shared\_Comments.cshtml" />
     <Content Include="Views\Activities\_Cancel.cshtml" />
     <Content Include="Views\WorkItems\Widget.cshtml" />
-    <Content Include="Views\WorkItems\_WorkItemFields.cshtml" />
+    <Content Include="Views\WorkItems\EditorTemplates\WorkItem.cshtml" />
     <Content Include="Views\Goals\Tasks.cshtml" />
     <Content Include="Views\Goals\Archive.cshtml" />
     <Content Include="Views\Goals\_GoalDetails.cshtml" />
@@ -900,6 +900,7 @@
     <Content Include="Views\Users\Details.cshtml" />
     <Content Include="Views\Users\Edit.cshtml" />
     <Content Include="Views\Users\Index.cshtml" />
+    <Content Include="Views\Goals\WidgetBox.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
