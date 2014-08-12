@@ -344,7 +344,7 @@ namespace PandoLogic.Controllers
 
             await Db.SaveChangesAsync();
 
-            return RedirectToAction("Details", new { id = id });
+            return RedirectToAction("Index", "Goals");
         }
 
         public async Task<ActionResult> UndoArchive(int id)

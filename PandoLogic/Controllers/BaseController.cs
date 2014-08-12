@@ -276,7 +276,9 @@ namespace PandoLogic.Controllers
 
                 // Companies
                 ViewBag.CurrentUserCompanies = cache.Companies;                
-            }            
+            }
+
+            ViewBag.CurrentUserGoals = Db.Goals.Where(g => g.ArchiveDate == null && g.IsTemplate == false && g.CompanyId == cache.SelectedCompanyId).Include(g => g.WorkItems).OrderBy(g => g.DueDate).ToArray();
         }
 
         #endregion

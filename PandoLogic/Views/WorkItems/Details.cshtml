@@ -45,6 +45,14 @@
                     }
                 </div>
             </div>
+            @if (Model.Goal != null)
+            {
+                <div class="callout callout-info">
+                    <p class="text-blue">Goal Details</p>
+                    <h4>@Model.Goal.Title</h4>
+                    @Model.Goal.Description
+                </div>
+            }
             <div class="box-body">
                 <dl class="dl-horizontal">
 
@@ -75,7 +83,7 @@
                         <a href="@Url.Action("Details", "Users", new { id = Model.CreatorId })">
                             @Html.DisplayFor(model => model.Creator.FullName)
                         </a>
-                        
+
                     </dd>
 
                     @if (Model.Assignee != null)

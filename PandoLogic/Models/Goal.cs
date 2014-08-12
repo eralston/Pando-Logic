@@ -154,22 +154,36 @@ namespace PandoLogic.Models
 
         #region Methods
 
+        string _progress = null;
+
         public string CalculateProgress()
         {
+            if (!string.IsNullOrEmpty(_progress))
+            {
+                return _progress;
+            }
+
             if (this.ArchiveDate.HasValue)
-                return "100";
+            {
+                _progress = "100";
+                return _progress;
+            }
 
             int complete = CompletedWorkItemCount();
             int count = this.WorkItems.Count;
 
-            if (count == 0)
-                return "0";
+            if(count == 0)
+            {
+                _progress = "0";
+                return _progress;
+            }
 
             float retFloat = (float)complete / (float)count;
             retFloat = retFloat * 100f;
             int retInt = (int)retFloat;
-            string ret = retInt.ToString();
-            return ret;
+
+            _progress = retInt.ToString();
+            return _progress;
         }
 
         public int CompletedWorkItemCount()
@@ -244,6 +258,7 @@ namespace PandoLogic.Models
             Goal goal = goals.Create();
 
             goal.CreatedDate = DateTime.Now;
+            goal.StartDate = goal.CreatedDate;
             goal.CompanyId = companyId;
             goal.CreatorId = userId;
 

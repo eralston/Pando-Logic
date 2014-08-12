@@ -388,7 +388,7 @@ namespace PandoLogic.Controllers
 
             await Db.SaveChangesAsync();
 
-            return RedirectToAction("Index");
+            return RedirectToAction("Index", "Goals");
         }
 
         public async Task<ActionResult> RebuildIndex()

@@ -45,6 +45,7 @@
                         <tr>
                             <td>
                                 <a href="@Url.Action("Details", "Goals", new { id = goal.Id })">
+                                    <i class="fa @goal.Icon @goal.IconClass"></i>
                                     @goal.Title
                                 </a>
                             </td>
@@ -74,7 +75,7 @@
 
 
                             <td>
-                                <div class="progress sm active">
+                                <div class="progress sm active bg-red">
                                     <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="@goal.CalculateProgress()" aria-valuemin="0" aria-valuemax="100" style="width: @goal.CalculateProgress()%">
                                         <span class="sr-only">@goal.CalculateProgress()% Complete</span>
                                     </div>

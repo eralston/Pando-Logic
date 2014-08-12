@@ -22,3 +22,23 @@
 .user-rating i {
     cursor: pointer;
 }
+
+.script-font {
+    font-family: 'Kaushan Script', cursive;
+}
+
+.bottom-banner {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    font-size: 8em;
+    z-index: 0;
+}
+
+div {
+    z-index: 1;
+}
+
+body > .header .logo {
+    font-size: 28px;
+}
