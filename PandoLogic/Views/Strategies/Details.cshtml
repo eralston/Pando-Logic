@@ -1,104 +1,104 @@
 ﻿@using PandoLogic.Hubs
-    @using PandoLogic.Models
+@using PandoLogic.Models
 
-    @model Strategy
+@model Strategy
 
-    @{
-        ViewBag.Title = Model.Title;
-        ViewBag.TitleMinor = "Strategy Details";
+@{
+    ViewBag.Title = Model.Title;
+    ViewBag.TitleMinor = "Strategy Details";
 
-        ViewBag.Breadcrumb = new Breadcrumb(new Crumb[] {
+    ViewBag.Breadcrumb = new Breadcrumb(new Crumb[] {
         new Crumb("Dashboard", Url.Action("Index","Home"), "fa-dashboard"),
         new Crumb("Strategies", Url.Action("Index","Strategies"), "fa-puzzle-piece"),
         new Crumb("Strategy Details")
     });
-    }
-    <div class="row">
-        <div class="col-md-6">
-            <!-- general form elements -->
-            <div class="box box-primary">
-                <div class="box-header">
-                    <h3 class="box-title">@Model.Title</h3>
-                    <div class="btn-group pull-right box-tools">
+}
+<div class="row">
+    <div class="col-md-6">
+        <!-- general form elements -->
+        <div class="box box-primary">
+            <div class="box-header">
+                <h3 class="box-title">@Model.Title</h3>
+                <div class="btn-group pull-right box-tools">
 
-                        @if (ViewBag.IsStrategyBookmarked)
-                        {
-                            <a class="btn btn-default btn-flat btn-sm" href="@Url.Action("Unbookmark", new { id = Model.Id })">
-                                <i class="fa fa-bookmark"></i>
-                                Unbookmark
-                            </a>
-                        }
-                        else
-                        {
-                            <a class="btn btn-default btn-flat btn-sm" href="@Url.Action("Bookmark", new { id = Model.Id })">
-                                <i class="fa fa-bookmark-o"></i>
-                                Bookmark
-                            </a>
-                        }
+                    @if (ViewBag.IsStrategyBookmarked)
+                    {
+                        <a class="btn btn-default btn-flat btn-sm" href="@Url.Action("Unbookmark", new { id = Model.Id })">
+                            <i class="fa fa-bookmark"></i>
+                            Unbookmark
+                        </a>
+                    }
+                    else
+                    {
+                        <a class="btn btn-default btn-flat btn-sm" href="@Url.Action("Bookmark", new { id = Model.Id })">
+                            <i class="fa fa-bookmark-o"></i>
+                            Bookmark
+                        </a>
+                    }
 
-                        @if (ViewBag.IsMyStrategy)
-                        {
-                            <a class="btn btn-default btn-flat btn-sm" href="@Url.Action("Edit", new { id = Model.Id })">
-                                <i class="fa fa-pencil"></i>
-                                Edit
-                            </a>
-                            <a class="btn btn-default btn-flat btn-sm" href="@Url.Action("Delete", new { id = Model.Id })">
-                                <i class="fa fa-trash-o"></i>
-                                Delete
-                            </a>
-                        }
+                    @if (ViewBag.IsMyStrategy)
+                    {
+                        <a class="btn btn-default btn-flat btn-sm" href="@Url.Action("Edit", new { id = Model.Id })">
+                            <i class="fa fa-pencil"></i>
+                            Edit
+                        </a>
+                        <a class="btn btn-default btn-flat btn-sm" href="@Url.Action("Delete", new { id = Model.Id })">
+                            <i class="fa fa-trash-o"></i>
+                            Delete
+                        </a>
+                    }
 
-                        @Html.ActionLink("Adopt Strategy", "Adopt", new { id = Model.Id }, new { @class = "btn btn-primary  btn-flat btn-sm" })
-                    </div>
+                    @Html.ActionLink("Adopt Strategy", "Adopt", new { id = Model.Id }, new { @class = "btn btn-primary  btn-flat btn-sm" })
                 </div>
-                @Html.Partial("_StrategyDetails", Model)
             </div>
-        </div>
-        <div class="col-md-6">
-            @Html.Partial("_Chat", new ChatInfo { ChatRoomId = string.Format("Strategy-{0}", @Model.Id), Title = "Strategy Chat" })
-            @Html.Partial("_Comments", new Activity())
+            @Html.Partial("_StrategyDetails", Model)
         </div>
     </div>
+    <div class="col-md-6">
+        @Html.Partial("_Chat", new ChatInfo { ChatRoomId = string.Format("Strategy-{0}", @Model.Id), Title = "Strategy Chat" })
+        @Html.Partial("_Comments", new Activity())
+    </div>
+</div>
 
-    @section scripts {
-        <script>
+@section scripts {
+    <script>
 
-            var currentRating = @ViewBag.StrategyRating.Rating;
+        var currentRating = @ViewBag.StrategyRating.Rating;
 
-            function markStar($elem) {
-                $elem.addClass("fa-star").removeClass("fa-star-o");
-            }
+        function markStar($elem) {
+            $elem.addClass("fa-star").removeClass("fa-star-o");
+        }
 
-            function unmarkStar($elem) {
-                $elem.removeClass("fa-star").addClass("fa-star-o");
-            }
+        function unmarkStar($elem) {
+            $elem.removeClass("fa-star").addClass("fa-star-o");
+        }
 
-            $(function () {
+        $(function () {
 
-                var $stars = $(".user-rating i");
-                $stars.hover(function () {
-                    markStar($(this));
-                    markStar($(this).prevAll());
-                    unmarkStar($(this).nextAll());
-                }, function () {
+            var $stars = $(".user-rating i");
+            $stars.hover(function () {
+                markStar($(this));
+                markStar($(this).prevAll());
+                unmarkStar($(this).nextAll());
+            }, function () {
 
-                    for(var i = 0; i < 5; ++i)
+                for(var i = 0; i < 5; ++i)
+                {
+                    var $star = $($stars[i]);
+                    if(i < currentRating)
                     {
-                        var $star = $($stars[i]);
-                        if(i < currentRating)
-                        {
-                            markStar($star);
-                        }
-                        else
-                        {
-                            unmarkStar($star);
-                        }
+                        markStar($star);
                     }
-                }).click(function () {
-                    var rating = $(this).attr("data-rating");
-                    $(".user-rating-target").val(rating);
-                    $(".user-rating-form").submit();
-                });
-            })
-        </script>
-    }
+                    else
+                    {
+                        unmarkStar($star);
+                    }
+                }
+            }).click(function () {
+                var rating = $(this).attr("data-rating");
+                $(".user-rating-target").val(rating);
+                $(".user-rating-form").submit();
+            });
+        })
+    </script>
+}

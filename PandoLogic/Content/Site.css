@@ -47,3 +47,7 @@ body > .header .logo {
 .timeline:before {
     left: 30px;
 }
+
+.company-chat-toggle {
+    cursor: pointer;
+}

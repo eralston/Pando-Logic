@@ -113,6 +113,7 @@
                         @Html.ValidationSummary("", new { @class = "text-danger" })
                     </div>
                 }
+                @Html.Partial("_CompanyChat")
                 @RenderBody()
             </section>
         </aside>
@@ -284,6 +285,20 @@
                     }
                 }
             };
+        });
+    </script>
+    <script>
+        $(function () {
+            $(".company-chat-toggle").click(function () {
+
+                var $chat = $(".company-chat");
+
+                if ($chat.is(":hidden")) {
+                    $chat.slideDown(300);
+                } else {
+                    $chat.slideUp(300);
+                }
+            });
         });
     </script>
 

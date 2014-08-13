@@ -921,6 +921,7 @@
     <Content Include="Views\Goals\WidgetBox.cshtml" />
     <Content Include="Views\Shared\_LeftMenu.cshtml" />
     <Content Include="Views\Shared\_TopBarMenu.cshtml" />
+    <Content Include="Views\Shared\_CompanyChat.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
