@@ -11,64 +11,66 @@
 
 @if (Model.Count() > 0)
 {
-    <ul class="timeline">
+    <div style="position: relative">
+        <ul class="timeline">
 
-        @foreach (Activity activity in Model)
-        {
-            if (!currentDateTime.HasValue || currentDateTime.Value.Date != activity.CreatedDate.Value.Date)
+            @foreach (Activity activity in Model)
             {
-                currentDateTime = activity.CreatedDate;
-                <li class="time-label">
-                    <span class="bg-aqua">
-                        @if (currentDateTime.Value.Date == today.Date)
+                if (!currentDateTime.HasValue || currentDateTime.Value.Date != activity.CreatedDate.Value.Date)
+                {
+                    currentDateTime = activity.CreatedDate;
+                    <li class="time-label">
+                        <span class="bg-aqua">
+                            @if (currentDateTime.Value.Date == today.Date)
+                            {
+                                <span>Today</span>
+                            }
+                            else if (currentDateTime.Value.Date == yesterday.Date)
+                            {
+                                <span>Yesterday</span>
+                            }
+                            else
+                            {
+                                @currentDateTime.Value.ToString("D")
+                            }
+
+                        </span>
+                    </li>
+                }
+
+                bool hasDescription = !string.IsNullOrEmpty(activity.Description);
+                string headerClass = hasDescription ? "" : " no-border ";
+
+                <li>
+                    <i class="fa @activity.IconClass"></i>
+                    <div class="timeline-item">
+                        <span class="time">
+                            @{
+                bool? isFomActivityFeed = ViewBag.IsFromActivityFeed;
+                string deleteActionName = isFomActivityFeed.HasValue && isFomActivityFeed.Value ? "DeleteActivity" : "Delete";
+                string editActionName = isFomActivityFeed.HasValue && isFomActivityFeed.Value ? "EditActivity" : "Edit";
+                            }
+                            <a href="@Url.Action(editActionName, "Activities", new { id = activity.Id })">
+                                <i class="fa fa-pencil"></i>
+                            </a>
+                            <a href="@Url.Action(deleteActionName, "Activities", new { id = activity.Id })">
+                                <i class="fa fa-trash-o"></i>
+                            </a>
+                            <i class="fa fa-clock-o"></i>
+                            @activity.CreatedDate.Value.ToString("t")
+                        </span>
+
+                        <h3 class="timeline-header @headerClass">@activity.Title</h3>
+
+                        @if (hasDescription)
                         {
-                            <span>Today</span>
+                            <div class="timeline-body">
+                                @activity.Description
+                            </div>
                         }
-                        else if (currentDateTime.Value.Date == yesterday.Date)
-                        {
-                            <span>Yesterday</span>
-                        }
-                        else
-                        {
-                            @currentDateTime.Value.ToString("D")
-                        }
-                        
-                    </span>
+                    </div>
                 </li>
             }
-
-            bool hasDescription = !string.IsNullOrEmpty(activity.Description);
-            string headerClass = hasDescription ? "" : " no-border ";
-
-            <li>
-                <i class="fa @activity.IconClass"></i>
-                <div class="timeline-item">
-                    <span class="time">
-                        @{
-            bool? isFomActivityFeed = ViewBag.IsFromActivityFeed;
-            string deleteActionName = isFomActivityFeed.HasValue && isFomActivityFeed.Value ? "DeleteActivity" : "Delete";
-            string editActionName = isFomActivityFeed.HasValue && isFomActivityFeed.Value ? "EditActivity" : "Edit";
-                        }
-                        <a href="@Url.Action(editActionName, "Activities", new { id = activity.Id })">
-                            <i class="fa fa-pencil"></i>
-                        </a>
-                        <a href="@Url.Action(deleteActionName, "Activities", new { id = activity.Id })">
-                            <i class="fa fa-trash-o"></i>
-                        </a>
-                        <i class="fa fa-clock-o"></i>
-                        @activity.CreatedDate.Value.ToString("t")
-                    </span>
-
-                    <h3 class="timeline-header @headerClass">@activity.Title</h3>
-
-                    @if (hasDescription)
-                    {
-                        <div class="timeline-body">
-                            @activity.Description
-                        </div>
-                    }
-                </div>
-            </li>
-        }
-    </ul>
+        </ul>
+    </div>
 }

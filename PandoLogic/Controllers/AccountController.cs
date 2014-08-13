@@ -69,7 +69,7 @@ namespace PandoLogic.Controllers
                 {
                     await SignInAsync(user, model.RememberMe);
 
-                    await UpdateCurrentUserCacheAsync();
+                    ClearCurrentUserCache();
 
                     return RedirectToLocal(returnUrl);
                 }

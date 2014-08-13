@@ -42,3 +42,8 @@ div {
 body > .header .logo {
     font-size: 28px;
 }
+
+/* Fix the timeline position, evidently the _Timeline partial wraps it slightly wrong */
+.timeline:before {
+    left: 30px;
+}

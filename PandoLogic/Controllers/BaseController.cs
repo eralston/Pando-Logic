@@ -12,11 +12,12 @@ using PandoLogic;
 using PandoLogic.Models;
 
 using InviteOnly;
+using System.Web.Security;
 
 namespace PandoLogic.Controllers
 {
 
-    public class BaseController : Controller, IInviteContextProvider
+    public class BaseController : Controller, IInviteContextProvider, IPersistenceContext
     {
         #region Constants
 
@@ -90,7 +91,6 @@ namespace PandoLogic.Controllers
 
         #region Fields
 
-        private ApplicationDbContext _db = null;
         private ApplicationUser _user = null;
         private Member _member = null;
 
@@ -98,6 +98,7 @@ namespace PandoLogic.Controllers
 
         #region Properties
 
+        private ApplicationDbContext _db = null;
         public ApplicationDbContext Db
         {
             get
@@ -115,7 +116,7 @@ namespace PandoLogic.Controllers
         /// <summary>
         /// Gets the currently logged in user's name
         /// </summary>
-        protected string CurrentUsername
+        public string CurrentUsername
         {
             get
             {
@@ -186,16 +187,16 @@ namespace PandoLogic.Controllers
             HttpContext.Session[UserInfoCacheId] = _userCache;
         }
 
-        protected ApplicationUser GetCurrentUser()
+        public ApplicationUser GetCurrentUser()
         {
-            _user = _user ?? Db.Users.Where(u => u.UserName == CurrentUsername).FirstOrDefault();
+            _user = _user ?? this.FindCurrentUser();
 
             return _user;
         }
 
-        protected async Task<ApplicationUser> GetCurrentUserAsync()
+        public async Task<ApplicationUser> GetCurrentUserAsync()
         {
-            _user = _user ?? await Db.Users.Where(u => u.UserName == CurrentUsername).FirstOrDefaultAsync();
+            _user = _user ?? await this.FindCurrentUserAsync();
 
             return _user;
         }
@@ -204,8 +205,6 @@ namespace PandoLogic.Controllers
         {
             if (_member != null)
                 return _member;
-
-            ApplicationUser user = GetCurrentUser();
 
             int selectedMemberId = UserCache.SelectedMemberId;
             _member = Db.Members.Find(selectedMemberId);
@@ -282,6 +281,11 @@ namespace PandoLogic.Controllers
                 ViewBag.CurrentUserCompanies = cache.Companies;
 
                 ViewBag.CurrentUserGoals = Db.Goals.Where(g => g.ArchiveDate == null && g.IsTemplate == false && g.CompanyId == cache.SelectedCompanyId).Include(g => g.WorkItems).OrderBy(g => g.DueDate).ToArray();
+            }
+
+            if(Request.IsAuthenticated)
+            {
+                FormsAuthentication.SetAuthCookie(CurrentUsername, false);
             }
         }
 

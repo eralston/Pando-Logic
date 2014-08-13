@@ -62,9 +62,7 @@
         </div>
         @Html.Partial("_TaskBox", (IEnumerable<WorkItem>)ViewBag.Tasks)
     </div>
-    <div class="row">
-        <div class="col-md-6">
-            @Html.Partial("_Comments", new Activity())
-        </div>
+    <div class="col-md-6">
+        @Html.Partial("_Comments", new Activity())
     </div>
 </div>

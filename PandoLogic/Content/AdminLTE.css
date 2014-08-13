@@ -1569,21 +1569,21 @@ body > .header .logo .icon {
   cursor: move;
   margin: 0 5px;
 }
-.box .chat {
+.chat {
   padding: 5px 20px 5px 10px;
 }
-.box .chat .item {
+.chat .item {
   margin-bottom: 10px;
 }
-.box .chat .item:before,
-.box .chat .item:after {
+.chat .item:before,
+.chat .item:after {
   display: table;
   content: " ";
 }
-.box .chat .item:after {
+.chat .item:after {
   clear: both;
 }
-.box .chat .item > img {
+.chat .item > img {
   width: 40px;
   height: 40px;
   border: 2px solid transparent;
@@ -1591,21 +1591,21 @@ body > .header .logo .icon {
   -moz-border-radius: 50% !important;
   border-radius: 50% !important;
 }
-.box .chat .item > img.online {
+.chat .item > img.online {
   border: 2px solid #00a65a;
 }
-.box .chat .item > img.offline {
+.chat .item > img.offline {
   border: 2px solid #f56954;
 }
-.box .chat .item > .message {
+.chat .item > .message {
   margin-left: 55px;
   margin-top: -40px;
 }
-.box .chat .item > .message > .name {
+.chat .item > .message > .name {
   display: block;
   font-weight: 600;
 }
-.box .chat .item > .attachment {
+.chat .item > .attachment {
   -webkit-border-radius: 3px;
   -moz-border-radius: 3px;
   border-radius: 3px;
@@ -1614,24 +1614,24 @@ body > .header .logo .icon {
   margin-right: 15px;
   padding: 10px;
 }
-.box .chat .item > .attachment > h4 {
+.chat .item > .attachment > h4 {
   margin: 0 0 5px 0;
   font-weight: 600;
   font-size: 14px;
 }
-.box .chat .item > .attachment > p,
-.box .chat .item > .attachment > .filename {
+.chat .item > .attachment > p,
+.chat .item > .attachment > .filename {
   font-weight: 600;
   font-size: 13px;
   font-style: italic;
   margin: 0;
 }
-.box .chat .item > .attachment:before,
-.box .chat .item > .attachment:after {
+.chat .item > .attachment:before,
+.chat .item > .attachment:after {
   display: table;
   content: " ";
 }
-.box .chat .item > .attachment:after {
+.chat .item > .attachment:after {
   clear: both;
 }
 .box > .overlay,
