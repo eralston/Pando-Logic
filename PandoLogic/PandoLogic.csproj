@@ -245,6 +245,7 @@
     <Compile Include="Models\ICommentable.cs" />
     <Compile Include="Models\Industry.cs" />
     <Compile Include="Models\Member.cs" />
+    <Compile Include="Models\MemberInvite.cs" />
     <Compile Include="Models\PhoneNumber.cs" />
     <Compile Include="Models\Strategy.cs" />
     <Compile Include="Models\StrategyAdoption.cs" />
@@ -451,6 +452,7 @@
     <Content Include="fonts\ionicons.eot" />
     <Content Include="fonts\ionicons.ttf" />
     <Content Include="fonts\ionicons.woff" />
+    <Content Include="App_Data\Industry List.csv" />
     <None Include="Properties\PublishProfiles\PandoLogic-dev %282%29.pubxml" />
     <None Include="Properties\PublishProfiles\PandoLogic-dev.pubxml" />
     <None Include="Scripts\jquery-2.1.1.intellisense.js" />
@@ -469,6 +471,7 @@
     <Content Include="img\bootstrap-colorpicker\hue-horizontal.png" />
     <Content Include="img\bootstrap-colorpicker\hue.png" />
     <Content Include="img\bootstrap-colorpicker\saturation.png" />
+    <Content Include="img\brand\banner.jpg" />
     <Content Include="img\credit\american-express.png" />
     <Content Include="img\credit\cirrus.png" />
     <Content Include="img\credit\mastercard.png" />
@@ -922,9 +925,12 @@
     <Content Include="Views\Shared\_LeftMenu.cshtml" />
     <Content Include="Views\Shared\_TopBarMenu.cshtml" />
     <Content Include="Views\Shared\_CompanyChat.cshtml" />
+    <Content Include="Views\Email\Invite.cshtml" />
+    <Content Include="Views\Companies\Team.cshtml" />
+    <Content Include="Views\Companies\RevokeInvite.cshtml" />
+    <Content Include="Views\Companies\_Details.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="App_Data\" />
     <Folder Include="Views\Shared\DisplayTemplates\" />
   </ItemGroup>
   <ItemGroup>

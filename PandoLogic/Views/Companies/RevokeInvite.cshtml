@@ -1,14 +1,14 @@
 ﻿@model PandoLogic.Models.Company
 
 @{
-    ViewBag.Title = string.Format("Delete {0}", Model.Name);
-    ViewBag.TitleMinor = "Delete Company";
+    ViewBag.Title = string.Format("Revoke Invite for {0}", ViewBag.MemberInviteEmail);
+    ViewBag.TitleMinor = "Revoke Invite";
 
     ViewBag.Breadcrumb = new Breadcrumb(new Crumb[] {
             new Crumb("Dashboard", Url.Action("Index","Home"), "fa-dashboard"),
             new Crumb("Companies", Url.Action("Index","Companies"), "fa-building-o"),
             new Crumb("Company Details", Url.Action("Details","Companies", new { id = Model.Id })),
-            new Crumb("Delete Company")
+            new Crumb("Revoke Invite")
         });
 }
 
@@ -20,13 +20,16 @@
                 <h3 class="box-title">@ViewBag.Title</h3>
             </div>
             <div class="box-body">
-                @Html.Partial("_Details", Model)
+                <dl>
+                    <dt>E-Mail</dt>
+                    <dd>@ViewBag.MemberInviteEmail</dd>
+                </dl>
                 @using (Html.BeginForm())
                 {
                     @Html.AntiForgeryToken()
 
                     <div class="form-actions no-color">
-                        <input type="submit" value="Delete Company" class="btn btn-danger" />
+                        <input type="submit" value="Revoke Invite" class="btn btn-danger" />
                         @Html.ActionLink("Cancel", "Details", new { id = Model.Id })
                     </div>
                 }

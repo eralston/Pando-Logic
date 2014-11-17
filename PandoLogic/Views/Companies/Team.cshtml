@@ -1,0 +1,72 @@
+﻿@using PandoLogic.Models
+
+@{
+    Layout = null;
+}
+
+<div class="box box-primary">
+    <div class="box-header">
+        <h3 class="box-title">Team Members</h3>
+    </div>
+    <div class="box-body no-padding">
+        <div class="table-responsive">
+            <table class="table table-striped">
+                <tbody>
+                    <tr>
+                        <th>E-Mail</th>
+                        <th>Name</th>
+                        <th></th>
+                    </tr>
+                    @foreach (Member member in ViewBag.Members)
+                    {
+                        <tr>
+                            <td>
+                                @Html.ActionLink(member.User.Email, "Details", "Users", new { id = member.UserId }, null)
+                            </td>
+                            <td>
+                                @Html.ActionLink(member.User.FullName, "Details", "Users", new { id = member.UserId }, null)
+                            </td>
+                            <td>
+                                <a class="" href="@Url.Action("Delete", new { id = Model.Id })">
+                                    <i class="fa fa-trash-o"></i>
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                    @foreach (MemberInvite invite in ViewBag.MemberInvites)
+                    {
+                        <tr>
+                            <td>
+                                @invite.Email
+                            </td>
+                            <td>
+                                Pending
+                            </td>
+                            <td>
+                                <a class="" href="@Url.Action("RevokeInvite", "Companies", new { id = invite.Id })">
+                                <i class="fa fa-trash-o"></i>
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                    <tr>
+                        <td colspan="3">
+                            @using (Html.BeginForm("Invite", "Companies", FormMethod.Post))
+                            {
+                                @Html.AntiForgeryToken()
+
+                                <div class="input-group">
+                                    <input type="hidden" name="CompanyId" value="@Model.Id" />
+                                    <input class="form-control" placeholder="Invite E-Mail" name="Email">
+                                    <div class="input-group-btn">
+                                        <button class="btn btn-primary"><i class="fa fa-plus"></i></button>
+                                    </div>
+                                </div>
+                            }
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

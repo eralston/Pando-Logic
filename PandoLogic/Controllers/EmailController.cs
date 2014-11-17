@@ -24,5 +24,18 @@ namespace PandoLogic.Controllers
 
             return View();
         }
+
+        public ActionResult Invite()
+        {
+            ViewBag.Title = "You're Invited to Pando Logic";
+            ViewBag.Teaser = "{0} has invited you to collaborate on Pando Logic";
+            ViewBag.H1 = "You're Invited!";
+            ViewBag.Lead = "Get Focused. Get Results. Collaborate.";
+            ViewBag.Body = "You're invited to connect and collaborate with your team. Pando Logic will empower you to plan and achieve in your business.";
+            ViewBag.Link = "http://google.com";
+            ViewBag.LinkText = "Click to Accept Invitation";
+
+            return View();
+        }
     }
 }

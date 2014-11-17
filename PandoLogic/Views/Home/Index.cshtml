@@ -17,5 +17,6 @@
     <div class="col-md-6">
         @Html.Action("Widget", "WorkItems")
         @Html.Action("Widget", "Goals")
+        @Html.Action("Team", "Companies", new { id = ViewBag.CurrentUserSelectedCompanyId })
     </div>
 </div>

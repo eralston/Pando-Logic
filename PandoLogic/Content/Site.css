@@ -1,4 +1,6 @@
-﻿.bg-pinstripe {
+﻿
+
+.bg-pinstripe {
     background-image: url("/img/pinstripe.png");
 }
 
@@ -23,8 +25,11 @@
     cursor: pointer;
 }
 
-.script-font {
-    font-family: 'Kaushan Script', cursive;
+.logo {
+
+    font-size: 20px !important;
+    font-family: 'Varela Round', sans-serif;
+    text-transform: uppercase;
 }
 
 .bottom-banner {

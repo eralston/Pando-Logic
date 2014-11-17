@@ -15,6 +15,20 @@ using PandoLogic.Models;
 
 namespace PandoLogic.Controllers
 {
+    /// <summary>
+    /// ViewModel for inviting someone into a team
+    /// </summary>
+    public class MemberInviteViewModel
+    {
+        public int CompanyId { get; set; }
+
+        [Required]
+        [EmailAddress]
+        public string Email { get; set; }
+
+        public Company Company { get; set; }
+    }
+
     [NotMapped]
     public class CompanyViewModel : Company
     {
@@ -32,7 +46,6 @@ namespace PandoLogic.Controllers
             return !string.IsNullOrEmpty(FoundedDateString);
         }
 
-
         public DateTime ParsedDateTime()
         {
             CultureInfo provider = CultureInfo.InvariantCulture;
@@ -40,8 +53,32 @@ namespace PandoLogic.Controllers
         }
     }
 
+    [Authorize]
     public class CompaniesController : BaseController
     {
+        #region Methods
+
+        private void ApplyTeamMembersToViewBag(Company company)
+        {
+            ViewBag.Members = Db.Members.WhereCompany(company);
+            ViewBag.MemberInvites = Db.MemberInvites.WhereCompany(company.Id);
+        }
+
+        /// <summary>
+        /// Asynchronously returns whether the current user is in the given company
+        /// This should be used to double-check access rights for the user when accessing this controller
+        /// </summary>
+        /// <param name="companyId"></param>
+        /// <returns></returns>
+        public async Task<bool> IsCurrentUserInCompany(int companyId)
+        {
+            string currentUserId = this.UserCache.Id;
+            var ret = await Db.Members.WhereAssignedToUserAndCompany(currentUserId, companyId);
+            return ret != null;
+        }
+
+        #endregion
+
         // GET: Companies
         public async Task<ActionResult> Index()
         {
@@ -50,17 +87,30 @@ namespace PandoLogic.Controllers
         }
 
         // GET: Companies/Details/5
-        public async Task<ActionResult> Details(int? id)
+        public async Task<ActionResult> Details(int id)
         {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
+            bool isCurrentUserAllowed = await IsCurrentUserInCompany(id);
+            if (!isCurrentUserAllowed)
+                return HttpNotFound();
+
             Company company = await Db.Companies.FindAsync(id);
+
+            UnstashModelState();
+
+            return View(company);
+        }
+
+        [ChildActionOnly]
+        public ActionResult Team(int id)
+        {
+            Company company = Db.Companies.Find(id);
             if (company == null)
             {
                 return HttpNotFound();
             }
+
+            ApplyTeamMembersToViewBag(company);
+
             return View(company);
         }
 
@@ -152,12 +202,12 @@ namespace PandoLogic.Controllers
         }
 
         // GET: Companies/Edit/5
-        public async Task<ActionResult> Edit(int? id)
+        public async Task<ActionResult> Edit(int id)
         {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
+            bool isCurrentUserAllowed = await IsCurrentUserInCompany(id);
+            if (!isCurrentUserAllowed)
+                return HttpNotFound();
+
             Company company = await Db.Companies.FindAsync(id);
             if (company == null)
             {
@@ -175,6 +225,10 @@ namespace PandoLogic.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Edit([Bind(Include = "Id,CreatedDate,Name,NumberOfEmployees,IndustryId,AddressId")] Company company)
         {
+            bool isCurrentUserAllowed = await IsCurrentUserInCompany(company.Id);
+            if (!isCurrentUserAllowed)
+                return HttpNotFound();
+
             if (ModelState.IsValid)
             {
                 Db.Entry(company).State = EntityState.Modified;
@@ -187,12 +241,12 @@ namespace PandoLogic.Controllers
         }
 
         // GET: Companies/Delete/5
-        public async Task<ActionResult> Delete(int? id)
+        public async Task<ActionResult> Delete(int id)
         {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
+            bool isCurrentUserAllowed = await IsCurrentUserInCompany(id);
+            if (!isCurrentUserAllowed)
+                return HttpNotFound();
+
             Company company = await Db.Companies.FindAsync(id);
             if (company == null)
             {
@@ -206,6 +260,10 @@ namespace PandoLogic.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> DeleteConfirmed(int id)
         {
+            bool isCurrentUserAllowed = await IsCurrentUserInCompany(id);
+            if (!isCurrentUserAllowed)
+                return HttpNotFound();
+
             Company company = await Db.Companies.FindAsync(id);
             Db.Companies.Remove(company);
             await Db.SaveChangesAsync();
@@ -221,21 +279,25 @@ namespace PandoLogic.Controllers
         /// <returns></returns>
         public async Task<ActionResult> Change(int id)
         {
+            bool isCurrentUserAllowed = await IsCurrentUserInCompany(id);
+            if (!isCurrentUserAllowed)
+                return HttpNotFound();
+
             // Double-check user is member of company
             ApplicationUser user = await GetCurrentUserAsync();
             Member[] memberships = await Db.Members.WhererUserIsMember(user).ToArrayAsync();
 
             // Pull out the URL to which we will redirect
             string url = Request.QueryString["returnurl"];
-            if(string.IsNullOrEmpty(url))
+            if (string.IsNullOrEmpty(url))
             {
                 url = Url.Action("Index", "Home");
             }
 
             // Try to find the membership for the desired company
-            foreach(Member member in memberships)
+            foreach (Member member in memberships)
             {
-                if(member.CompanyId == id)
+                if (member.CompanyId == id)
                 {
                     member.SetSelected();
                     await Db.SaveChangesAsync();
@@ -247,5 +309,79 @@ namespace PandoLogic.Controllers
             // If we didn't find anything, then let's just redirect without having done anything
             return Redirect(url);
         }
+
+        #region Action Methods
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> Invite(MemberInviteViewModel memberInvite)
+        {
+            // Double-check user has access
+            bool isCurrentUserAllowed = await IsCurrentUserInCompany(memberInvite.CompanyId);
+            if (!isCurrentUserAllowed)
+                return HttpNotFound();
+
+            // If it's valid, then move along
+            if (ModelState.IsValid)
+            {
+                // Create the invite and send an e-mail
+                MemberInvite invite = Db.MemberInvites.Create(memberInvite.Email, memberInvite.CompanyId);
+                ApplicationUser user = await GetCurrentUserAsync();
+                await Db.SaveChangesAsync();
+
+                // Send an invite e-mail
+                EmailTemplates.SendInviteEmail(user, this, invite);
+            }
+            else
+            {
+                // Save the errors for the return
+                StashModelState();
+            }
+
+            return RedirectToAction("Details", new { id = memberInvite.CompanyId });
+        }
+
+        public async Task<ActionResult> RevokeInvite(int id)
+        {
+            // Pull the invite
+            MemberInvite invite = await Db.MemberInvites.FindAsync(id);
+
+            if (invite == null)
+                return HttpNotFound();
+
+            // Verify current user is in this team
+            bool isCurrentUserAllowed = await IsCurrentUserInCompany(invite.CompanyId);
+            if (!isCurrentUserAllowed)
+                return HttpNotFound();
+
+            Company company = await Db.Companies.FindAsync(invite.CompanyId);
+            ViewBag.MemberInviteId = id;
+            ViewBag.MemberInviteEmail = invite.Email ?? "";
+
+            return View(company);
+        }
+
+        [HttpPost, ActionName("RevokeInvite")]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> RevokeInviteConfirmed(int id)
+        {
+            // Pull the invite
+            MemberInvite invite = await Db.MemberInvites.FindAsync(id);
+
+            if (invite == null)
+                return HttpNotFound();
+
+            // Verify current user is in this team
+            bool isCurrentUserAllowed = await IsCurrentUserInCompany(invite.CompanyId);
+            if (!isCurrentUserAllowed)
+                return HttpNotFound();
+
+            Db.MemberInvites.Remove(invite);
+            await Db.SaveChangesAsync();
+
+            return RedirectToAction("Details", new { id = invite.CompanyId });
+        }
+
+        #endregion
     }
 }

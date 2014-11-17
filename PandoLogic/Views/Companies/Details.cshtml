@@ -1,61 +1,40 @@
-﻿@model PandoLogic.Models.Company
+﻿@using PandoLogic.Models
+@model PandoLogic.Models.Company
 
 @{
-    ViewBag.Title = "Details";
+    ViewBag.Title = Model.Name;
+    ViewBag.TitleMinor = "Company Details";
+
+    ViewBag.Breadcrumb = new Breadcrumb(new Crumb[] {
+            new Crumb("Dashboard", Url.Action("Index","Home"), "fa-dashboard"),
+            new Crumb("Companies", Url.Action("Index","Companies"), "fa-building-o"),
+            new Crumb("Company Details")
+        });
 }
 
-<h2>Details</h2>
-
-<div>
-    <h4>Company</h4>
-    <hr />
-    <div class="image">
-        <img src="@Model.AvatarUrl" alt="Company Logo" />
+<div class="row">
+    <div class="col-md-6">
+        <!-- general form elements -->
+        <div class="box box-primary">
+            <div class="box-header">
+                <h3 class="box-title">@Model.Name</h3>
+                <div class="btn-group pull-right box-tools">
+                    <a class="btn btn-default btn-flat btn-sm" href="@Url.Action("Edit", new { id = Model.Id })">
+                        <i class="fa fa-pencil"></i>
+                        Edit
+                    </a>
+                    <a class="btn btn-default btn-flat btn-sm" href="@Url.Action("Delete", new { id = Model.Id })">
+                        <i class="fa fa-trash-o"></i>
+                        Delete
+                    </a>
+                </div>
+            </div>
+            <div class="box-body">
+                @Html.Partial("_Details", Model)
+            </div>
+        </div>
     </div>
-    <dl class="dl-horizontal">
-        <dt>
-            @Html.DisplayNameFor(model => model.Address.Address1)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.Address.Address1)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.Industry.Title)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.Industry.Title)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.CreatedDate)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.CreatedDate)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.Name)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.Name)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.NumberOfEmployees)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.NumberOfEmployees)
-        </dd>
-
-    </dl>
+    <div class="col-md-6">
+        @Html.Action("Team", new { id = Model.Id })
+    </div>
 </div>
-<p>
-    @Html.ActionLink("Edit", "Edit", new { id = Model.Id }) |
-    @Html.ActionLink("Back to List", "Index")
-</p>

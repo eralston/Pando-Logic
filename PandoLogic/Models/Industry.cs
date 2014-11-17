@@ -27,3 +27,4 @@ namespace PandoLogic.Models
         public string Title { get; set; }
     }
 }
+

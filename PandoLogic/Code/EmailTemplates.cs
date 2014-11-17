@@ -21,7 +21,7 @@ namespace PandoLogic
         /// <param name="subject"></param>
         /// <param name="emailViewName"></param>
         /// <param name="model"></param>
-        static void SendEmail(ApplicationUser targetUser, Controller controller, string subject, 
+        static void SendEmail(string toEmail, Controller controller, string subject, 
                                     string emailViewName, object model = null)
         {
             string body = controller.RenderRazorViewToString(emailViewName, model);
@@ -29,7 +29,7 @@ namespace PandoLogic
             MailMessage message = new MailMessage();
             message.SetFrom(FromEmailAddress);
             message.SetBody(body, body);
-            message.AddTo(targetUser.Email);
+            message.AddTo(toEmail);
             message.Subject = subject;
 
             message.SendMailSmtp();
@@ -47,7 +47,7 @@ namespace PandoLogic
 
             ApplyWelcomeEmailToViewBag(targetUser, controller);
 
-            SendEmail(targetUser, controller, subject, viewName);
+            SendEmail(targetUser.Email, controller, subject, viewName);
         }
 
         public static void ApplyWelcomeEmailToViewBag(ApplicationUser targetUser, Controller controller)
@@ -59,6 +59,22 @@ namespace PandoLogic
             controller.ViewBag.Body = "We need you to confirm your email address. To complete the subscription process, please click the link below";
             controller.ViewBag.Link = string.Format("http://{0}/Home/Verify?invite={1}", Settings.SiteUrl, targetUser.VerificationInvite.Value);
             controller.ViewBag.LinkText = "Click to Verify E-Mail Address";
+        }
+
+        public static void SendInviteEmail(ApplicationUser sender, Controller controller, MemberInvite invite)
+        {
+            controller.ViewBag.Title = "You're Invited to Pando Logic";
+            controller.ViewBag.Teaser = string.Format("{0} has invited you to collaborate on Pando Logic", sender.FullName);
+            controller.ViewBag.H1 = "You're Invited!";
+            controller.ViewBag.Lead = "Get Focused. Get Results. Collaborate.";
+            controller.ViewBag.Body = string.Format("{0} has invited you to connect and collaborate on Pando Logic. Pando Logic will empower you to plan and achieve in your business. Please accept this invitation by clicking below.", sender.FullName);
+            controller.ViewBag.Link = string.Format("http://{0}/Home/AcceptInvite?invite={1}", Settings.SiteUrl, invite.Invite.Value);
+            controller.ViewBag.LinkText = "Click to Accept Invitation";
+
+            string viewName = "~/Views/Email/Invite.cshtml";
+            string subject = "You're Invite to Pando Logic";
+
+            SendEmail(invite.Email, controller, subject, viewName);
         }
     }
 }

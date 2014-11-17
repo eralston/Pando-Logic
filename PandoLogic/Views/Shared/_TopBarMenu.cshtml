@@ -94,14 +94,15 @@
             <ul class="dropdown-menu">
                 <!-- User image -->
                 <li class="user-header bg-light-blue">
-
-                    @if (!string.IsNullOrEmpty(ViewBag.CurrentUserSelectedCompanyAvatarUrl))
-                    {
-                        <img src="@ViewBag.CurrentUserSelectedCompanyAvatarUrl" class="img-circle" alt="Company Image" />
-                    }
-                    <p>
-                        @ViewBag.CurrentUserSelectedCompanyName
-                    </p>
+                    <a href="@Url.Action("Details", "Companies", new { id = ViewBag.CurrentUserSelectedCompanyId })">
+                        @if (!string.IsNullOrEmpty(ViewBag.CurrentUserSelectedCompanyAvatarUrl))
+                        {
+                            <img src="@ViewBag.CurrentUserSelectedCompanyAvatarUrl" class="img-circle" alt="Company Image" />
+                        }
+                        <p>
+                            @ViewBag.CurrentUserSelectedCompanyName
+                        </p>
+                    </a>
                 </li>
                 <!-- Menu Footer-->
                 <li class="user-footer">
