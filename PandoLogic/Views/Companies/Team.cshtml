@@ -27,7 +27,7 @@
                                 @Html.ActionLink(member.User.FullName, "Details", "Users", new { id = member.UserId }, null)
                             </td>
                             <td>
-                                <a class="" href="@Url.Action("Delete", new { id = Model.Id })">
+                                <a class="" href="@Url.Action("Delete", "Members", new { id = Model.Id })">
                                     <i class="fa fa-trash-o"></i>
                                 </a>
                             </td>

@@ -22,6 +22,10 @@ namespace PandoLogic.Controllers
             return View();
         }
 
+        /// <summary>
+        /// Called when a user verifies their e-mail address, confirming their Pando Logic account
+        /// </summary>
+        /// <returns></returns>
         [InviteOnly]
         public async Task<ActionResult> Verify()
         {
@@ -43,6 +47,10 @@ namespace PandoLogic.Controllers
 
         }
 
+        /// <summary>
+        /// The page for accepting or declining an invitation to a team on pando logic
+        /// </summary>
+        /// <returns></returns>
         [InviteOnly]
         public async Task<ActionResult> AcceptInvite()
         {
@@ -101,6 +109,11 @@ namespace PandoLogic.Controllers
             }
         }
 
+        /// <summary>
+        /// Called when the user chooses to decline the invite into a team, deleting it from the system
+        /// </summary>
+        /// <param name="inviteId"></param>
+        /// <returns></returns>
         [HttpPost]
         [InviteOnly]
         public async Task<ActionResult> DeclineInvite(int inviteId)

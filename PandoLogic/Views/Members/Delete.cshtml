@@ -1,0 +1,57 @@
+﻿@model PandoLogic.Models.Member
+
+@{
+    ViewBag.Title = string.Format("Remove Member {0} from {1}", Model.User.FullName, Model.Company.Name);
+    ViewBag.TitleMinor = "Remove Member";
+
+    ViewBag.Breadcrumb = new Breadcrumb(new Crumb[] {
+            new Crumb("Dashboard", Url.Action("Index","Home"), "fa-dashboard"),
+            new Crumb("Companies", Url.Action("Index","Companies"), "fa-building-o"),
+            new Crumb("Company Details", Url.Action("Details","Companies", new { id = Model.CompanyId })),
+            new Crumb("Remove Member")
+        });
+}
+
+<div class="row">
+    <div class="col-md-6">
+        <!-- general form elements -->
+        <div class="box box-danger">
+            <div class="box-header">
+                <h3 class="box-title">@ViewBag.Title</h3>
+            </div>
+            <div class="box-body">
+                <dl class="dl-horizontal">
+
+                    <dt>
+                        @Html.DisplayNameFor(model => model.User.FullName)
+                    </dt>
+
+                    <dd>
+                        @Html.DisplayFor(model => model.User.FullName)
+                    </dd>
+
+                    <dt>
+                        @Html.DisplayNameFor(model => model.JobTitle)
+                    </dt>
+
+                    <dd>
+                        @Html.DisplayFor(model => model.JobTitle)
+                    </dd>
+
+                </dl>
+                @using (Html.BeginForm())
+                {
+                    @Html.AntiForgeryToken()
+
+                    <div class="form-actions no-color">
+                        <input type="submit" value="Remove Member" class="btn btn-danger" />
+                        @Html.ActionLink("Cancel", "Details", "Companies", new { id = Model.CompanyId }, null)
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+
+    </div>
+</div>
