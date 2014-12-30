@@ -1,0 +1,90 @@
+﻿@using PandoLogic.Models
+
+@model PandoLogic.Models.MemberInvite
+
+@{
+    ViewBag.Title = string.Format("Accept Invite {0} to {1}", Model.Email, Model.Company.Name);
+
+    if (Request.IsAuthenticated)
+    {
+        ViewBag.TitleMinor = "Accept Invite";
+
+        ViewBag.Breadcrumb = new Breadcrumb(new Crumb[] {
+            new Crumb("Dashboard", Url.Action("Index","Home"), "fa-dashboard"),
+            new Crumb("Companies", Url.Action("Index","Companies"), "fa-building-o"),
+            new Crumb("Company Details", Url.Action("Details","Companies", new { id = Model.CompanyId })),
+            new Crumb("Accept Invite")
+        });
+    }
+    else
+    {
+        Layout = "~/Views/Shared/_PublicLayout.cshtml";
+    }
+}
+
+
+@if (Request.IsAuthenticated)
+{
+    <div class="row">
+        <div class="col-md-6">
+            <!-- general form elements -->
+            <div class="box box-primary">
+                <div class="box-header">
+                    <h3 class="box-title">@ViewBag.Title</h3>
+                </div>
+                <div class="box-body">
+
+                    <p class="text-muted">
+                        You are invited to join the company @Model.Company.Name on Pando Logic.
+                    </p>
+                    <div class="form-actions no-color">
+                        @using (Html.BeginForm("AcceptInvite", "Home", FormMethod.Post, new { style = "display:inline" }))
+                        {
+                            @Html.AntiForgeryToken()
+                            @Html.Hidden("inviteId", Model.Id)
+                            <input type="submit" value="Accept Invite" class="btn btn-primary" />
+                        }
+                        @using (Html.BeginForm("DeclineInvite", "Home", FormMethod.Post, new { style = "display:inline" }))
+                        {
+                            @Html.AntiForgeryToken()
+                            @Html.Hidden("inviteId", Model.Id)
+                            <input type="submit" value="Decline Invite" class="btn btn-warning" />
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+        </div>
+    </div>
+}
+else
+{
+    <div class="form-box" id="login-box">
+        <div class="header">Accept Invite to @Model.Company.Name</div>
+
+
+        @using (Html.BeginForm("Login", "Account", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, new { role = "form" }))
+        {
+            <div class="body bg-gray">
+                <p class="text-muted">
+                    You are invited to join the company @Model.Company.Name on Pando Logic. Please login or register to accept this invite.
+                </p>
+                @Html.AntiForgeryToken()
+                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                <div class="form-group">
+                    @Html.TextBoxFor(m => m.Email, new { @class = "form-control", placeholder = "E-Mail" })
+                    @Html.ValidationMessageFor(m => m.Email, "", new { @class = "text-danger" })
+                </div>
+                <div class="form-group">
+                    @Html.Password("Password", null, new { @class = "form-control", placeholder = "Password" })
+                </div>
+            </div>
+            <div class="footer">
+                <button type="submit" class="btn btn-primary btn-block">Sign Me In &amp; Accept Invite</button>
+
+                @Html.ActionLink("No Account? Register", "Register", "Account", null, new { @class = "text-center" })
+            </div>
+        }
+    </div>
+}

@@ -48,10 +48,15 @@ namespace PandoLogic.Controllers
         private async Task LoadFeedActivities()
         {
             Member member = await GetCurrentMemberAsync();
-            Company company = member.Company;
-            int companyId = company.Id;
+            int? companyId = null;
 
-            ViewBag.FeedActivities = await Db.Activities.WhereCompany(companyId).ToArrayAsync();
+            if (member != null)
+            {
+                Company company = member.Company;
+                companyId = company.Id;
+            }
+
+            ViewBag.FeedActivities = await Db.Activities.WhereCompanyOrAuthor(companyId, this.UserCache.Id).ToArrayAsync();
         }
 
         private async Task<ActionResult> Delete(Activity activity, ActionResult result)
@@ -142,7 +147,7 @@ namespace PandoLogic.Controllers
             ViewBag.IsFromActivityFeed = true;
 
             // Send down the edit form
-            return View("Edit",activity);
+            return View("Edit", activity);
         }
 
         // POST: Activities/Edit/5
@@ -269,7 +274,7 @@ namespace PandoLogic.Controllers
         {
             // Pull the activity from the database
             Activity activity = await FindSafeActivity(id);
-            
+
             // Ensure it exists
             if (activity == null)
             {
@@ -287,19 +292,16 @@ namespace PandoLogic.Controllers
         /// <returns></returns>
         public ActionResult Widget()
         {
+            int? companyId = null;
             Member member = GetCurrentMember();
-
-            if(member != null)
+            if (member != null)
             {
                 Company company = member.Company;
-                int companyId = company.Id;
-                IEnumerable<Activity> activities = Db.Activities.WhereCompany(companyId).Take(5).ToArray();
-                return View(activities);
+                companyId = company.Id;
             }
-            else
-            {
-                return null;
-            }           
+
+            IEnumerable<Activity> activities = Db.Activities.WhereCompanyOrAuthor(companyId, this.UserCache.Id).Take(5).ToArray();
+            return View(activities);
         }
     }
 }

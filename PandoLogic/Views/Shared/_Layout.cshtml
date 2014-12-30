@@ -103,8 +103,11 @@
 
             </section>
 
-            <!-- Main content -->
             <section class="content">
+                @if(ViewBag.Notifications != null)
+                {
+                    
+                }
                 @*Error messages*@
                 @if (!ViewData.ModelState.IsValid)
                 {

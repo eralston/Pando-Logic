@@ -5,53 +5,57 @@
 <div class="navbar-right">
     <ul class="nav navbar-nav">
         <!-- Messages: style can be found in dropdown.less-->
-        <li class="messages-menu">
-            <a class="company-chat-toggle" data-toggle="">
-                <i class="fa fa-comments-o"></i>
-            </a>
-        </li>
+        @if (Html.IsInCompanyContext())
+        {
+            <li class="messages-menu">
+                <a class="company-chat-toggle" data-toggle="">
+                    <i class="fa fa-comments-o"></i>
+                </a>
+            </li>
+        }
+
         <!-- Notifications: style can be found in dropdown.less -->
         @*<li class="dropdown notifications-menu">
-        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-            <i class="fa fa-warning"></i>
-            <span class="label label-warning">10</span>
-        </a>
-        <ul class="dropdown-menu">
-            <li class="header">You have 10 notifications</li>
-            <li>
-                <!-- inner menu: contains the actual data -->
-                <ul class="menu">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                    <i class="fa fa-warning"></i>
+                    <span class="label label-warning">10</span>
+                </a>
+                <ul class="dropdown-menu">
+                    <li class="header">You have 10 notifications</li>
                     <li>
-                        <a href="#">
-                            <i class="ion ion-ios7-people info"></i> 5 new members joined today
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#">
-                            <i class="fa fa-warning danger"></i> Very long description here that may not fit into the page and may cause design problems
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#">
-                            <i class="fa fa-users warning"></i> 5 new members joined
-                        </a>
-                    </li>
+                        <!-- inner menu: contains the actual data -->
+                        <ul class="menu">
+                            <li>
+                                <a href="#">
+                                    <i class="ion ion-ios7-people info"></i> 5 new members joined today
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#">
+                                    <i class="fa fa-warning danger"></i> Very long description here that may not fit into the page and may cause design problems
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#">
+                                    <i class="fa fa-users warning"></i> 5 new members joined
+                                </a>
+                            </li>
 
-                    <li>
-                        <a href="#">
-                            <i class="ion ion-ios7-cart success"></i> 25 sales made
-                        </a>
+                            <li>
+                                <a href="#">
+                                    <i class="ion ion-ios7-cart success"></i> 25 sales made
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#">
+                                    <i class="ion ion-ios7-person danger"></i> You changed your username
+                                </a>
+                            </li>
+                        </ul>
                     </li>
-                    <li>
-                        <a href="#">
-                            <i class="ion ion-ios7-person danger"></i> You changed your username
-                        </a>
-                    </li>
+                    <li class="footer"><a href="#">View all</a></li>
                 </ul>
-            </li>
-            <li class="footer"><a href="#">View all</a></li>
-        </ul>
-    </li>*@
+            </li>*@
         <li class="dropdown tasks-menu">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                 <i class="fa fa-tasks"></i>
@@ -87,48 +91,57 @@
             </ul>
         </li>
         <li class="dropdown user user-menu">
-            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                <i class="fa fa-building"></i>
-                <span>@ViewBag.CurrentUserSelectedCompanyName<i class="caret"></i></span>
-            </a>
+            @if (Html.IsInCompanyContext())
+            {
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                    <i class="fa fa-building"></i>
+                    <span>@ViewBag.CurrentUserSelectedCompanyName<i class="caret"></i></span>
+                </a>
+            }
+
             <ul class="dropdown-menu">
                 <!-- User image -->
-                <li class="user-header bg-light-blue">
-                    <a href="@Url.Action("Details", "Companies", new { id = ViewBag.CurrentUserSelectedCompanyId })">
-                        @if (!string.IsNullOrEmpty(ViewBag.CurrentUserSelectedCompanyAvatarUrl))
-                        {
-                            <img src="@ViewBag.CurrentUserSelectedCompanyAvatarUrl" class="img-circle" alt="Company Image" />
-                        }
-                        <p>
-                            @ViewBag.CurrentUserSelectedCompanyName
-                        </p>
-                    </a>
-                </li>
-                <!-- Menu Footer-->
-                <li class="user-footer">
+                @if (Html.IsInCompanyContext())
+                {
+                    <li class="user-header bg-light-blue">
+                        <a href="@Url.Action("Details", "Companies", new { id = ViewBag.CurrentUserSelectedCompanyId })">
+                            @if (!string.IsNullOrEmpty(ViewBag.CurrentUserSelectedCompanyAvatarUrl))
+                            {
+                                <img src="@ViewBag.CurrentUserSelectedCompanyAvatarUrl" class="img-circle" alt="Company Image" />
+                            }
+                            <p>
+                                @ViewBag.CurrentUserSelectedCompanyName
+                            </p>
+                        </a>
+                    </li>
+                }
 
-                    <div class="box-body no-padding">
-                        <div class="table-responsive">
-                            <table class="table table-striped">
-                                <tbody>
-                                    <tr>
-                                        <th>Companies</th>
-                                    </tr>
-                                    @foreach (BaseController.CompanyInfoCache company in ViewBag.CurrentUserCompanies)
-                                    {
+                @if (ViewBag.CurrentUserCompanies != null)
+                {
+                    <!-- Menu Footer-->
+                    <li class="user-footer">
+                        <div class="box-body no-padding">
+                            <div class="table-responsive">
+                                <table class="table table-striped">
+                                    <tbody>
                                         <tr>
-                                            <td>
-                                                @Html.ActionLink(company.Name, "Change", "Companies", new { id = company.Id, returnurl = Url.RouteUrl(ViewContext.RouteData.Values) }, new { @class = "force-a" })
-                                            </td>
+                                            <th>Companies</th>
                                         </tr>
-                                    }
-                                </tbody>
-                            </table>
+                                        @foreach (BaseController.CompanyInfoCache company in ViewBag.CurrentUserCompanies)
+                                        {
+                                            <tr>
+                                                <td>
+                                                    @Html.ActionLink(company.Name, "Change", "Companies", new { id = company.Id, returnurl = Url.RouteUrl(ViewContext.RouteData.Values) }, new { @class = "force-a" })
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
-                    </div>
-                </li>
+                    </li>
+                }
             </ul>
-
         </li>
         @*Top-Right User Drop-down*@
         <li class="dropdown user user-menu">

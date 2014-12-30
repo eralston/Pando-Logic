@@ -86,7 +86,7 @@ namespace PandoLogic.Models
         /// <param name="memberInvites"></param>
         /// <param name="invite"></param>
         /// <returns></returns>
-        public static Task<MemberInvite> FindForInvite(this DbSet<MemberInvite> memberInvites, InviteOnly.Invite invite)
+        public static Task<MemberInvite> FindForInviteAsync(this DbSet<MemberInvite> memberInvites, InviteOnly.Invite invite)
         {
             int inviteId = invite.Id;
             return memberInvites.Where(i => i.InviteId == inviteId).FirstOrDefaultAsync();

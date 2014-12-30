@@ -72,7 +72,7 @@ namespace PandoLogic
             controller.ViewBag.LinkText = "Click to Accept Invitation";
 
             string viewName = "~/Views/Email/Invite.cshtml";
-            string subject = "You're Invite to Pando Logic";
+            string subject = "You're Invited to Pando Logic";
 
             SendEmail(invite.Email, controller, subject, viewName);
         }

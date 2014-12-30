@@ -929,6 +929,7 @@
     <Content Include="Views\Companies\Team.cshtml" />
     <Content Include="Views\Companies\RevokeInvite.cshtml" />
     <Content Include="Views\Companies\_Details.cshtml" />
+    <Content Include="Views\Home\AcceptInvite.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Views\Shared\DisplayTemplates\" />

@@ -16,6 +16,39 @@ using System.Web.Security;
 
 namespace PandoLogic.Controllers
 {
+    /// <summary>
+    /// The various types of notifications for the user, which will drive the presentation style for the user
+    /// </summary>
+    public enum NotificationType
+    {
+        Info,
+        Warning,
+        Error,
+        Success
+    }
+
+    /// <summary>
+    /// A class for capturing top-level notifications for the user
+    /// </summary>
+    public class Notification
+    {
+        public Notification(string title, string message = "", NotificationType type = NotificationType.Info)
+        {
+            this.Title = title;
+            this.Message = message;
+            this.Type = type;
+        }
+
+        public Notification(string title, NotificationType type = NotificationType.Info)
+        {
+            this.Title = title;
+            this.Type = type;
+        }
+
+        public string Title { get; set; }
+        public string Message { get; set; }
+        public NotificationType Type { get; set; }
+    }
 
     public class BaseController : Controller, IInviteContextProvider, IPersistenceContext
     {
@@ -54,7 +87,7 @@ namespace PandoLogic.Controllers
                 Id = user.Id;
                 AvatarUrl = user.AvatarUrl;
 
-                if(selectedMember != null)
+                if (selectedMember != null)
                 {
                     // Load selected member data
                     SelectedCompanyId = selectedMember.CompanyId;
@@ -66,7 +99,7 @@ namespace PandoLogic.Controllers
 
                 // Load up the companies
                 CompanyInfoCache[] companies = new CompanyInfoCache[userCompanies.Length];
-                for(int i = 0; i < userCompanies.Length; ++i)
+                for (int i = 0; i < userCompanies.Length; ++i)
                 {
                     Company company = userCompanies[i];
                     companies[i] = new CompanyInfoCache(company);
@@ -86,7 +119,7 @@ namespace PandoLogic.Controllers
             public string SelectedCompanyAvatarUrl { get; set; }
             public CompanyInfoCache[] Companies { get; set; }
         }
-        
+
         #endregion
 
         #region Fields
@@ -97,6 +130,16 @@ namespace PandoLogic.Controllers
         #endregion
 
         #region Properties
+
+        List<Notification> _notifications = null;
+        public List<Notification> Notifications 
+        {
+            get 
+            {
+                _notifications = _notifications ?? new List<Notification>();
+                return _notifications; 
+            }
+        }
 
         private ApplicationDbContext _db = null;
         public ApplicationDbContext Db
@@ -213,7 +256,7 @@ namespace PandoLogic.Controllers
 
         protected async Task<Member> GetCurrentMemberAsync()
         {
-            if(_member != null)
+            if (_member != null)
                 return _member;
 
             int selectedMemberId = UserCache.SelectedMemberId;
@@ -221,7 +264,7 @@ namespace PandoLogic.Controllers
 
             return _member;
         }
-             
+
         protected void StashModelState()
         {
             TempData[ModelStateCacheId] = ModelState;
@@ -283,7 +326,7 @@ namespace PandoLogic.Controllers
                 ViewBag.CurrentUserGoals = Db.Goals.Where(g => g.ArchiveDate == null && g.IsTemplate == false && g.CompanyId == cache.SelectedCompanyId).Include(g => g.WorkItems).OrderBy(g => g.DueDate).ToArray();
             }
 
-            if(Request.IsAuthenticated)
+            if (Request.IsAuthenticated)
             {
                 FormsAuthentication.SetAuthCookie(CurrentUsername, false);
             }

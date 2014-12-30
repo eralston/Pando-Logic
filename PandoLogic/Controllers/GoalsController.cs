@@ -93,6 +93,11 @@ namespace PandoLogic.Controllers
         private Goal[] QueryActiveGoals(bool limited = true)
         {
             Member currentMember = GetCurrentMember();
+            if(currentMember == null)
+            {
+                return null;
+            }
+
             IQueryable<Goal> query = BuildGoalQuery(limited, currentMember);
             query = query.Where(g => g.ArchiveDate == null);
             var goals = query.ToArray();
@@ -301,12 +306,20 @@ namespace PandoLogic.Controllers
         public ActionResult Widget()
         {
             var goals = QueryActiveGoals();
+
+            if (goals == null)
+                return new EmptyResult();
+
             return View(goals);
         }
 
         public ActionResult WidgetBox()
         {
             var goals = QueryActiveGoals(false);
+
+            if (goals == null)
+                return new EmptyResult();
+
             return View(goals);
         }
 

@@ -6,10 +6,27 @@ using System.Web;
 using System.Web.Mvc;
 using System.Web.Mvc.Html;
 
+using PandoLogic.Controllers;
+
 namespace PandoLogic
 {
     public static class HtmlHelpers
     {
+        /// <summary>
+        /// Returns true if the system currently has context for a company; otherwise, returns false
+        /// </summary>
+        /// <param name="htmlHelper"></param>
+        /// <returns></returns>
+        public static bool IsInCompanyContext(this HtmlHelper htmlHelper)
+        {
+            BaseController controller = htmlHelper.ViewContext.Controller as BaseController;
+
+            if (controller == null)
+                return false;
+
+            return controller.UserCache.SelectedCompanyName != null;
+        }
+
         public static IHtmlString RemoveLink(this HtmlHelper htmlHelper, string linkText, string container, string deleteElement)
         {
             var js = string.Format("javascript:removeNestedForm(this,'{0}','{1}');return false;", container, deleteElement);

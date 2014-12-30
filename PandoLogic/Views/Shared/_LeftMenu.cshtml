@@ -31,16 +31,21 @@
                     <i class="fa fa-dashboard"></i> <span>Dashboard</span>
                 </a>
             </li>
-            <li class="">
-                <a href="@Url.Action("Index","Tasks")">
-                    <i class="fa fa-check"></i> <span>Tasks</span>
-                </a>
-            </li>
-            <li class="">
-                <a href="@Url.Action("Index","Goals")">
-                    <i class="fa fa-tasks"></i> <span>Goals</span>
-                </a>
-            </li>
+            @if (Html.IsInCompanyContext())
+            {
+                <li class="">
+                    <a href="@Url.Action("Index","Tasks")">
+                        <i class="fa fa-check"></i> <span>Tasks</span>
+                    </a>
+                </li>
+
+
+                <li class="">
+                    <a href="@Url.Action("Index","Goals")">
+                        <i class="fa fa-tasks"></i> <span>Goals</span>
+                    </a>
+                </li>
+            }
             <li class="">
                 <a href="@Url.Action("Index","Activities")">
                     <i class="fa fa-list-ul"></i> <span>Activity Feed</span>

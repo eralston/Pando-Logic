@@ -1,12 +1,13 @@
 ﻿@using PandoLogic.Hubs
 
-@{
+@if (Html.IsInCompanyContext())
+{
     string title = string.Format("{0} Company Chat", ViewBag.CurrentUserSelectedCompanyName);
+
+    <div class="row company-chat" style="display:none">
+
+        <div class="col-md-12">
+            @Html.Partial("_Chat", new ChatInfo { ChatRoomId = string.Format("Company-{0}", @ViewBag.CurrentUserSelectedCompanyId), Title = title })
+        </div>
+    </div>
 }
-
-<div class="row company-chat" style="display:none">
-
-    <div class="col-md-12">
-        @Html.Partial("_Chat", new ChatInfo { ChatRoomId = string.Format("Company-{0}", @ViewBag.CurrentUserSelectedCompanyId), Title = title })  
-    </div>   
-</div>
