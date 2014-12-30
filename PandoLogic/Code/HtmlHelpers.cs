@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Text;
 using System.Web;
@@ -10,8 +11,21 @@ using PandoLogic.Controllers;
 
 namespace PandoLogic
 {
+    /// <summary>
+    /// Extension method for the HtmlHelper object, used in CSHTML files
+    /// </summary>
     public static class HtmlHelpers
     {
+        /// <summary>
+        /// Gets the Google analytics key from the app settings section of the web.config file
+        /// </summary>
+        /// <param name="helper"></param>
+        /// <returns></returns>
+        public static string GoogleAnalyticsKey(this HtmlHelper helper)
+        {
+            return ConfigurationManager.AppSettings["google-analytics-key"];
+        }
+
         /// <summary>
         /// Returns true if the system currently has context for a company; otherwise, returns false
         /// </summary>
