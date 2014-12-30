@@ -286,6 +286,9 @@ namespace PandoLogic.Controllers
         /// </summary>
         private void SetupUserCacheAndApplyToViewBag()
         {
+            if (!Request.IsAuthenticated)
+                return;
+            
             // Apply cached user info
             UserInfoCache cache = this.UserCache;
 
@@ -307,6 +310,22 @@ namespace PandoLogic.Controllers
                 ViewBag.CurrentUserCompanies = cache.Companies;
 
                 ViewBag.CurrentUserGoals = Db.Goals.Where(g => g.ArchiveDate == null && g.IsTemplate == false && g.CompanyId == cache.SelectedCompanyId).Include(g => g.WorkItems).OrderBy(g => g.DueDate).ToArray();
+            }
+        }
+
+        private void CheckForInvites()
+        {
+            // If they aren't authenticated, then there's nothing to check
+            if (!Request.IsAuthenticated)
+                return;
+
+            ApplicationUser user = GetCurrentUser();
+            string email = user.Email;
+            IQueryable<MemberInvite> query = Db.MemberInvites.WhereEmail(email).Include(i => i.Company);
+            MemberInvite[] invites = query.ToArray();
+            if (invites.Length > 0)
+            {
+                ViewBag.MemberInvites = invites;
             }
         }
 
@@ -337,18 +356,6 @@ namespace PandoLogic.Controllers
 
             // Check for invites
             CheckForInvites();            
-        }
-
-        private void CheckForInvites()
-        {
-            ApplicationUser user = GetCurrentUser();
-            string email = user.Email;
-            IQueryable<MemberInvite> query = Db.MemberInvites.WhereEmail(email).Include(i => i.Company);
-            MemberInvite[] invites = query.ToArray();
-            if (invites.Length > 0)
-            {
-                ViewBag.MemberInvites = invites;
-            }
         }
 
         #endregion

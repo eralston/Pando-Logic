@@ -45,7 +45,7 @@
                             @Html.Hidden("inviteId", Model.Id)
                             <input type="submit" value="Accept Invite" class="btn btn-primary" />
                         }
-                        @using (Html.BeginForm("DeclineInvite", "Home", FormMethod.Post, new { style = "display:inline" }))
+                        @using (Html.BeginForm("DeclineInvite", "Home", new { invite = Model.Invite.Value }, FormMethod.Post, new { style = "display:inline" }))
                         {
                             @Html.AntiForgeryToken()
                             @Html.Hidden("inviteId", Model.Id)

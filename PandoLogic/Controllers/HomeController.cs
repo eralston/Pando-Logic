@@ -27,7 +27,7 @@ namespace PandoLogic.Controllers
         {
             Invite invite = this.GetCurrentInvite();
 
-            if(invite != null)
+            if (invite != null)
             {
                 // Remove the invite
                 ApplicationUser user = await GetCurrentUserAsync();
@@ -40,7 +40,7 @@ namespace PandoLogic.Controllers
             {
                 return RedirectToAction("Index");
             }
-            
+
         }
 
         [InviteOnly]
@@ -69,8 +69,8 @@ namespace PandoLogic.Controllers
         public async Task<ActionResult> AcceptInvite(int inviteId)
         {
             MemberInvite invite = await Db.MemberInvites.FindAsync(inviteId);
-            
-            if(Request.IsAuthenticated)
+
+            if (Request.IsAuthenticated)
             {
                 // Save an activity for this user
                 ApplicationUser currentUser = await GetCurrentUserAsync();
@@ -98,7 +98,35 @@ namespace PandoLogic.Controllers
             {
                 // Tell them to register
                 return RedirectToAction("Register", "Account");
-            }            
+            }
+        }
+
+        [HttpPost]
+        [InviteOnly]
+        public async Task<ActionResult> DeclineInvite(int inviteId)
+        {
+            MemberInvite invite = await Db.MemberInvites.FindAsync(inviteId);
+
+            if (Request.IsAuthenticated)
+            {
+                // Save an activity for this user
+                ApplicationUser currentUser = await GetCurrentUserAsync();
+                Activity newActivity = Db.Activities.Create(currentUser.Id, "Declined Invitation");
+                string description = string.Format("You declined the invite to join the {0} team", invite.Company.Name);
+                newActivity.Description = description;
+                newActivity.Type = ActivityType.WorkDeleted;
+            }
+
+            // clear the invite
+            invite.FulfilledDate = DateTime.Now;
+            Db.Invites.Remove(invite.Invite);
+            invite.Invite = null;
+
+            // Save changes
+            await Db.SaveChangesAsync();
+
+            // Send them home
+            return RedirectToAction("Index");
         }
     }
 }
