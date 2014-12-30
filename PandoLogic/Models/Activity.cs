@@ -104,7 +104,7 @@ namespace PandoLogic.Models
 
         // To-One on Company
         [ForeignKey("Company")]
-        public int CompanyId { get; set; }
+        public int? CompanyId { get; set; }
         public virtual Company Company { get; set; }
 
         public int? GoalId { get; set; }
@@ -113,6 +113,21 @@ namespace PandoLogic.Models
 
     public static class ActivityExtensions
     {
+
+        public static Activity Create(this DbSet<Activity> activities, string authorUserId, string title)
+        {
+            Activity activity = activities.Create();
+
+            activity.CreatedDate = DateTime.Now;
+            activity.AuthorId = authorUserId;
+            activity.Company = null;
+            activity.Title = title;
+
+            activities.Add(activity);
+
+            return activity;
+        }
+
         public static Activity Create(this DbSet<Activity> activities, string authorUserId, Company company, string title)
         {
             Activity activity = activities.Create();

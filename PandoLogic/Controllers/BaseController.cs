@@ -132,12 +132,12 @@ namespace PandoLogic.Controllers
         #region Properties
 
         List<Notification> _notifications = null;
-        public List<Notification> Notifications 
+        public List<Notification> Notifications
         {
-            get 
+            get
             {
                 _notifications = _notifications ?? new List<Notification>();
-                return _notifications; 
+                return _notifications;
             }
         }
 
@@ -281,28 +281,11 @@ namespace PandoLogic.Controllers
             TempData[ModelStateCacheId] = null;
         }
 
-        #endregion
-
-        #region Override Methods
-
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                if (_db != null)
-                    _db.Dispose();
-            }
-            base.Dispose(disposing);
-        }
-
         /// <summary>
-        /// 
+        /// Applies the user cache (lazy loading it the first time) and applies it to the ViewBag
         /// </summary>
-        /// <param name="filterContext"></param>
-        protected override void OnActionExecuting(ActionExecutingContext filterContext)
+        private void SetupUserCacheAndApplyToViewBag()
         {
-            base.OnActionExecuting(filterContext);
-
             // Apply cached user info
             UserInfoCache cache = this.UserCache;
 
@@ -325,10 +308,46 @@ namespace PandoLogic.Controllers
 
                 ViewBag.CurrentUserGoals = Db.Goals.Where(g => g.ArchiveDate == null && g.IsTemplate == false && g.CompanyId == cache.SelectedCompanyId).Include(g => g.WorkItems).OrderBy(g => g.DueDate).ToArray();
             }
+        }
 
-            if (Request.IsAuthenticated)
+        #endregion
+
+        #region Override Methods
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
             {
-                FormsAuthentication.SetAuthCookie(CurrentUsername, false);
+                if (_db != null)
+                    _db.Dispose();
+            }
+            base.Dispose(disposing);
+        }
+
+        /// <summary>
+        /// Called after an action is authorized, but before it is executed
+        /// </summary>
+        /// <param name="filterContext"></param>
+        protected override void OnActionExecuting(ActionExecutingContext filterContext)
+        {
+            base.OnActionExecuting(filterContext);
+
+            // Do necessary prep for user cache
+            SetupUserCacheAndApplyToViewBag();
+
+            // Check for invites
+            CheckForInvites();            
+        }
+
+        private void CheckForInvites()
+        {
+            ApplicationUser user = GetCurrentUser();
+            string email = user.Email;
+            IQueryable<MemberInvite> query = Db.MemberInvites.WhereEmail(email).Include(i => i.Company);
+            MemberInvite[] invites = query.ToArray();
+            if (invites.Length > 0)
+            {
+                ViewBag.MemberInvites = invites;
             }
         }
 

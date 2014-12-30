@@ -3,7 +3,8 @@
 @model PandoLogic.Models.MemberInvite
 
 @{
-    ViewBag.Title = string.Format("Accept Invite {0} to {1}", Model.Email, Model.Company.Name);
+    ViewBag.MuteInvites = true;
+    ViewBag.Title = string.Format("Accept Invite to {0}", Model.Company.Name);
 
     if (Request.IsAuthenticated)
     {

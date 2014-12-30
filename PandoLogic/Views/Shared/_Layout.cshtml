@@ -1,4 +1,5 @@
 ﻿@using PandoLogic.Controllers
+@using PandoLogic.Models
 
 <!DOCTYPE html>
 <html>
@@ -104,10 +105,20 @@
             </section>
 
             <section class="content">
-                @if(ViewBag.Notifications != null)
+                @if (ViewBag.MemberInvites != null && ViewBag.MuteInvites == null)
                 {
-                    
+                    MemberInvite[] invites = ViewBag.MemberInvites;
+                    foreach (MemberInvite invite in invites)
+                    {
+                        <div class="callout callout-info">
+                            <h4>You're Invited to Join "@invite.Company.Name"</h4>
+                            <p>Accept this invitation to start collaborating with your team on Pando Logic</p>
+                            @Html.ActionLink("Accept Invitation", "AcceptInvite", "Home", new { invite = invite.Invite.Value }, new { @class = "btn btn-info" })
+                        </div>
+                    }
+
                 }
+
                 @*Error messages*@
                 @if (!ViewData.ModelState.IsValid)
                 {
@@ -116,9 +127,11 @@
                         @Html.ValidationSummary("", new { @class = "text-danger" })
                     </div>
                 }
+
                 @Html.Partial("_CompanyChat")
                 @RenderBody()
             </section>
+
         </aside>
     </div>
 
@@ -275,8 +288,7 @@
 
                     $chatUsers.children().remove();
 
-                    for (var i in response.Users)
-                    {
+                    for (var i in response.Users) {
                         var data = response.Users[i];
                         var user = userTemplate(data);
                         $user = $(user);

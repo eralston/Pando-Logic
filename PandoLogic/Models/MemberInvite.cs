@@ -81,6 +81,19 @@ namespace PandoLogic.Models
         }
 
         /// <summary>
+        /// Returns a queryable for all member invites matching the given e-mail address
+        /// </summary>
+        /// <param name="memberInvites"></param>
+        /// <param name="email"></param>
+        /// <returns></returns>
+        public static IQueryable<MemberInvite> WhereEmail(this DbSet<MemberInvite> memberInvites, string email)
+        {
+            // Find all members for the current user
+            var invites = memberInvites.Where(u => u.Email == email);
+            return invites;
+        }
+
+        /// <summary>
         /// Finds the memberinvite connected to the given invite OR null if not found
         /// </summary>
         /// <param name="memberInvites"></param>
@@ -91,5 +104,7 @@ namespace PandoLogic.Models
             int inviteId = invite.Id;
             return memberInvites.Where(i => i.InviteId == inviteId).FirstOrDefaultAsync();
         }
+
+        
     }
 }

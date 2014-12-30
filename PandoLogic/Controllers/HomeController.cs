@@ -16,21 +16,6 @@ namespace PandoLogic.Controllers
     /// </summary>
     public class HomeController : BaseController
     {
-        public int SessionInviteId
-        {
-            get
-            {
-                object o = Session["MemberInviteId"];
-                if (o == null)
-                    return -1;
-                return (int)o;
-            }
-            set
-            {
-                Session["MemberInviteId"] = value;
-            }
-        }
-
         [Authorize]
         public ActionResult Index()
         {
@@ -66,17 +51,7 @@ namespace PandoLogic.Controllers
 
             if (invite != null)
             {
-                // Save the invite ID to the session
-                SessionInviteId = invite.Id;
-
-                if(Request.IsAuthenticated)
-                {
-                    return View(memberInvite);
-                }
-                else
-                {
-                    return View(memberInvite);
-                }
+                return View(memberInvite);
             }
             else
             {
@@ -97,10 +72,19 @@ namespace PandoLogic.Controllers
             
             if(Request.IsAuthenticated)
             {
-                // Fulfill the invite
-                invite.FulfilledDate = DateTime.Now;
+                // Save an activity for this user
+                ApplicationUser currentUser = await GetCurrentUserAsync();
+                Activity newActivity = Db.Activities.Create(currentUser.Id, "Accepted Invitation");
+                string description = string.Format("You accepted the invite to join the {0} team", invite.Company.Name);
+                newActivity.Description = description;
+                newActivity.Type = ActivityType.TeamNotification;
+
+                // Add them to the company (and refresh user info)
+                Member membership = Db.Members.Create(currentUser, invite.Company);
+                ClearCurrentUserCache();
 
                 // clear the invite
+                invite.FulfilledDate = DateTime.Now;
                 Db.Invites.Remove(invite.Invite);
                 invite.Invite = null;
 
@@ -112,8 +96,7 @@ namespace PandoLogic.Controllers
             }
             else
             {
-                // Save this invite for later and send them in for registration
-                
+                // Tell them to register
                 return RedirectToAction("Register", "Account");
             }            
         }
