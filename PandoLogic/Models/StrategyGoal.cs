@@ -9,16 +9,8 @@ using System.Web.Security;
 
 namespace PandoLogic.Models
 {
-    public class StrategyGoal
+    public class StrategyGoal : BaseModel
     {
-        // Primary Key
-        [Key]
-        [DatabaseGeneratedAttribute(DatabaseGeneratedOption.Identity)]
-        public int Id { get; set; }
-
-        [Display(Name = "Created Date")]
-        public DateTime? CreatedDate { get; set; }
-
         [ForeignKey("Goal")]
         public int GoalId { get; set; }
         public virtual Goal Goal { get; set; }

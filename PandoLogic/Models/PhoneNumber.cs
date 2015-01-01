@@ -23,16 +23,8 @@ namespace PandoLogic.Models
     /// <summary>
     /// Model for tracking a phone number (for an individual or company)
     /// </summary>
-    public class PhoneNumber
+    public class PhoneNumber : BaseModel
     {
-        // Primary Key
-        [Key]
-        [DatabaseGeneratedAttribute(DatabaseGeneratedOption.Identity)]
-        public int Id { get; set; }
-
-        [Display(Name = "Created Date")]
-        public DateTime? CreatedDate { get; set; }
-
         [Display(Name = "Phone Number")]
         [Required]
         public string Number { get; set; }

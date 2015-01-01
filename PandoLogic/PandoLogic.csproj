@@ -96,13 +96,16 @@
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Newtonsoft.Json.6.0.4\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <HintPath>..\packages\Newtonsoft.Json.6.0.6\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="SendGrid.SmtpApi">
       <HintPath>..\packages\SendGrid.SmtpApi.1.1.3\lib\net40\SendGrid.SmtpApi.dll</HintPath>
     </Reference>
     <Reference Include="SendGridMail">
       <HintPath>..\packages\Sendgrid.4.0.0\lib\SendGridMail.dll</HintPath>
+    </Reference>
+    <Reference Include="Stripe.net">
+      <HintPath>..\packages\Stripe.net.2.3.4\lib\net40\Stripe.net.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
@@ -204,6 +207,8 @@
     <Compile Include="App_Start\IdentityConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
+    <Compile Include="Code\Adjudicator.cs" />
+    <Compile Include="Code\AdminAuthorizeAttribute.cs" />
     <Compile Include="Code\Breadcrumb.cs" />
     <Compile Include="Code\ObjectExtensions.cs" />
     <Compile Include="Code\Validation\ConditionalRequiredAttribute.cs" />
@@ -220,6 +225,7 @@
     <Compile Include="Controllers\AddressesController.cs" />
     <Compile Include="Code\IPersistenceContext.cs" />
     <Compile Include="Controllers\MembersController.cs" />
+    <Compile Include="Controllers\SubscriptionPlansController.cs" />
     <Compile Include="Controllers\UsersController.cs" />
     <Compile Include="Controllers\BaseController.cs" />
     <Compile Include="Controllers\CommentsController.cs" />
@@ -247,12 +253,15 @@
     <Compile Include="Models\Industry.cs" />
     <Compile Include="Models\Member.cs" />
     <Compile Include="Models\MemberInvite.cs" />
+    <Compile Include="Models\BaseModel.cs" />
     <Compile Include="Models\PhoneNumber.cs" />
     <Compile Include="Models\Strategy.cs" />
     <Compile Include="Models\StrategyAdoption.cs" />
     <Compile Include="Models\StrategyBookmark.cs" />
     <Compile Include="Models\StrategyGoal.cs" />
     <Compile Include="Models\StrategyRating.cs" />
+    <Compile Include="Models\Subscription.cs" />
+    <Compile Include="Models\SubscriptionPlan.cs" />
     <Compile Include="Models\WorkItem.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
@@ -937,6 +946,11 @@
     <Content Include="Views\Members\Edit.cshtml" />
     <Content Include="Views\Members\Index.cshtml" />
     <Content Include="Views\Shared\_GoogleAnalytics.cshtml" />
+    <Content Include="Views\SubscriptionPlans\Create.cshtml" />
+    <Content Include="Views\SubscriptionPlans\Delete.cshtml" />
+    <Content Include="Views\SubscriptionPlans\Details.cshtml" />
+    <Content Include="Views\SubscriptionPlans\Edit.cshtml" />
+    <Content Include="Views\SubscriptionPlans\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Views\Shared\DisplayTemplates\" />

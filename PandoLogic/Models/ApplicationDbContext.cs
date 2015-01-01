@@ -54,5 +54,9 @@ namespace PandoLogic.Models
         public DbSet<StrategyRating> StrategyRatings { get; set; }
 
         public DbSet<MemberInvite> MemberInvites { get; set; }
+
+        public DbSet<SubscriptionPlan> SubscriptionPlans { get; set; }
+
+        public DbSet<Subscription> Subscriptions { get; set; }
     }
 }

@@ -14,16 +14,8 @@ namespace PandoLogic.Models
     /// An invitation for a user not yet in the system that connects a company to just an e-mail address
     /// Onboarding a new team member converts this record into a new Member object onces an ApplicationUser exists
     /// </summary>
-    public class MemberInvite
+    public class MemberInvite : BaseModel
     {
-        // Primary Key
-        [Key]
-        [DatabaseGeneratedAttribute(DatabaseGeneratedOption.Identity)]
-        public int Id { get; set; }
-
-        [Display(Name = "Created Date")]
-        public DateTime? CreatedDate { get; set; }
-
         [Display(Name = "Fulfilled Date")]
         public DateTime? FulfilledDate { get; set; }
 

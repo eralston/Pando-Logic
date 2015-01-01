@@ -12,7 +12,7 @@ namespace PandoLogic.Models
     /// <summary>
     /// A unit of high-level planning for an organization
     /// </summary>
-    public class Goal : PandoLogic.Models.ICommentable
+    public class Goal : BaseModel, PandoLogic.Models.ICommentable
     {
         /// <summary>
         /// List of configurable colors for goals
@@ -40,15 +40,6 @@ namespace PandoLogic.Models
             Task, // fa-check
             Goal // fa-tasks
         }
-
-        // Primary Key
-        [Key]
-        [DatabaseGeneratedAttribute(DatabaseGeneratedOption.Identity)]
-        public int Id { get; set; }
-
-        [Display(Name = "Created Date")]
-        [DataType(DataType.DateTime)]
-        public DateTime? CreatedDate { get; set; }
 
         // To-One on ApplicationUser
         [ForeignKey("Creator")]

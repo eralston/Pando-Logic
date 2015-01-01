@@ -19,16 +19,8 @@ namespace PandoLogic.Models
         Other
     }
 
-    public class Address
+    public class Address : BaseModel
     {
-        // Primary Key
-        [Key]
-        [DatabaseGeneratedAttribute(DatabaseGeneratedOption.Identity)]
-        public int Id { get; set; }
-
-        [Display(Name = "Created Date")]
-        public DateTime? CreatedDate { get; set; }
-
         [Display(Name = "Updated Date")]
         public DateTime? LastUpdate { get; set; }
 

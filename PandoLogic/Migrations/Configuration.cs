@@ -4,6 +4,7 @@ using System.Data.Entity.Migrations;
 using System.Linq;
 
 using PandoLogic.Models;
+using Microsoft.AspNet.Identity;
 
 namespace PandoLogic.Migrations
 {
@@ -13,6 +14,30 @@ namespace PandoLogic.Migrations
         {
             AutomaticMigrationsEnabled = true;
             AutomaticMigrationDataLossAllowed = true;
+        }
+
+        /// <summary>
+        /// Creates the initial identify for the given e-mail and password, adding them to the admin group
+        /// </summary>
+        /// <returns></returns>
+        private static void CreateInitialIdentity(string email, string password, ApplicationDbContext context)
+        {
+            string username = Guid.NewGuid().ToString("N");
+            ApplicationUser user = context.Users.FindByEmail(email);
+
+            bool existingUser = user != null;
+            if (user == null)
+                user = new ApplicationUser() { Email = email, UserName = username };
+
+            Adjudicator adjudicator = new Adjudicator(context);
+            if (!existingUser)
+            {
+                IdentityResult result = adjudicator.UserManager.Create(user, password);
+            }
+
+            adjudicator.AddToAdminRole(user);
+
+            context.SaveChanges();
         }
 
         protected override void Seed(PandoLogic.Models.ApplicationDbContext context)
@@ -29,6 +54,8 @@ namespace PandoLogic.Migrations
             //      new Person { FullName = "Rowan Miller" }
             //    );
             //
+
+            CreateInitialIdentity("erik.ralston@gmail.com", "123456", context);
 
             context.Industries.AddOrUpdate(
                     i => i.Title,

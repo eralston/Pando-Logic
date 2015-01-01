@@ -24,16 +24,8 @@ namespace PandoLogic.Models
     /// <summary>
     /// 
     /// </summary>
-    public class Strategy : ICommentable
+    public class Strategy : BaseModel, ICommentable
     {
-        // Primary Key
-        [Key]
-        [DatabaseGeneratedAttribute(DatabaseGeneratedOption.Identity)]
-        public int Id { get; set; }
-
-        [Display(Name = "Created Date")]
-        public DateTime? CreatedDate { get; set; }
-
         [Required]
         [MaxLength(100)]
         public virtual string Title { get; set; }

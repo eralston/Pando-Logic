@@ -12,17 +12,8 @@ namespace PandoLogic.Models
     /// <summary>
     /// An organization using Pando Logic to track its progress
     /// </summary>
-    public class Company
+    public class Company : BaseModel
     {
-        // Primary Key
-        [Key]
-        [DatabaseGeneratedAttribute(DatabaseGeneratedOption.Identity)]
-        public int Id { get; set; }
-
-        [Display(Name = "Created Date")]
-        [DataType(DataType.DateTime)]
-        public DateTime? CreatedDate { get; set; }
-
         // To-One on ApplicationUser
         [ForeignKey("Creator")]
         public string CreatorId { get; set; }

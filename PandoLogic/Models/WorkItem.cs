@@ -14,17 +14,8 @@ namespace PandoLogic.Models
     /// These are called "Tasks" in the UIs
     /// A single unit of work, usually under a goal
     /// </summary>
-    public class WorkItem : ICommentable
+    public class WorkItem : BaseModel, ICommentable
     {
-        // Primary Key
-        [Key]
-        [DatabaseGeneratedAttribute(DatabaseGeneratedOption.Identity)]
-        public int Id { get; set; }
-
-        [Display(Name = "Created Date")]
-        [DataType(DataType.DateTime)]
-        public DateTime? CreatedDate { get; set; }
-
         // To-One on ApplicationUser
         [ForeignKey("Creator")]
         public string CreatorId { get; set; }
@@ -96,7 +87,7 @@ namespace PandoLogic.Models
         public static async Task RemoveWorkItemsForGoal(this ApplicationDbContext context, int goalId)
         {
             WorkItem[] workItems = await context.WorkItems.WhereGoal(goalId).ToArrayAsync();
-            foreach(WorkItem item in workItems)
+            foreach (WorkItem item in workItems)
             {
                 context.WorkItems.Remove(item);
             }

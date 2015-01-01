@@ -13,17 +13,8 @@ namespace PandoLogic.Models
     /// <summary>
     /// Bookmark for the user, enabling them to save a working list of strategies
     /// </summary>
-    public class StrategyBookmark
+    public class StrategyBookmark : BaseModel
     {
-        // Primary Key
-        [Key]
-        [DatabaseGeneratedAttribute(DatabaseGeneratedOption.Identity)]
-        public int Id { get; set; }
-
-        [Display(Name = "Created Date")]
-        [DataType(DataType.DateTime)]
-        public DateTime? CreatedDate { get; set; }
-
         // To-One on ApplicationUser
         [ForeignKey("User")]
         public string UserId { get; set; }

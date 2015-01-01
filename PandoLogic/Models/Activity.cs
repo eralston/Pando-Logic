@@ -23,13 +23,12 @@ namespace PandoLogic.Models
         WorkUndoArchived,   // fa-unlock-alt bg-yellow
         UserAction,         // fa-user bg-purple        EG: Register, Accept Invite Into System, Assigning Task, etc
         TeamNotification    // fa-users bg-yellow
-        
     }
 
     /// <summary>
     /// A model for saving a historic record of actions in the system, in particular to review actions of a team
     /// </summary>
-    public class Activity
+    public class Activity : BaseModel
     {
         /// <summary>
         /// Returns the class names for the given activity type
@@ -73,14 +72,6 @@ namespace PandoLogic.Models
 
             return ret;
         }
-
-        // Primary Key
-        [Key]
-        [DatabaseGeneratedAttribute(DatabaseGeneratedOption.Identity)]
-        public int Id { get; set; }
-
-        [Display(Name = "Created Date")]
-        public DateTime? CreatedDate { get; set; }
 
         [Required]
         public virtual string Title { get; set; }

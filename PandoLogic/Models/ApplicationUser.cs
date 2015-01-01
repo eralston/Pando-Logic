@@ -81,5 +81,18 @@ namespace PandoLogic.Models
                    where c.Id == companyId
                    select u;
         }
+
+        /// <summary>
+        /// Finds the ApplicationUser associated with the given e-mail address, returning null if not found
+        /// </summary>
+        /// <param name="users"></param>
+        /// <param name="email"></param>
+        /// <returns></returns>
+        public static ApplicationUser FindByEmail(this IQueryable<ApplicationUser> users, string email)
+        {
+            //Contract.Requires<ArgumentNullException>(email != null);
+
+            return users.Where(u => u.Email == email).FirstOrDefault();
+        }
     }
 }

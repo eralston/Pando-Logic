@@ -10,16 +10,11 @@ using System.Web.Security;
 
 namespace PandoLogic.Models
 {
-    public class StrategyAdoption
+    /// <summary>
+    /// An instance for every adoption by a user and company of a strategy
+    /// </summary>
+    public class StrategyAdoption : BaseModel
     {
-        // Primary Key
-        [Key]
-        [DatabaseGeneratedAttribute(DatabaseGeneratedOption.Identity)]
-        public int Id { get; set; }
-
-        [Display(Name = "Created Date")]
-        public DateTime? CreatedDate { get; set; }
-
         [ForeignKey("Company")]
         public int CompanyId { get; set; }
         public virtual Company Company { get; set; }

@@ -10,16 +10,8 @@ using System.Web.Security;
 
 namespace PandoLogic.Models
 {
-    public class StrategyRating
+    public class StrategyRating : BaseModel
     {
-        // Primary Key
-        [Key]
-        [DatabaseGeneratedAttribute(DatabaseGeneratedOption.Identity)]
-        public int Id { get; set; }
-
-        [Display(Name = "Created Date")]
-        public DateTime? CreatedDate { get; set; }
-
         [Range(0.0f, 5.0f)]
         public float Rating { get; set; }
 

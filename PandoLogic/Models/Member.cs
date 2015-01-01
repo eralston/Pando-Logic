@@ -13,16 +13,8 @@ namespace PandoLogic.Models
     /// <summary>
     /// Maps from an ApplicationUser to a Company model
     /// </summary>
-    public class Member
+    public class Member : BaseModel
     {
-        // Primary Key
-        [Key]
-        [DatabaseGeneratedAttribute(DatabaseGeneratedOption.Identity)]
-        public int Id { get; set; }
-
-        [Display(Name = "Created Date")]
-        public DateTime? CreatedDate { get; set; }
-
         // To-One on Company
         [ForeignKey("Company")]
         public int CompanyId { get; set; }
