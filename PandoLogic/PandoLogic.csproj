@@ -211,6 +211,7 @@
     <Compile Include="Code\AdminAuthorizeAttribute.cs" />
     <Compile Include="Code\Breadcrumb.cs" />
     <Compile Include="Code\ObjectExtensions.cs" />
+    <Compile Include="Code\StripeManager.cs" />
     <Compile Include="Code\Validation\ConditionalRequiredAttribute.cs" />
     <Compile Include="Code\ControllerExtensions.cs" />
     <Compile Include="Code\Validation\DateTimeValidationAttribute.cs" />
@@ -226,6 +227,7 @@
     <Compile Include="Code\IPersistenceContext.cs" />
     <Compile Include="Controllers\MembersController.cs" />
     <Compile Include="Controllers\SubscriptionPlansController.cs" />
+    <Compile Include="Controllers\SubscriptionsController.cs" />
     <Compile Include="Controllers\UsersController.cs" />
     <Compile Include="Controllers\BaseController.cs" />
     <Compile Include="Controllers\CommentsController.cs" />
@@ -951,6 +953,11 @@
     <Content Include="Views\SubscriptionPlans\Details.cshtml" />
     <Content Include="Views\SubscriptionPlans\Edit.cshtml" />
     <Content Include="Views\SubscriptionPlans\Index.cshtml" />
+    <Content Include="Views\Subscriptions\Create.cshtml" />
+    <Content Include="Views\Subscriptions\Delete.cshtml" />
+    <Content Include="Views\Subscriptions\Details.cshtml" />
+    <Content Include="Views\Subscriptions\Edit.cshtml" />
+    <Content Include="Views\Subscriptions\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Views\Shared\DisplayTemplates\" />

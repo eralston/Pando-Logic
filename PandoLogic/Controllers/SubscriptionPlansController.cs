@@ -17,39 +17,6 @@ namespace PandoLogic.Controllers
     [AdminAuthorize]
     public class SubscriptionPlansController : BaseController
     {
-        #region Methods
-
-        /// <summary>
-        /// Creates a new plan inside of Stripe, using the given subscription plan's information
-        /// </summary>
-        /// <param name="subscriptionPlan"></param>
-        private static void CreatePlanInStripe(SubscriptionPlan subscriptionPlan)
-        {
-            // Save it to Stripe
-            StripePlanCreateOptions newStripePlan = new StripePlanCreateOptions();
-            newStripePlan.Amount = Convert.ToInt32(subscriptionPlan.Price * 100.0);           // all amounts on Stripe are in cents, pence, etc
-            newStripePlan.Currency = "usd";        // "usd" only supported right now
-            newStripePlan.Interval = "month";      // "month" or "year"
-            newStripePlan.IntervalCount = 1;       // optional
-            newStripePlan.Name = subscriptionPlan.Title;
-            newStripePlan.TrialPeriodDays = 14;    // amount of time that will lapse before the customer is billed
-            newStripePlan.Id = subscriptionPlan.Identifier;
-
-            StripePlanService planService = new StripePlanService();
-            planService.Create(newStripePlan);
-        }
-
-        private static void UpdatePlanInStripe(SubscriptionPlan plan)
-        {
-            StripePlanUpdateOptions options = new StripePlanUpdateOptions();
-            options.Name = plan.Title;
-
-            StripePlanService planService = new StripePlanService();
-            planService.Update(plan.Identifier, options);
-        }
-
-        #endregion
-
         // GET: SubscriptionPlans
         public async Task<ActionResult> Index()
         {
@@ -88,7 +55,7 @@ namespace PandoLogic.Controllers
             {
                 subscriptionPlan.Identifier = Guid.NewGuid().ToString();
 
-                CreatePlanInStripe(subscriptionPlan);
+                StripeManager.CreatePlan(subscriptionPlan);
 
                 // Save to our database
                 subscriptionPlan.CreatedDate = DateTime.Now;
@@ -135,7 +102,7 @@ namespace PandoLogic.Controllers
                 plan.Title = subscriptionPlan.Title;
 
                 // Update Stripe
-                UpdatePlanInStripe(plan);
+                StripeManager.UpdatePlan(plan);
 
                 // Save changes to the database
                 await Db.SaveChangesAsync();
@@ -166,6 +133,10 @@ namespace PandoLogic.Controllers
         public async Task<ActionResult> DeleteConfirmed(int id)
         {
             SubscriptionPlan subscriptionPlan = await Db.SubscriptionPlans.FindAsync(id);
+
+            // Remove from Stripe
+            StripeManager.DeletePlan(subscriptionPlan);
+
             Db.SubscriptionPlans.Remove(subscriptionPlan);
             await Db.SaveChangesAsync();
             return RedirectToAction("Index");

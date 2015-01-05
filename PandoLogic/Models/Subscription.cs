@@ -15,6 +15,7 @@ namespace PandoLogic.Models
     /// </summary>
     public class Subscription : BaseModel
     {
+        [Display(Name = "Active Until")]
         public DateTime? ActiveUntil { get; set; }
 
         public string Notes { get; set; }
