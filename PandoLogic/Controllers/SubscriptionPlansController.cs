@@ -53,7 +53,7 @@ namespace PandoLogic.Controllers
         {
             if (ModelState.IsValid)
             {
-                subscriptionPlan.Identifier = Guid.NewGuid().ToString();
+                subscriptionPlan.PaymentSystemId = Guid.NewGuid().ToString();
 
                 StripeManager.CreatePlan(subscriptionPlan);
 

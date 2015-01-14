@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Data;
 using System.Data.Entity;
 using System.Linq;
@@ -21,6 +22,35 @@ using InviteOnly;
 
 namespace PandoLogic.Controllers
 {
+    /// <summary>
+    /// ViewModel for the payment page, carrying the payment information
+    /// https://stripe.com/docs/stripe.js/switching
+    /// </summary>
+    public class PaymentViewModel
+    {
+        [Required]
+        public string stripeToken { get; set; }
+    }
+
+    public class SubscriptionViewModel
+    {
+        public SubscriptionViewModel(SubscriptionPlan[] plans, Company company)
+        {
+            this.Plans = plans;
+            this.Company = company;
+        }
+
+        public SubscriptionPlan[] Plans { get; set; }
+
+        public Company Company { get; set; }
+    }
+
+    public class SubscriptionPostViewModel
+    {
+        public int PlanId { get; set; }
+        public int CompanyId { get; set; }
+    }
+
     [Authorize]
     public class AccountController : BaseController
     {
@@ -35,7 +65,8 @@ namespace PandoLogic.Controllers
             UserManager = userManager;
         }
 
-        public ApplicationUserManager UserManager {
+        public ApplicationUserManager UserManager
+        {
             get
             {
                 return _userManager ?? HttpContext.GetOwinContext().GetUserManager<ApplicationUserManager>();
@@ -88,7 +119,7 @@ namespace PandoLogic.Controllers
         [AllowAnonymous]
         public async Task<ActionResult> ConfirmEmail(string userId, string code)
         {
-            if (userId == null || code == null) 
+            if (userId == null || code == null)
             {
                 return View("Error");
             }
@@ -148,13 +179,13 @@ namespace PandoLogic.Controllers
         {
             return View();
         }
-	
+
         //
         // GET: /Account/ResetPassword
         [AllowAnonymous]
         public ActionResult ResetPassword(string code)
         {
-            if (code == null) 
+            if (code == null)
             {
                 return View("Error");
             }
@@ -259,7 +290,7 @@ namespace PandoLogic.Controllers
             bool hasPassword = HasPassword();
             ViewBag.HasLocalPassword = hasPassword;
             ViewBag.ReturnUrl = Url.Action("Manage");
-            
+
 
             if (hasPassword)
             {
@@ -302,7 +333,7 @@ namespace PandoLogic.Controllers
             }
 
             ViewBag.CurrentApplicationUser = await GetCurrentUserAsync();
-            
+
             // Find the list of companies the current user is a member of
             await LoadCompaniesForCurrentUserIntoViewBag();
 
@@ -358,6 +389,96 @@ namespace PandoLogic.Controllers
             return new ChallengeResult(provider, Url.Action("LinkLoginCallback", "Account"), User.Identity.GetUserId());
         }
 
+        /// <summary>
+        /// GET for payment page, enabling user to enter card information
+        /// </summary>
+        /// <returns></returns>
+        public async Task<ActionResult> Payment()
+        {
+            ApplicationUser currentUser = await GetCurrentUserAsync();
+
+            if (currentUser.HasPaymentInfo)
+                return RedirectToAction("Subscription");
+            else
+                return View();
+        }
+
+        /// <summary>
+        /// POST for 
+        /// </summary>
+        /// <param name="viewModel"></param>
+        /// <returns></returns>
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> Payment(PaymentViewModel viewModel)
+        {
+            if (ModelState.IsValid)
+            {
+                ApplicationUser currentUser = await GetCurrentUserAsync();
+
+                // Create the customer in stripe with this payment information
+                StripeManager.CreateOrUpdateCustomer(currentUser, viewModel.stripeToken);
+
+                await Db.SaveChangesAsync();
+
+                return RedirectToAction("Subscription");
+            }
+
+            return View();
+        }
+
+        /// <summary>
+        /// GET request for the page where the user selects subscription level
+        /// </summary>
+        /// <returns></returns>
+        public async Task<ActionResult> Subscription()
+        {
+            SubscriptionPlan[] plans = await Db.SubscriptionPlans
+                                                    .Where(p => p.State == SubscriptionState.Available)
+                                                    .OrderByDescending(p => p.Price)
+                                                    .ToArrayAsync();
+            Member member = await GetCurrentMemberAsync();
+
+            if (member == null)
+            {
+                return RedirectToAction("Create", "Companies");
+            }
+
+            SubscriptionViewModel viewModel = new SubscriptionViewModel(plans, member.Company);
+
+            return View(viewModel);
+        }
+
+        /// <summary>
+        /// POST request for confirming user's subscription level
+        /// </summary>
+        /// <param name="viewModel"></param>
+        /// <returns></returns>
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> Subscription(SubscriptionPostViewModel viewModel)
+        {
+            if (ModelState.IsValid)
+            {
+                // Setup the user
+                ApplicationUser currentUser = await GetCurrentUserAsync();
+                StripeManager.CreateOrUpdateCustomer(currentUser);
+
+                // Setup the subscription
+                Member member = await GetCurrentMemberAsync();
+                SubscriptionPlan plan = await Db.SubscriptionPlans.FindAsync(viewModel.PlanId);
+                Subscription newSubscription = Db.Subscriptions.Create(currentUser, member.Company, plan);
+                StripeManager.Subscribe(newSubscription);
+
+                // Save all changes
+                await Db.SaveChangesAsync();
+
+                return RedirectToAction("Index", "Home");
+            }
+
+            return View();
+        }
+
         //
         // GET: /Account/LinkLoginCallback
         public async Task<ActionResult> LinkLoginCallback()
@@ -403,13 +524,13 @@ namespace PandoLogic.Controllers
                     if (result.Succeeded)
                     {
                         await SignInAsync(user, isPersistent: false);
-                        
+
                         // For more information on how to enable account confirmation and password reset please visit http://go.microsoft.com/fwlink/?LinkID=320771
                         // Send an email with this link
                         // string code = await UserManager.GenerateEmailConfirmationTokenAsync(user.Id);
                         // var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
                         // SendEmail(user.Email, callbackUrl, "Confirm your account", "Please confirm your account by clicking this link");
-                        
+
                         return RedirectToLocal(returnUrl);
                     }
                 }
@@ -540,7 +661,7 @@ namespace PandoLogic.Controllers
                 // Save it to Azure
                 var file = Request.Files[0];
 
-                if(file.ContentLength > 0)
+                if (file.ContentLength > 0)
                 {
                     string fileName = StorageManager.GenerateUniqueName(file.FileName);
                     await StorageManager.UserImages.UploadBlobAsync(fileName, file.InputStream);
@@ -644,7 +765,8 @@ namespace PandoLogic.Controllers
 
         private class ChallengeResult : HttpUnauthorizedResult
         {
-            public ChallengeResult(string provider, string redirectUri) : this(provider, redirectUri, null)
+            public ChallengeResult(string provider, string redirectUri)
+                : this(provider, redirectUri, null)
             {
             }
 

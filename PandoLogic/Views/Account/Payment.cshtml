@@ -1,0 +1,72 @@
+﻿@model PandoLogic.Controllers.PaymentViewModel
+@{
+    ViewBag.Title = "Payment Info";
+    Layout = "~/Views/Shared/_PublicLayout.cshtml";
+}
+
+<div class="form-box" id="login-box">
+    <div class="header">Payment Info</div>
+    @using (Html.BeginForm("Payment", "Account", FormMethod.Post, new { role = "form", id = "payment-form" }))
+    {
+        @Html.AntiForgeryToken()
+        <div class="body bg-gray">
+            @Html.ValidationSummary("", new { @class = "text-danger" })
+            <span class='payment-errors text-danger'></span>
+            <div class="form-group">
+                <input data-stripe="number" class="form-control" placeholder="Card Number" />
+            </div>
+            <div class="form-group">
+                <input data-stripe="cvc" class="form-control" placeholder="Card Verificaton Code (CVC)" />
+            </div>
+            <div class="form-group">
+                <input data-stripe="exp-month" class="form-control" placeholder="Expiration Month" />
+            </div>
+            <div class="form-group">
+                <input data-stripe="exp-year" class="form-control" placeholder="Expiration Year" />
+            </div>
+        </div>
+        <div class="footer">
+            <button type="submit" class="btn btn-primary btn-block">Save Card &amp; Continue</button>
+        </div>
+    }
+</div>
+
+@section Scripts {
+
+    <script type="text/javascript" src="https://js.stripe.com/v2/"></script>
+
+    <script type="text/javascript">
+        Stripe.setPublishableKey('@Html.StripePublishableKey()');
+
+        var stripeResponseHandler = function (status, response) {
+            var $form = $('#payment-form');
+
+            if (response.error) {
+                // Show the errors on the form
+                $form.find('.payment-errors').text(response.error.message);
+                $form.find('button').prop('disabled', false);
+            } else {
+                // token contains id, last4, and card type
+                var token = response.id;
+                // Insert the token into the form so it gets submitted to the server
+                $form.append($('<input type="hidden" name="stripeToken" />').val(token));
+                // and re-submit
+                $form.get(0).submit();
+            }
+        };
+
+        jQuery(function ($) {
+            $('#payment-form').submit(function (e) {
+                var $form = $(this);
+
+                // Disable the submit button to prevent repeated clicks
+                $form.find('button').prop('disabled', true);
+
+                Stripe.card.createToken($form, stripeResponseHandler);
+
+                // Prevent the form from submitting with the default action
+                return false;
+            });
+        });
+    </script>
+}

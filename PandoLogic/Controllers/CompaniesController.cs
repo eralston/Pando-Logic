@@ -152,7 +152,7 @@ namespace PandoLogic.Controllers
                 await UpdateCurrentUserCacheAsync();
 
                 // Continue to setting the company address
-                return RedirectToAction("CreateCompany", "Addresses", new { id = company.Id });
+                return RedirectToAction("Payment", "Account");
             }
 
             ViewBag.IndustryId = new SelectList(Db.Industries, "Id", "Title", companyViewModel.IndustryId);
@@ -267,7 +267,10 @@ namespace PandoLogic.Controllers
             Company company = await Db.Companies.FindAsync(id);
             Db.Companies.Remove(company);
             await Db.SaveChangesAsync();
-            return RedirectToAction("Index");
+
+            await UpdateCurrentUserCacheAsync();
+
+            return RedirectToAction("Index", "Home");
         }
 
         /// <summary>

@@ -54,6 +54,22 @@ namespace PandoLogic.Models
         public int? VerificationInviteId { get; set; }
         public virtual Invite VerificationInvite { get; set; }
 
+        /// <summary>
+        /// Customer ID for the charging system
+        /// </summary>
+        public string PaymentSystemId { get; set; }
+
+        /// <summary>
+        /// Returns true if this application user has payment information; otherwise, returns false
+        /// </summary>
+        public bool HasPaymentInfo 
+        { 
+            get
+            {
+                return this.PaymentSystemId != null;
+            }
+        }
+
         #region Methods
 
         [NotMapped]

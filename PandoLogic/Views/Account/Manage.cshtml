@@ -8,22 +8,6 @@
 <div class="row">
     <div class="col-md-6">
         @Html.Partial("_ChangePasswordPartial")
-
-        @*
-            @if (ViewBag.HasLocalPassword)
-                {
-                    @Html.Partial("_ChangePasswordPartial")
-                }
-                else
-                {
-                    @Html.Partial("_SetPasswordPartial")
-                }
-
-            <section id="externalLogins">
-                @Html.Action("RemoveAccountList")
-                @Html.Partial("_ExternalLoginsListPartial", new ExternalLoginListViewModel { Action = "LinkLogin", ReturnUrl = ViewBag.ReturnUrl })
-            </section>
-        *@
     </div>
     <div class="col-md-6">
         <div class="box box-primary">
@@ -51,6 +35,13 @@
         <div class="box box-primary">
             <div class="box-header">
                 <h3 class="box-title">Companies</h3>
+                <div class="btn-group pull-right box-tools">
+
+                    <a class="btn btn-default btn-flat btn-sm" href="@Url.Action("Create", "Companies")">
+                        <i class="fa fa-plus"></i>
+                        Create Company
+                    </a>
+                </div>
             </div>
             <div class="box-body no-padding">
                 <div class="table-responsive">

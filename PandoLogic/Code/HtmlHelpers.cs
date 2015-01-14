@@ -27,6 +27,16 @@ namespace PandoLogic
         }
 
         /// <summary>
+        /// Gets the Google analytics key from the app settings section of the web.config file
+        /// </summary>
+        /// <param name="helper"></param>
+        /// <returns></returns>
+        public static string StripePublishableKey(this HtmlHelper helper)
+        {
+            return ConfigurationManager.AppSettings["StripeApiPublishableKey"];
+        }
+
+        /// <summary>
         /// Returns true if the system currently has context for a company; otherwise, returns false
         /// </summary>
         /// <param name="htmlHelper"></param>

@@ -211,6 +211,8 @@ namespace PandoLogic.Controllers
 
         protected void UpdateCurrentUserCache()
         {
+            _member = null;
+
             ApplicationUser user = GetCurrentUser();
             Company[] userCompanies = Db.CompaniesWhereUserIsMember(user).ToArray();
             Member selectedMember = Db.Members.FindSelectedForUser(user).FirstOrDefault();
@@ -220,6 +222,8 @@ namespace PandoLogic.Controllers
 
         protected async Task UpdateCurrentUserCacheAsync()
         {
+            _member = null;
+
             ApplicationUser user = await GetCurrentUserAsync();
 
             // TODO: Make these requests parallel

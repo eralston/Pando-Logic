@@ -20,6 +20,8 @@ namespace PandoLogic.Models
 
         public string Notes { get; set; }
 
+        public string PaymentSystemId { get; set; }
+
         // To-One on Company
         [ForeignKey("Company")]
         public int CompanyId { get; set; }
@@ -34,5 +36,31 @@ namespace PandoLogic.Models
         [ForeignKey("Plan")]
         public int PlanId { get; set; }
         public virtual SubscriptionPlan Plan { get; set; }
+    }
+
+    public static class SubscriptionExtensions
+    {
+        /// <summary>
+        /// Creates a new subscription
+        /// </summary>
+        /// <param name="subscriptions"></param>
+        /// <param name="user"></param>
+        /// <param name="company"></param>
+        /// <param name="plan"></param>
+        /// <returns></returns>
+        public static Subscription Create(this DbSet<Subscription> subscriptions, ApplicationUser user, Company company, SubscriptionPlan plan)
+        {
+            Subscription newSub = new Subscription();
+
+            newSub.CreatedDate = DateTime.Now;
+
+            newSub.Company = company;
+            newSub.User = user;
+            newSub.Plan = plan;
+
+            subscriptions.Add(newSub);
+
+            return newSub;
+        }
     }
 }

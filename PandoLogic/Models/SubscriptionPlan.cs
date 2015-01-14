@@ -33,7 +33,7 @@ namespace PandoLogic.Models
         /// <summary>
         /// The identifier used over in Stripe for this plan
         /// </summary>
-        public string Identifier { get; set; }
+        public string PaymentSystemId { get; set; }
 
         public string Note { get; set; }
 

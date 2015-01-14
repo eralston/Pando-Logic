@@ -43,6 +43,8 @@ namespace PandoLogic.Models
         public string AvatarUrl { get; set; }
         public string AvatarFileName { get; set; }
 
+        public string ZipCode { get; set; }
+
         [Display(Name = "Founded Date")]
         [DataType(DataType.DateTime)]
         public DateTime? FoundedDate { get; set; }

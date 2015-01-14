@@ -958,6 +958,8 @@
     <Content Include="Views\Subscriptions\Details.cshtml" />
     <Content Include="Views\Subscriptions\Edit.cshtml" />
     <Content Include="Views\Subscriptions\Index.cshtml" />
+    <Content Include="Views\Account\Payment.cshtml" />
+    <Content Include="Views\Account\Subscription.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Views\Shared\DisplayTemplates\" />

@@ -1,0 +1,42 @@
+﻿@using PandoLogic.Controllers
+@using PandoLogic.Models
+
+@model SubscriptionViewModel
+
+@{
+    ViewBag.Title = "Subscription Plan";
+    Layout = "~/Views/Shared/_PublicLayout.cshtml";
+}
+
+<div class="form-box">
+    <div class="header">Subscription Plan</div>
+    <div class="body bg-gray">
+        <p>Pick the plan that's right for @Model.Company.Name</p>
+        @foreach (SubscriptionPlan plan in Model.Plans)
+        {
+            using (Html.BeginForm("Subscription", "Account", FormMethod.Post))
+            {
+                @Html.AntiForgeryToken()
+                @Html.Hidden("PlanId", plan.Id)
+                @Html.Hidden("CompanyId", Model.Company.Id)
+                <div class="box box-primary">
+                    <div class="box-header">
+                        <h3 class="box-title">@plan.Title</h3>
+                    </div>
+                    <div class="box-body">
+                        <p>
+                            @plan.Description
+                        </p>
+                        <button class="btn btn-default btn-block">
+                            <strong>@plan.Title </strong>
+                            $@plan.Price
+                        </button>
+                    </div>
+                </div>
+            }
+        }
+
+    </div>
+    <div class="footer">
+    </div>
+</div>
