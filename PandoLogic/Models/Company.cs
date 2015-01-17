@@ -43,6 +43,8 @@ namespace PandoLogic.Models
         public string AvatarUrl { get; set; }
         public string AvatarFileName { get; set; }
 
+        [Required]
+        [Display(Name = "Postal Code")]
         public string ZipCode { get; set; }
 
         [Display(Name = "Founded Date")]

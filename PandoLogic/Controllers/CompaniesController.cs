@@ -51,6 +51,19 @@ namespace PandoLogic.Controllers
             CultureInfo provider = CultureInfo.InvariantCulture;
             return DateTime.ParseExact(FoundedDateString, FoundedDateFormat, provider);
         }
+
+        public CompanyViewModel() { }
+        public CompanyViewModel(Company company)
+        {
+            this.AvatarFileName = company.AvatarFileName;
+            this.AvatarUrl = company.AvatarUrl;
+            this.FoundedDate = company.FoundedDate;
+            this.Id = company.Id;
+            this.Industry = company.Industry;
+            this.Name = company.Name;
+            this.NumberOfEmployees = company.NumberOfEmployees;
+            this.ZipCode = company.ZipCode;
+        }
     }
 
     [Authorize]
@@ -127,7 +140,7 @@ namespace PandoLogic.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Create([Bind(Include = "Name,NumberOfEmployees,IndustryId,JobTitle,FoundedDateString")] CompanyViewModel companyViewModel)
+        public async Task<ActionResult> Create([Bind(Include = "Name,NumberOfEmployees,IndustryId,JobTitle,FoundedDateString,ZipCode")] CompanyViewModel companyViewModel)
         {
             if (ModelState.IsValid)
             {
@@ -171,6 +184,7 @@ namespace PandoLogic.Controllers
             origCompany.Name = company.Name;
             origCompany.NumberOfEmployees = company.NumberOfEmployees;
             origCompany.IndustryId = company.IndustryId;
+            origCompany.ZipCode = company.ZipCode;
 
             if (company.HasFoundedDate())
             {
@@ -213,9 +227,17 @@ namespace PandoLogic.Controllers
             {
                 return HttpNotFound();
             }
+            bool isCurrentUserInCompany = await IsCurrentUserInCompany(company.Id);
+            if (!isCurrentUserInCompany)
+            {
+                return HttpNotFound();
+            }
+
+            CompanyViewModel viewModel = new CompanyViewModel(company);
+
             ViewBag.AddressId = new SelectList(Db.Addresses, "Id", "Address1", company.AddressId);
             ViewBag.IndustryId = new SelectList(Db.Industries, "Id", "Title", company.IndustryId);
-            return View(company);
+            return View(viewModel);
         }
 
         // POST: Companies/Edit/5
@@ -223,7 +245,7 @@ namespace PandoLogic.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Edit([Bind(Include = "Id,CreatedDate,Name,NumberOfEmployees,IndustryId,AddressId")] Company company)
+        public async Task<ActionResult> Edit([Bind(Include = "Id,Name,NumberOfEmployees,IndustryId,ZipCode,FoundedDateString")] CompanyViewModel company)
         {
             bool isCurrentUserAllowed = await IsCurrentUserInCompany(company.Id);
             if (!isCurrentUserAllowed)
@@ -231,9 +253,21 @@ namespace PandoLogic.Controllers
 
             if (ModelState.IsValid)
             {
-                Db.Entry(company).State = EntityState.Modified;
+                Company origCompany = await Db.Companies.FindAsync(company.Id);
+                if (company == null)
+                {
+                    return HttpNotFound();
+                }
+                bool isCurrentUserInCompany = await IsCurrentUserInCompany(origCompany.Id);
+                if (!isCurrentUserInCompany)
+                {
+                    return HttpNotFound();
+                }
+
+                await UpdateCompany(company, origCompany);
+
                 await Db.SaveChangesAsync();
-                return RedirectToAction("Index");
+                return RedirectToAction("Details", new { id = company.Id });
             }
             ViewBag.AddressId = new SelectList(Db.Addresses, "Id", "Address1", company.AddressId);
             ViewBag.IndustryId = new SelectList(Db.Industries, "Id", "Title", company.IndustryId);

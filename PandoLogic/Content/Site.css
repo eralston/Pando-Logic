@@ -32,6 +32,14 @@
     text-transform: uppercase;
 }
 
+.centered-logo {
+    font-size: 3em !important;
+    font-family: 'Varela Round', sans-serif;
+    text-transform: uppercase;
+    text-align: center;
+    color: lightgray;
+}
+
 .bottom-banner {
     position: fixed;
     bottom: 20px;

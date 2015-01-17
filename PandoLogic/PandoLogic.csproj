@@ -16,7 +16,8 @@
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <MvcBuildViews>false</MvcBuildViews>
     <UseIISExpress>true</UseIISExpress>
-    <IISExpressSSLPort />
+    <IISExpressSSLPort>
+    </IISExpressSSLPort>
     <IISExpressAnonymousAuthentication />
     <IISExpressWindowsAuthentication />
     <IISExpressUseClassicPipelineMode />
@@ -466,7 +467,8 @@
     <Content Include="fonts\ionicons.woff" />
     <Content Include="App_Data\Industry List.csv" />
     <None Include="Properties\PublishProfiles\PandoLogic-dev %282%29.pubxml" />
-    <None Include="Properties\PublishProfiles\PandoLogic-dev.pubxml" />
+    <None Include="Properties\PublishProfiles\pandologic-prod - FTP.pubxml" />
+    <None Include="Properties\PublishProfiles\pandologic-prod - Web Deploy.pubxml" />
     <None Include="Scripts\jquery-2.1.1.intellisense.js" />
     <Content Include="img\ajax-loader.gif" />
     <Content Include="img\ajax-loader1.gif" />
@@ -833,6 +835,7 @@
     </Content>
     <Content Include="Web.Release.config">
       <DependentUpon>Web.config</DependentUpon>
+      <SubType>Designer</SubType>
     </Content>
     <Content Include="Views\Web.config" />
     <Content Include="Views\_ViewStart.cshtml" />
@@ -960,6 +963,7 @@
     <Content Include="Views\Subscriptions\Index.cshtml" />
     <Content Include="Views\Account\Payment.cshtml" />
     <Content Include="Views\Account\Subscription.cshtml" />
+    <Content Include="Views\Companies\EditorTemplates\CompanyViewModel.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Views\Shared\DisplayTemplates\" />
@@ -986,7 +990,7 @@
           <AutoAssignPort>True</AutoAssignPort>
           <DevelopmentServerPort>1249</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
-          <IISUrl>http://localhost:1249/</IISUrl>
+          <IISUrl>http://localhost:1250/</IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
           <UseCustomServer>False</UseCustomServer>
           <CustomServerUrl>

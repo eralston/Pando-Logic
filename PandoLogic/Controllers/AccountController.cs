@@ -395,6 +395,7 @@ namespace PandoLogic.Controllers
         /// <returns></returns>
         public async Task<ActionResult> Payment()
         {
+            // If the current user has payment info, then we can skip this, unless they are editing it
             ApplicationUser currentUser = await GetCurrentUserAsync();
 
             if (currentUser.HasPaymentInfo)
