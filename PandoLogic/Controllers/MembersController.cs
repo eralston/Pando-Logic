@@ -116,6 +116,9 @@ namespace PandoLogic.Controllers
             ApplicationUser user = await GetCurrentUserAsync();
             Member currentMember = await GetCurrentMemberAsync();
 
+            Subscription subscription = await Db.Subscriptions.WhereUserAndCompany(user.Id, currentMember.CompanyId);
+            ViewBag.Subscription = subscription;
+
             if (member.UserId != user.Id && member.CompanyId != currentMember.CompanyId)
             {
                 return HttpNotFound();

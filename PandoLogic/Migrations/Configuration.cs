@@ -41,23 +41,8 @@ namespace PandoLogic.Migrations
             }            
         }
 
-        protected override void Seed(PandoLogic.Models.ApplicationDbContext context)
+        private static void CreateOrUpdateIndustries(PandoLogic.Models.ApplicationDbContext context)
         {
-            //  This method will be called after migrating to the latest version.
-
-            //  You can use the DbSet<T>.AddOrUpdate() helper extension method 
-            //  to avoid creating duplicate seed data. E.g.
-            //
-            //    context.People.AddOrUpdate(
-            //      p => p.FullName,
-            //      new Person { FullName = "Andrew Peters" },
-            //      new Person { FullName = "Brice Lambson" },
-            //      new Person { FullName = "Rowan Miller" }
-            //    );
-            //
-
-            AddToAdminRole(context, "erik.ralston@gmail.com");
-
             context.Industries.AddOrUpdate(
                     i => i.Title,
                     new Industry { Title = "Agriculture", CreatedDate = DateTime.Now },
@@ -79,5 +64,27 @@ namespace PandoLogic.Migrations
                     new Industry { Title = "Transportation", CreatedDate = DateTime.Now }
                 );
         }
+
+        protected override void Seed(PandoLogic.Models.ApplicationDbContext context)
+        {
+            //  This method will be called after migrating to the latest version.
+
+            //  You can use the DbSet<T>.AddOrUpdate() helper extension method 
+            //  to avoid creating duplicate seed data. E.g.
+            //
+            //    context.People.AddOrUpdate(
+            //      p => p.FullName,
+            //      new Person { FullName = "Andrew Peters" },
+            //      new Person { FullName = "Brice Lambson" },
+            //      new Person { FullName = "Rowan Miller" }
+            //    );
+            //
+
+            AddToAdminRole(context, "erik.ralston@gmail.com");
+
+            CreateOrUpdateIndustries(context);
+        }
+
+        
     }
 }

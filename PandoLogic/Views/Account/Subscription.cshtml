@@ -38,5 +38,9 @@
 
     </div>
     <div class="footer">
+        @if (ViewBag.HasExistingSubscription != null)
+        {
+            <a href="@Url.Action("Details", "Companies", new { id = Model.Company.Id })" class="btn btn-primary btn-block">Nevermind, I Don't Want to Change My Subscription</a>
+        }
     </div>
 </div>

@@ -49,4 +49,13 @@ namespace PandoLogic.Models
         [DefaultValue(SubscriptionState.Available)]
         public SubscriptionState State { get; set; }
     }
+
+    public static class SubscriptionPlanExtensions
+    {
+        public static IQueryable<SubscriptionPlan> AllAvailablePlans(this DbSet<SubscriptionPlan> plans)
+        {
+            return plans.Where(p => p.State == SubscriptionState.Available)
+                                                    .OrderByDescending(p => p.Price);
+        }
+    }
 }

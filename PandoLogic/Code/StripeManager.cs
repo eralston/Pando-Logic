@@ -142,7 +142,7 @@ namespace PandoLogic
         /// <param name="subscription"></param>
         public static void Subscribe(Subscription subscription)
         {
-            if (string.IsNullOrEmpty(subscription.PaymentSystemId))
+            if (!string.IsNullOrEmpty(subscription.PaymentSystemId))
                 return;
 
             var subscriptionService = new StripeSubscriptionService();
@@ -150,6 +150,22 @@ namespace PandoLogic
             subscription.PaymentSystemId = stripeSubscription.Id;
 
             System.Diagnostics.Trace.TraceInformation("Subscribed customer in stripe: '{0}' with new subscription id '{1}", subscription.User.Email, subscription.PaymentSystemId);
+        }
+
+        /// <summary>
+        /// Changes the given subscription to use the new plan
+        /// </summary>
+        /// <param name="subscription"></param>
+        /// <param name="newPlan"></param>
+        public static void ChangeSubscriptionPlan(Subscription subscription, SubscriptionPlan newPlan)
+        {
+            StripeSubscriptionUpdateOptions options = new StripeSubscriptionUpdateOptions();
+            options.PlanId = newPlan.PaymentSystemId;
+
+            subscription.Plan = newPlan;
+
+            var subscriptionService = new StripeSubscriptionService();
+            subscriptionService.Update(subscription.User.PaymentSystemId, subscription.PaymentSystemId, options);
         }
 
         /// <summary>

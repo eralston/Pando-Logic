@@ -164,6 +164,9 @@ namespace PandoLogic.Controllers
             Company company = await Db.Companies.FindAsync(id);
             Subscription sub = await Db.Subscriptions.WhereCompany(id);
 
+            if (sub.UserId == UserCache.Id)
+                ViewBag.IsCompanyOwner = true;
+
             UnstashModelState();
 
             CompanyViewModel viewModel = new CompanyViewModel(company, sub);
@@ -237,11 +240,6 @@ namespace PandoLogic.Controllers
             {
                 return HttpNotFound();
             }
-            bool isCurrentUserInCompany = await IsCurrentUserInCompany(company.Id);
-            if (!isCurrentUserInCompany)
-            {
-                return HttpNotFound();
-            }
 
             CompanyViewModel viewModel = new CompanyViewModel(company);
 
@@ -265,11 +263,6 @@ namespace PandoLogic.Controllers
             {
                 Company origCompany = await Db.Companies.FindAsync(company.Id);
                 if (company == null)
-                {
-                    return HttpNotFound();
-                }
-                bool isCurrentUserInCompany = await IsCurrentUserInCompany(origCompany.Id);
-                if (!isCurrentUserInCompany)
                 {
                     return HttpNotFound();
                 }
@@ -323,8 +316,8 @@ namespace PandoLogic.Controllers
             sub.IsSoftDeleted = true;
             
             Company company = await Db.Companies.FindAsync(id);
-
             company.IsSoftDeleted = true;
+
             await Db.SaveChangesAsync();
 
             await UpdateCurrentUserCacheAsync();

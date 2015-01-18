@@ -438,16 +438,32 @@ namespace PandoLogic.Controllers
         /// <returns></returns>
         public async Task<ActionResult> Subscription()
         {
-            SubscriptionPlan[] plans = await Db.SubscriptionPlans
-                                                    .Where(p => p.State == SubscriptionState.Available)
-                                                    .OrderByDescending(p => p.Price)
-                                                    .ToArrayAsync();
+            SubscriptionPlan[] plans = await Db.SubscriptionPlans.AllAvailablePlans().ToArrayAsync();
+
+            // If we are entering this page, then double-check consistency of member state
+            await UpdateCurrentUserCacheAsync();
             Member member = await GetCurrentMemberAsync();
 
+            // If we don't have a member, then we need to start with making a company
             if (member == null)
             {
+                System.Diagnostics.Trace.TraceError("User {0} tried to access subscription without a company", GetCurrentUser().Email);
                 return RedirectToAction("Create", "Companies");
             }
+
+            Subscription companySubscription = await Db.Subscriptions.WhereCompany(member.CompanyId);
+
+            // If the current company has a subscription, but it's not owned by the current user
+            if (companySubscription != null && companySubscription.UserId != UserCache.Id)
+            {
+                return RedirectToAction("Details", "Companies", new { id = member.CompanyId });
+            }
+           
+            // If the current company has a subscription and it's owned by the current user, then indicate with the from
+            if(companySubscription != null)
+            {
+                ViewBag.HasExistingSubscription = true;
+            }           
 
             SubscriptionViewModel viewModel = new SubscriptionViewModel(plans, member.Company);
 
@@ -465,19 +481,36 @@ namespace PandoLogic.Controllers
         {
             if (ModelState.IsValid)
             {
-                // Setup the user
+                // Context for this subscription change
                 ApplicationUser currentUser = await GetCurrentUserAsync();
+                Member member = await GetCurrentMemberAsync();
+
+                // Make sure Stripe has what it needs on the user
                 StripeManager.CreateOrUpdateCustomer(currentUser);
 
-                // Setup the subscription
-                Member member = await GetCurrentMemberAsync();
-                SubscriptionPlan plan = await Db.SubscriptionPlans.FindAsync(viewModel.PlanId);
-                Subscription newSubscription = Db.Subscriptions.Create(currentUser, member.Company, plan);
-                StripeManager.Subscribe(newSubscription);
+                // If there is an existing subscription, then unsubscibe and delete it
+                SubscriptionPlan desiredPlan = await Db.SubscriptionPlans.FindAsync(viewModel.PlanId);
+                Subscription oldSubscription = await Db.Subscriptions.WhereUserAndCompany(currentUser.Id, member.CompanyId);
+                if (oldSubscription != null && oldSubscription.PaymentSystemId != null)
+                {
+                    // Transfer this user to the new plan
+                    StripeManager.ChangeSubscriptionPlan(oldSubscription, desiredPlan);
+                }
+                else
+                {
+                    // If we have a leftover dead subscription, then kill it
+                    if (oldSubscription != null)
+                        Db.Subscriptions.Remove(oldSubscription);
+
+                    // Create new subscription based on selected plan
+                    Subscription newSubscription = Db.Subscriptions.Create(currentUser, member.Company, desiredPlan);
+                    StripeManager.Subscribe(newSubscription);
+                }
 
                 // Save all changes
                 await Db.SaveChangesAsync();
 
+                // Send them home
                 return RedirectToAction("Index", "Home");
             }
 

@@ -39,15 +39,26 @@
                     </dd>
 
                 </dl>
-                @using (Html.BeginForm())
+                @if (ViewBag.Subscription == null)
                 {
-                    @Html.AntiForgeryToken()
+                    using (Html.BeginForm())
+                    {
+                        @Html.AntiForgeryToken()
 
-                    <div class="form-actions no-color">
-                        <input type="submit" value="Remove Member" class="btn btn-danger" />
-                        @Html.ActionLink("Cancel", "Details", "Companies", new { id = Model.CompanyId }, null)
-                    </div>
+                        <div class="form-actions no-color">
+                            <input type="submit" value="Remove Member" class="btn btn-danger" />
+                            @Html.ActionLink("Cancel", "Details", "Companies", new { id = Model.CompanyId }, null)
+                        </div>
+                    }
                 }
+                else
+                {
+                    <p class="text-muted">
+                        You cannot remove yourself from this company because you are the subscriber for it.
+                        You can delete the company and unsubscribe from the @Html.ActionLink("company details page", "Details", "Companies", new { id = Model.CompanyId }, null)
+                    </p>
+                }
+
             </div>
         </div>
     </div>
