@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Data.Entity;
@@ -50,10 +51,25 @@ namespace PandoLogic.Models
         [Display(Name = "Founded Date")]
         [DataType(DataType.DateTime)]
         public DateTime? FoundedDate { get; set; }
+
+        [DefaultValue(false)]
+        public bool IsSoftDeleted { get; set; }
     }
 
     public static class CompanyExtensions
     {
+        public static Company Create(this DbSet<Company> companies, ApplicationUser creatorUser)
+        {
+            Company company = new Company();
+
+            company.CreatedDate = DateTime.Now;
+            company.Creator = creatorUser;
+
+            companies.Add(company);
+
+            return company;
+        }
+
         /// <summary>
         /// Creates a query for companies where the given user is a member
         /// </summary>
@@ -64,7 +80,7 @@ namespace PandoLogic.Models
         {
             var query = from m in context.Members
                         join c in context.Companies on m.CompanyId equals c.Id
-                        where m.UserId == user.Id
+                        where m.UserId == user.Id && c.IsSoftDeleted == false
                         select c;
             return query;
         }

@@ -78,24 +78,24 @@ namespace PandoLogic.Models
         {
             string userId = user.Id;
             // Find all members for the current user
-            var userMembers = members.Where(m => m.UserId == userId);
+            var userMembers = members.Where(m => m.UserId == userId && m.Company.IsSoftDeleted == false);
             return userMembers;
         }
 
         public static IQueryable<Member> WhereCompany(this DbSet<Member> members, Company company)
         {
             int companyId = company.Id;
-            return members.Where(m => m.CompanyId == companyId).Include(m => m.User);
+            return members.Where(m => m.CompanyId == companyId && m.Company.IsSoftDeleted == false).Include(m => m.User);
         }
 
         public static Task<Member> FindPrimaryForUser(this DbSet<Member> members, string userId)
         {
-            return members.Where(m => m.UserId == userId).FirstOrDefaultAsync();
+            return members.Where(m => m.UserId == userId && m.Company.IsSoftDeleted == false).FirstOrDefaultAsync();
         }
 
         public static Task<Member> WhereAssignedToUserAndCompany(this DbSet<Member> members, string userId, int companyId)
         {
-            return members.Where(m => m.UserId == userId && m.CompanyId == companyId).FirstOrDefaultAsync();
+            return members.Where(m => m.UserId == userId && m.CompanyId == companyId && m.Company.IsSoftDeleted == false).FirstOrDefaultAsync();
         }
     }
 }

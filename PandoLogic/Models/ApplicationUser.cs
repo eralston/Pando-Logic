@@ -66,7 +66,7 @@ namespace PandoLogic.Models
         { 
             get
             {
-                return this.PaymentSystemId != null;
+                return !string.IsNullOrEmpty(this.PaymentSystemId);
             }
         }
 

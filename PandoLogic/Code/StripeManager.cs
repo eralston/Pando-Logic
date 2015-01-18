@@ -129,6 +129,9 @@ namespace PandoLogic
         /// <param name="subscription"></param>
         public static void Subscribe(Subscription subscription)
         {
+            if (string.IsNullOrEmpty(subscription.PaymentSystemId))
+                return;
+
             var subscriptionService = new StripeSubscriptionService();
             StripeSubscription stripeSubscription = subscriptionService.Create(subscription.User.PaymentSystemId, subscription.Plan.PaymentSystemId);
             subscription.PaymentSystemId = stripeSubscription.Id;
@@ -141,6 +144,9 @@ namespace PandoLogic
         /// <param name="subscription"></param>
         public static void Unsubscribe(Subscription subscription)
         {
+            if (string.IsNullOrEmpty(subscription.PaymentSystemId))
+                return;
+
             var subscriptionService = new StripeSubscriptionService();
             subscriptionService.Cancel(subscription.PaymentSystemId, subscription.User.PaymentSystemId);
             subscription.PaymentSystemId = null;

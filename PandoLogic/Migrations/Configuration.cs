@@ -8,6 +8,10 @@ using Microsoft.AspNet.Identity;
 
 namespace PandoLogic.Migrations
 {
+    /// <summary>
+    /// Performs configuration and seeing of the database
+    /// NOTE: In the future this should use explicit migrations, right now it uses automatic migrations
+    /// </summary>
     internal sealed class Configuration : DbMigrationsConfiguration<PandoLogic.Models.ApplicationDbContext>
     {
         public Configuration()
@@ -20,24 +24,21 @@ namespace PandoLogic.Migrations
         /// Creates the initial identify for the given e-mail and password, adding them to the admin group
         /// </summary>
         /// <returns></returns>
-        private static void CreateInitialIdentity(string email, string password, ApplicationDbContext context)
+        private static void AddToAdminRole(ApplicationDbContext context, string email)
         {
-            string username = Guid.NewGuid().ToString("N");
             ApplicationUser user = context.Users.FindByEmail(email);
-
-            bool existingUser = user != null;
             if (user == null)
-                user = new ApplicationUser() { Email = email, UserName = username };
-
-            Adjudicator adjudicator = new Adjudicator(context);
-            if (!existingUser)
             {
-                IdentityResult result = adjudicator.UserManager.Create(user, password);
+                return;
             }
+            else
+            {
+                Adjudicator adjudicator = new Adjudicator(context);
 
-            adjudicator.AddToAdminRole(user);
+                adjudicator.AddToAdminRole(user);
 
-            context.SaveChanges();
+                context.SaveChanges();
+            }            
         }
 
         protected override void Seed(PandoLogic.Models.ApplicationDbContext context)
@@ -55,7 +56,7 @@ namespace PandoLogic.Migrations
             //    );
             //
 
-            CreateInitialIdentity("erik.ralston@gmail.com", "123456", context);
+            AddToAdminRole(context, "erik.ralston@gmail.com");
 
             context.Industries.AddOrUpdate(
                     i => i.Title,

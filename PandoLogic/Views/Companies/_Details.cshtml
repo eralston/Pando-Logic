@@ -1,4 +1,4 @@
-﻿@model PandoLogic.Models.Company
+﻿@model PandoLogic.Controllers.CompanyViewModel
 
 <dl class="dl-horizontal">
 
@@ -33,4 +33,24 @@
     <dd>
         @Html.DisplayFor(model => model.ZipCode)
     </dd>
+
+    @if (Model.Subscription != null)
+    {
+        <dt>
+            Subscription Plan
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Subscription.Plan.Title)
+        </dd>
+
+    <dt>
+        Monthly Price
+    </dt>
+
+    <dd>
+        $@Html.DisplayFor(model => model.Subscription.Plan.Price)
+    </dd>
+    }
+    
 </dl>

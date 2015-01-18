@@ -214,6 +214,8 @@ namespace PandoLogic.Controllers
             _member = null;
 
             ApplicationUser user = GetCurrentUser();
+            if (user == null)
+                return;
             Company[] userCompanies = Db.CompaniesWhereUserIsMember(user).ToArray();
             Member selectedMember = Db.Members.FindSelectedForUser(user).FirstOrDefault();
             _userCache = new UserInfoCache(user, userCompanies, selectedMember);
@@ -324,6 +326,12 @@ namespace PandoLogic.Controllers
                 return;
 
             ApplicationUser user = GetCurrentUser();
+
+            // TODO: Error log
+            if (user == null)
+                return;
+
+
             string email = user.Email;
             IQueryable<MemberInvite> query = Db.MemberInvites.WhereEmail(email).Include(i => i.Company);
             MemberInvite[] invites = query.ToArray();

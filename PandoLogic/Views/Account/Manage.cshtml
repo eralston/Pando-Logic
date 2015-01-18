@@ -2,6 +2,11 @@
 @using Microsoft.AspNet.Identity;
 @{
     ViewBag.Title = "Manage Account";
+
+    ViewBag.Breadcrumb = new Breadcrumb(new Crumb[] {
+        new Crumb("Dashboard", Url.Action("Index","Home"), "fa-dashboard"),
+        new Crumb("Manage Account")
+    });
 }
 
 <p class="text-success">@ViewBag.StatusMessage</p>

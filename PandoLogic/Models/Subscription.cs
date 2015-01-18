@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Data.Entity;
 using System.Globalization;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Web.Security;
 
 namespace PandoLogic.Models
@@ -36,6 +38,9 @@ namespace PandoLogic.Models
         [ForeignKey("Plan")]
         public int PlanId { get; set; }
         public virtual SubscriptionPlan Plan { get; set; }
+
+        [DefaultValue(false)]
+        public bool IsSoftDeleted { get; set; }
     }
 
     public static class SubscriptionExtensions
@@ -61,6 +66,30 @@ namespace PandoLogic.Models
             subscriptions.Add(newSub);
 
             return newSub;
+        }
+
+        /// <summary>
+        /// Returns the single subscription for a given company
+        /// </summary>
+        /// <param name="subscriptions"></param>
+        /// <param name="companyId"></param>
+        /// <returns></returns>
+        public static Task<Subscription> WhereCompany(this DbSet<Subscription> subscriptions, int companyId)
+        {
+            return subscriptions.Where(s => s.CompanyId == companyId && s.IsSoftDeleted == false).FirstOrDefaultAsync();
+        }
+
+        /// <summary>
+        /// Returns the single subscription linking between a user and a company
+        /// NOTE: Fundamentally, there should be only one subscription per company; however, this validate the given user is attached to the subscription
+        /// </summary>
+        /// <param name="subscriptions"></param>
+        /// <param name="userId"></param>
+        /// <param name="companyId"></param>
+        /// <returns></returns>
+        public static Task<Subscription> WhereUserAndCompany(this DbSet<Subscription> subscriptions, string userId, int companyId)
+        {
+            return subscriptions.Where(s => s.UserId == userId && s.CompanyId == companyId && s.IsSoftDeleted == false).FirstOrDefaultAsync();
         }
     }
 }

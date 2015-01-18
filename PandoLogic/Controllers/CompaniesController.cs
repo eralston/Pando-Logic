@@ -34,6 +34,8 @@ namespace PandoLogic.Controllers
     {
         const string FoundedDateFormat = "MM/dd/yyyy";
 
+        public Subscription Subscription { get; set; }
+
         [Display(Name = "Job Title")]
         public string JobTitle { get; set; }
 
@@ -52,8 +54,7 @@ namespace PandoLogic.Controllers
             return DateTime.ParseExact(FoundedDateString, FoundedDateFormat, provider);
         }
 
-        public CompanyViewModel() { }
-        public CompanyViewModel(Company company)
+        private void ApplyToProperties(Company company)
         {
             this.AvatarFileName = company.AvatarFileName;
             this.AvatarUrl = company.AvatarUrl;
@@ -63,6 +64,18 @@ namespace PandoLogic.Controllers
             this.Name = company.Name;
             this.NumberOfEmployees = company.NumberOfEmployees;
             this.ZipCode = company.ZipCode;
+        }
+
+        public CompanyViewModel() { }
+        public CompanyViewModel(Company company)
+        {
+            ApplyToProperties(company);
+        }
+
+        public CompanyViewModel(Company company, Subscription subscription) 
+        {
+            ApplyToProperties(company);
+            this.Subscription = subscription;
         }
     }
 
@@ -90,6 +103,48 @@ namespace PandoLogic.Controllers
             return ret != null;
         }
 
+        /// <summary>
+        /// Updates the given company
+        /// </summary>
+        /// <param name="company"></param>
+        /// <param name="origCompany"></param>
+        /// <returns></returns>
+        private async Task UpdateCompany(CompanyViewModel company, Company origCompany)
+        {
+            // Set properties
+            origCompany.Name = company.Name;
+            origCompany.NumberOfEmployees = company.NumberOfEmployees;
+            origCompany.IndustryId = company.IndustryId;
+            origCompany.ZipCode = company.ZipCode;
+
+            if (company.HasFoundedDate())
+            {
+                origCompany.FoundedDate = company.ParsedDateTime();
+            }
+            else
+            {
+                origCompany.FoundedDate = null;
+            }
+
+            // Check for avatar upload
+            if (Request.Files.Count > 0)
+            {
+                var file = Request.Files[0];
+
+                if (file.ContentLength > 0)
+                {
+                    // If we have one, then upload to Azure
+                    string fileName = StorageManager.GenerateUniqueName(file.FileName);
+                    await StorageManager.CompanyImages.UploadBlobAsync(fileName, file.InputStream);
+
+                    // Set the URL
+                    string fileUrl = StorageManager.GetCompanyImageUrl(fileName);
+                    origCompany.AvatarUrl = fileUrl;
+                    origCompany.AvatarFileName = file.FileName;
+                }
+            }
+        }
+
         #endregion
 
         // GET: Companies
@@ -107,10 +162,13 @@ namespace PandoLogic.Controllers
                 return HttpNotFound();
 
             Company company = await Db.Companies.FindAsync(id);
+            Subscription sub = await Db.Subscriptions.WhereCompany(id);
 
             UnstashModelState();
 
-            return View(company);
+            CompanyViewModel viewModel = new CompanyViewModel(company, sub);
+
+            return View(viewModel);
         }
 
         [ChildActionOnly]
@@ -145,18 +203,13 @@ namespace PandoLogic.Controllers
             if (ModelState.IsValid)
             {
                 // Create a new company and capture viewModel fields
-                Company company = new Company();
-                await UpdateCompany(companyViewModel, company);
-
-                // Add in implied data
                 ApplicationUser currentUser = await GetCurrentUserAsync();
-                company.Creator = currentUser;
-                company.CreatedDate = DateTime.Now;
+                Company company = Db.Companies.Create(currentUser);
+                await UpdateCompany(companyViewModel, company);
 
                 // Creates a member to link to companies
                 Member member = Db.Members.Create(currentUser, company);
                 member.JobTitle = companyViewModel.JobTitle;
-                Db.Companies.Add(company);
 
                 // Save changes
                 await Db.SaveChangesAsync();
@@ -170,49 +223,6 @@ namespace PandoLogic.Controllers
 
             ViewBag.IndustryId = new SelectList(Db.Industries, "Id", "Title", companyViewModel.IndustryId);
             return View(companyViewModel);
-        }
-
-        /// <summary>
-        /// Updates the given company
-        /// </summary>
-        /// <param name="company"></param>
-        /// <param name="origCompany"></param>
-        /// <returns></returns>
-        private async Task UpdateCompany(CompanyViewModel company, Company origCompany)
-        {
-            // Set properties
-            origCompany.Name = company.Name;
-            origCompany.NumberOfEmployees = company.NumberOfEmployees;
-            origCompany.IndustryId = company.IndustryId;
-            origCompany.ZipCode = company.ZipCode;
-
-            if (company.HasFoundedDate())
-            {
-                origCompany.FoundedDate = company.ParsedDateTime();
-            }
-            else
-            {
-                origCompany.FoundedDate = null;
-            }
-
-
-            // Check for avatar upload
-            if (Request.Files.Count > 0)
-            {
-                var file = Request.Files[0];
-
-                if (file.ContentLength > 0)
-                {
-                    // If we have one, then upload to Azure
-                    string fileName = StorageManager.GenerateUniqueName(file.FileName);
-                    await StorageManager.CompanyImages.UploadBlobAsync(fileName, file.InputStream);
-
-                    // Set the URL
-                    string fileUrl = StorageManager.GetCompanyImageUrl(fileName);
-                    origCompany.AvatarUrl = fileUrl;
-                    origCompany.AvatarFileName = file.FileName;
-                }
-            }
         }
 
         // GET: Companies/Edit/5
@@ -267,6 +277,9 @@ namespace PandoLogic.Controllers
                 await UpdateCompany(company, origCompany);
 
                 await Db.SaveChangesAsync();
+
+                await UpdateCurrentUserCacheAsync();
+
                 return RedirectToAction("Details", new { id = company.Id });
             }
             ViewBag.AddressId = new SelectList(Db.Addresses, "Id", "Address1", company.AddressId);
@@ -277,16 +290,22 @@ namespace PandoLogic.Controllers
         // GET: Companies/Delete/5
         public async Task<ActionResult> Delete(int id)
         {
-            bool isCurrentUserAllowed = await IsCurrentUserInCompany(id);
-            if (!isCurrentUserAllowed)
+            // Only the subscriber can delete a company
+            Subscription sub = await Db.Subscriptions.WhereUserAndCompany(this.UserCache.Id, id);
+            if (sub == null)
                 return HttpNotFound();
 
+            // If this is the subscriber, then we're good
             Company company = await Db.Companies.FindAsync(id);
+            
             if (company == null)
             {
                 return HttpNotFound();
             }
-            return View(company);
+
+            CompanyViewModel viewModel = new CompanyViewModel(company, sub);
+
+            return View(viewModel);
         }
 
         // POST: Companies/Delete/5
@@ -294,12 +313,18 @@ namespace PandoLogic.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> DeleteConfirmed(int id)
         {
-            bool isCurrentUserAllowed = await IsCurrentUserInCompany(id);
-            if (!isCurrentUserAllowed)
+            // Only the subscriber can delete a company
+            Subscription sub = await Db.Subscriptions.WhereUserAndCompany(this.UserCache.Id, id);
+            if (sub == null)
                 return HttpNotFound();
 
+            // Unsubscribe and delete this subscription
+            StripeManager.Unsubscribe(sub);
+            sub.IsSoftDeleted = true;
+            
             Company company = await Db.Companies.FindAsync(id);
-            Db.Companies.Remove(company);
+
+            company.IsSoftDeleted = true;
             await Db.SaveChangesAsync();
 
             await UpdateCurrentUserCacheAsync();
