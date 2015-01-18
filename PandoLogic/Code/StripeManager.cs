@@ -24,21 +24,24 @@ namespace PandoLogic
         /// <summary>
         /// Creates a new plan inside of Stripe, using the given subscription plan's information
         /// </summary>
-        /// <param name="subscriptionPlan"></param>
-        public static void CreatePlan(SubscriptionPlan subscriptionPlan)
+        /// <param name="plan"></param>
+        public static void CreatePlan(SubscriptionPlan plan)
         {
             // Save it to Stripe
-            StripePlanCreateOptions newStripePlan = new StripePlanCreateOptions();
-            newStripePlan.Amount = Convert.ToInt32(subscriptionPlan.Price * 100.0); // all amounts on Stripe are in cents, pence, etc
-            newStripePlan.Currency = "usd";                                 // "usd" only supported right now
-            newStripePlan.Interval = "month";                               // "month" or "year"
-            newStripePlan.IntervalCount = 1;                                // optional
-            newStripePlan.Name = subscriptionPlan.Title;
-            newStripePlan.TrialPeriodDays = subscriptionPlan.TrialDays;     // amount of time that will lapse before the customer is billed
-            newStripePlan.Id = subscriptionPlan.PaymentSystemId;
+            StripePlanCreateOptions newStripePlanOptions = new StripePlanCreateOptions();
+            newStripePlanOptions.Amount = Convert.ToInt32(plan.Price * 100.0); // all amounts on Stripe are in cents, pence, etc
+            newStripePlanOptions.Currency = "usd";                                 // "usd" only supported right now
+            newStripePlanOptions.Interval = "month";                               // "month" or "year"
+            newStripePlanOptions.IntervalCount = 1;                                // optional
+            newStripePlanOptions.Name = plan.Title;
+            newStripePlanOptions.TrialPeriodDays = plan.TrialDays;     // amount of time that will lapse before the customer is billed
+            newStripePlanOptions.Id = plan.PaymentSystemId;
 
             StripePlanService planService = new StripePlanService();
-            planService.Create(newStripePlan);
+            StripePlan newPlan = planService.Create(newStripePlanOptions);
+            plan.PaymentSystemId = newPlan.Id;
+
+            System.Diagnostics.Trace.TraceInformation("Created new in stripe: '{0}' with id {1}", plan.Title, plan.PaymentSystemId);
         }
 
         /// <summary>
@@ -53,17 +56,23 @@ namespace PandoLogic
 
             StripePlanService planService = new StripePlanService();
             planService.Update(plan.PaymentSystemId, options);
+
+            System.Diagnostics.Trace.TraceInformation("Updated plan in stripe: '{0}' with id '{1}'", plan.Title, plan.PaymentSystemId);
         }
 
         /// <summary>
         /// Deletes a plan from Stripe
         /// NOTE: Delete the model from the underlying context after calling this method
         /// </summary>
-        /// <param name="subscriptionPlan"></param>
-        public static void DeletePlan(SubscriptionPlan subscriptionPlan)
+        /// <param name="plan"></param>
+        public static void DeletePlan(SubscriptionPlan plan)
         {
             var planService = new StripePlanService();
-            planService.Delete(subscriptionPlan.PaymentSystemId);
+            planService.Delete(plan.PaymentSystemId);
+
+            System.Diagnostics.Trace.TraceInformation("Deleting plan in stripe: '{0}' with id '{1}", plan.Title, plan.PaymentSystemId);
+
+            plan.PaymentSystemId = null;
         }
 
         /// <summary>
@@ -89,6 +98,8 @@ namespace PandoLogic
 
             // Set the accounting info
             user.PaymentSystemId = stripeCustomer.Id;
+
+            System.Diagnostics.Trace.TraceInformation("Created customer in stripe: '{0}' with id '{1}", user.Email, user.PaymentSystemId);
         }
 
         /// <summary>
@@ -107,6 +118,8 @@ namespace PandoLogic
 
             var customerService = new StripeCustomerService();
             StripeCustomer stripeCustomer = customerService.Update(user.PaymentSystemId, customerUpdate);
+
+            System.Diagnostics.Trace.TraceInformation("Updated customer in stripe: '{0}' with id '{1}", user.Email, user.PaymentSystemId);
         }
 
         /// <summary>
@@ -135,6 +148,8 @@ namespace PandoLogic
             var subscriptionService = new StripeSubscriptionService();
             StripeSubscription stripeSubscription = subscriptionService.Create(subscription.User.PaymentSystemId, subscription.Plan.PaymentSystemId);
             subscription.PaymentSystemId = stripeSubscription.Id;
+
+            System.Diagnostics.Trace.TraceInformation("Subscribed customer in stripe: '{0}' with new subscription id '{1}", subscription.User.Email, subscription.PaymentSystemId);
         }
 
         /// <summary>
@@ -150,6 +165,8 @@ namespace PandoLogic
             var subscriptionService = new StripeSubscriptionService();
             subscriptionService.Cancel(subscription.PaymentSystemId, subscription.User.PaymentSystemId);
             subscription.PaymentSystemId = null;
+
+            System.Diagnostics.Trace.TraceInformation("Unsuscribed customer in stripe: '{0}' with new subscription id '{1}", subscription.User.Email, subscription.PaymentSystemId);
         }
     }
 }

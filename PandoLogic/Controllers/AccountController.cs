@@ -106,6 +106,7 @@ namespace PandoLogic.Controllers
                 }
                 else
                 {
+                    System.Diagnostics.Trace.TraceWarning("Invalid username and password for user '{0}'", model.Email);
                     ModelState.AddModelError("", "Invalid username or password.");
                 }
             }
@@ -151,6 +152,7 @@ namespace PandoLogic.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> ForgotPassword(ForgotPasswordViewModel model)
         {
+            System.Diagnostics.Trace.TraceInformation("Forget password attempt for user '{0}'", model.Email);
             if (ModelState.IsValid)
             {
                 var user = await UserManager.FindByNameAsync(model.Email);
@@ -199,6 +201,8 @@ namespace PandoLogic.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> ResetPassword(ResetPasswordViewModel model)
         {
+            System.Diagnostics.Trace.TraceInformation("Reset password attempt for user '{0}'", model.Email);
+
             if (ModelState.IsValid)
             {
                 var user = await UserManager.FindByNameAsync(model.Email);

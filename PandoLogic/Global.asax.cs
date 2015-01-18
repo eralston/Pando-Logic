@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
@@ -16,6 +17,12 @@ namespace PandoLogic
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
+
+//#if DEBUG
+//            TextWriterTraceListener writer = new TextWriterTraceListener(System.Console.Out);
+//            Debug.Listeners.Add(writer);
+//#endif
+
         }
     }
 }

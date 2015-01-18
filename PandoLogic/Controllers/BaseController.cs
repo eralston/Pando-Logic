@@ -215,7 +215,11 @@ namespace PandoLogic.Controllers
 
             ApplicationUser user = GetCurrentUser();
             if (user == null)
+            {
+                System.Diagnostics.Trace.TraceError("Trying to update user cache for non-existent user.");
                 return;
+            }
+                
             Company[] userCompanies = Db.CompaniesWhereUserIsMember(user).ToArray();
             Member selectedMember = Db.Members.FindSelectedForUser(user).FirstOrDefault();
             _userCache = new UserInfoCache(user, userCompanies, selectedMember);
@@ -227,6 +231,12 @@ namespace PandoLogic.Controllers
             _member = null;
 
             ApplicationUser user = await GetCurrentUserAsync();
+
+            if(user == null)
+            {
+                System.Diagnostics.Trace.TraceError("Trying to async update user cache for non-existent user.");
+                return;
+            }
 
             // TODO: Make these requests parallel
             Company[] companies = await Db.CompaniesWhereUserIsMember(user).ToArrayAsync();

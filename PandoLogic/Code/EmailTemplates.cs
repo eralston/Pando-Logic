@@ -33,6 +33,8 @@ namespace PandoLogic
             message.Subject = subject;
 
             message.SendMailSmtp();
+
+            System.Diagnostics.Trace.TraceInformation("Sent e-mail to '{0}' with subject '{1}'", toEmail, subject);
         }
 
         /// <summary>

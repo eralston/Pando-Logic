@@ -25,6 +25,7 @@ namespace PandoLogic
         /// <returns></returns>
         public static Task UploadBlobAsync(this CloudBlobContainer container, string blobName, Stream uploadStream)
         {
+            System.Diagnostics.Trace.TraceInformation("Uploading azure storage blob '{0}' to container '{1}'", blobName, container.Name);
             CloudBlockBlob blockBlob = container.GetBlockBlobReference(blobName);
             return blockBlob.UploadFromStreamAsync(uploadStream);
         }
@@ -38,6 +39,7 @@ namespace PandoLogic
         /// <returns></returns>
         public static Task DownloadBlobAsync(this CloudBlobContainer container, string blobName, Stream downloadStream)
         {
+            System.Diagnostics.Trace.TraceInformation("Downloading azure storage blob '{0}' from container '{1}'", blobName, container.Name);
             CloudBlockBlob blockBlob = container.GetBlockBlobReference(blobName);
             return blockBlob.DownloadToStreamAsync(downloadStream);
         }
