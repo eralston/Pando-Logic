@@ -14,11 +14,11 @@
 
 <div class="form-group">
     @Html.Label("User Profile Image")
-    @if (!string.IsNullOrEmpty(Model.AvatarUrl))
+    @if (Model.Avatar != null && Model.Avatar.Url != null)
     {
         <div class="image">
-            <img src="@Model.AvatarUrl" class="img-circle" alt="User Image" />
-            <span>@Model.AvatarFileName</span>
+            <img src="@Model.Avatar.Url" class="img-circle" alt="User Image" />
+            <span>@Model.Avatar.DisplayName</span>
         </div>
     }
     <input type="file" name="file" />

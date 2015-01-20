@@ -16,8 +16,8 @@ namespace PandoLogic
     {
         #region Constants
 
-        const string UserImageContainerName = "userimages";
-        const string CompanyImageContainerName = "companyimages";
+        public const string UserImageContainerName = "userimages";
+        public const string CompanyImageContainerName = "companyimages";
 
         #endregion
 

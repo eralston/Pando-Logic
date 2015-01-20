@@ -43,6 +43,8 @@ namespace PandoLogic.Controllers
         [DateTimeStringValidation(Format = FoundedDateFormat)]
         public string FoundedDateString { get; set; }
 
+        public string AvatarUrl { get; set; }
+
         public bool HasFoundedDate()
         {
             return !string.IsNullOrEmpty(FoundedDateString);
@@ -56,8 +58,7 @@ namespace PandoLogic.Controllers
 
         private void ApplyToProperties(Company company)
         {
-            this.AvatarFileName = company.AvatarFileName;
-            this.AvatarUrl = company.AvatarUrl;
+            this.Avatar = company.Avatar;
             this.FoundedDate = company.FoundedDate;
             this.Id = company.Id;
             this.Industry = company.Industry;
@@ -86,7 +87,7 @@ namespace PandoLogic.Controllers
 
         private void ApplyTeamMembersToViewBag(Company company)
         {
-            ViewBag.Members = Db.Members.WhereCompany(company);
+            ViewBag.Members = Db.Members.WhereCompany(company.Id);
             ViewBag.MemberInvites = Db.MemberInvites.WhereCompany(company.Id);
         }
 
@@ -134,13 +135,18 @@ namespace PandoLogic.Controllers
                 if (file.ContentLength > 0)
                 {
                     // If we have one, then upload to Azure
-                    string fileName = StorageManager.GenerateUniqueName(file.FileName);
-                    await StorageManager.CompanyImages.UploadBlobAsync(fileName, file.InputStream);
+                    string blobName = StorageManager.GenerateUniqueName(file.FileName);
+                    await StorageManager.CompanyImages.UploadBlobAsync(blobName, file.InputStream);
 
                     // Set the URL
-                    string fileUrl = StorageManager.GetCompanyImageUrl(fileName);
-                    origCompany.AvatarUrl = fileUrl;
-                    origCompany.AvatarFileName = file.FileName;
+                    string fileUrl = StorageManager.GetCompanyImageUrl(blobName);
+
+                    CloudFile newFile = Db.CloudFiles.Create(PandoStorageManager.CompanyImageContainerName, blobName, fileUrl, file.FileName);
+
+                    if (origCompany.Avatar != null)
+                        await Db.CloudFiles.DeleteAsync(origCompany.Avatar, StorageManager);
+
+                    origCompany.Avatar = newFile;
                 }
             }
         }
@@ -340,7 +346,7 @@ namespace PandoLogic.Controllers
 
             // Double-check user is member of company
             ApplicationUser user = await GetCurrentUserAsync();
-            Member[] memberships = await Db.Members.WhererUserIsMember(user).ToArrayAsync();
+            Member[] memberships = await Db.Members.WhererUserIsMember(user.Id).ToArrayAsync();
 
             // Pull out the URL to which we will redirect
             string url = Request.QueryString["returnurl"];

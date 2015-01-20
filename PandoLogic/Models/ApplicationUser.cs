@@ -42,9 +42,25 @@ namespace PandoLogic.Models
             }
         }
 
-        public string AvatarUrl { get; set; }
+        [ForeignKey("Avatar")]
+        public int? AvatarId { get; set; }
+        public virtual CloudFile Avatar { get; set; }
 
-        public string AvatarFileName { get; set; }
+        [NotMapped]
+        public string AvatarOrDefaultUrl
+        {
+            get
+            {
+                if(Avatar != null)
+                {
+                    return Avatar.Url;
+                }
+                else
+                {
+                    return "/Content/images/user-icon.png";
+                }
+            }
+        }
 
         // To-Many on PhoneNumber
         public virtual ICollection<PhoneNumber> PhoneNumbers { get; set; }

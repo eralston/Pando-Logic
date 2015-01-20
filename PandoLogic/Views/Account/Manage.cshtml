@@ -62,7 +62,10 @@
                                 <tr>
                                     <td>
                                         <div class="image">
-                                            <img src="@company.AvatarUrl" alt="Company Logo" />
+                                            @if (company.Avatar != null && company.Avatar.Url != null)
+                                            {
+                                                <img src="@company.Avatar.Url" alt="Company Logo" />
+                                            }
                                         </div>
                                     </td>
                                     <td>

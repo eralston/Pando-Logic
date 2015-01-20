@@ -67,24 +67,22 @@ namespace PandoLogic.Models
         /// <param name="members"></param>
         /// <param name="user"></param>
         /// <returns></returns>
-        public static IQueryable<Member> FindSelectedForUser(this DbSet<Member> members, ApplicationUser user)
+        public static IQueryable<Member> FindSelectedForUser(this DbSet<Member> members, string userId)
         {
             // Find all members for the current user
-            var userMembers = members.WhererUserIsMember(user).OrderByDescending(m => m.LastSelectedDate).Include(m => m.Company);
+            var userMembers = members.WhererUserIsMember(userId).OrderByDescending(m => m.LastSelectedDate).Include(m => m.Company);
             return userMembers;
         }
 
-        public static IQueryable<Member> WhererUserIsMember(this DbSet<Member> members, ApplicationUser user)
+        public static IQueryable<Member> WhererUserIsMember(this DbSet<Member> members, string userId)
         {
-            string userId = user.Id;
             // Find all members for the current user
             var userMembers = members.Where(m => m.UserId == userId && m.Company.IsSoftDeleted == false);
             return userMembers;
         }
 
-        public static IQueryable<Member> WhereCompany(this DbSet<Member> members, Company company)
+        public static IQueryable<Member> WhereCompany(this DbSet<Member> members, int companyId)
         {
-            int companyId = company.Id;
             return members.Where(m => m.CompanyId == companyId && m.Company.IsSoftDeleted == false).Include(m => m.User);
         }
 

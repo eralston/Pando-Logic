@@ -41,8 +41,9 @@ namespace PandoLogic.Models
         public int? AddressId { get; set; }
         public virtual Address Address { get; set; }
 
-        public string AvatarUrl { get; set; }
-        public string AvatarFileName { get; set; }
+        [ForeignKey("Avatar")]
+        public int? AvatarId { get; set; }
+        public virtual CloudFile Avatar { get; set; }
 
         [Required]
         [Display(Name = "Postal Code")]
@@ -76,11 +77,11 @@ namespace PandoLogic.Models
         /// <param name="context"></param>
         /// <param name="user"></param>
         /// <returns></returns>
-        public static IQueryable<Company> CompaniesWhereUserIsMember(this ApplicationDbContext context, ApplicationUser user)
+        public static IQueryable<Company> CompaniesWhereUserIsMember(this ApplicationDbContext context, string userId)
         {
             var query = from m in context.Members
                         join c in context.Companies on m.CompanyId equals c.Id
-                        where m.UserId == user.Id && c.IsSoftDeleted == false
+                        where m.UserId == userId && c.IsSoftDeleted == false
                         select c;
             return query;
         }

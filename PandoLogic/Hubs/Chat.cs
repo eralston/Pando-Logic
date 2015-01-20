@@ -48,7 +48,7 @@ namespace PandoLogic.Hubs
         {
             public UserInfo(ApplicationUser user, string connectionId)
             {
-                this.AvatarUrl = string.IsNullOrEmpty(user.AvatarUrl) ? "/Content/images/user-icon.png" : user.AvatarUrl;
+                this.AvatarUrl = user.AvatarOrDefaultUrl;
                 this.UserName = user.FullName;
 
                 // TODO: Figure out how to properly make UrlHelper happy
@@ -137,7 +137,7 @@ namespace PandoLogic.Hubs
             public UserResponse(string msg, string roomId, ApplicationUser user)
                 : base(msg, roomId)
             {
-                this.AvatarUrl = string.IsNullOrEmpty(user.AvatarUrl) ? "/Content/images/user-icon.png" : user.AvatarUrl;
+                this.AvatarUrl = user.AvatarOrDefaultUrl;
                 this.UserName = user.FullName;
 
                 // TODO: Figure out how to properly make UrlHelper happy

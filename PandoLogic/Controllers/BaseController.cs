@@ -79,13 +79,18 @@ namespace PandoLogic.Controllers
         {
             public UserInfoCache() { }
 
-            public UserInfoCache(ApplicationUser user, Company[] userCompanies, Member selectedMember)
+            public UserInfoCache(ApplicationUser user, Company[] userCompanies, Member selectedMember, Goal[] goals)
             {
                 // Load user data
                 FirstName = user.FirstName;
                 LastName = user.LastName;
                 Id = user.Id;
-                AvatarUrl = user.AvatarUrl;
+                if (user.Avatar != null)
+                    AvatarUrl = user.Avatar.Url;
+                else
+                    AvatarUrl = null;
+
+                this.Goals = goals;
 
                 if (selectedMember != null)
                 {
@@ -93,7 +98,11 @@ namespace PandoLogic.Controllers
                     SelectedCompanyId = selectedMember.CompanyId;
                     JobTitle = selectedMember.JobTitle;
                     SelectedCompanyName = selectedMember.Company.Name;
-                    SelectedCompanyAvatarUrl = selectedMember.Company.AvatarUrl;
+                    if (selectedMember.Company.Avatar != null)
+                        SelectedCompanyAvatarUrl = selectedMember.Company.Avatar.Url;
+                    else
+                        SelectedCompanyAvatarUrl = null;
+
                     SelectedMemberId = selectedMember.Id;
                 }
 
@@ -105,6 +114,8 @@ namespace PandoLogic.Controllers
                     companies[i] = new CompanyInfoCache(company);
                 }
                 Companies = companies;
+
+                
             }
 
             public string FirstName { get; set; }
@@ -118,6 +129,8 @@ namespace PandoLogic.Controllers
             public string SelectedCompanyName { get; set; }
             public string SelectedCompanyAvatarUrl { get; set; }
             public CompanyInfoCache[] Companies { get; set; }
+
+            public Goal[] Goals { get; set; }
         }
 
         #endregion
@@ -180,10 +193,15 @@ namespace PandoLogic.Controllers
                     return null;
                 }
 
+                if (_userCache != null)
+                    return _userCache;
+
                 _userCache = HttpContext.Session[UserInfoCacheId] as UserInfoCache;
 
                 if (_userCache == null)
+                {
                     UpdateCurrentUserCache();
+                }
 
                 return _userCache;
             }
@@ -206,12 +224,20 @@ namespace PandoLogic.Controllers
 
         protected void ClearCurrentUserCache()
         {
+            _userCache = null;
             HttpContext.Session[UserInfoCacheId] = null;
+        }
+
+        protected async Task UpdateCurrentUserCacheGoalsAsync()
+        {
+            int selectedId = UserCache.SelectedCompanyId;
+            UserCache.Goals = await Db.Goals.WhereActiveGoalForCompany(selectedId).ToArrayAsync();
         }
 
         protected void UpdateCurrentUserCache()
         {
             _member = null;
+            ClearCurrentUserCache();
 
             ApplicationUser user = GetCurrentUser();
             if (user == null)
@@ -220,15 +246,18 @@ namespace PandoLogic.Controllers
                 return;
             }
                 
-            Company[] userCompanies = Db.CompaniesWhereUserIsMember(user).ToArray();
-            Member selectedMember = Db.Members.FindSelectedForUser(user).FirstOrDefault();
-            _userCache = new UserInfoCache(user, userCompanies, selectedMember);
+            Company[] userCompanies = Db.CompaniesWhereUserIsMember(user.Id).ToArray();
+            Member selectedMember = Db.Members.FindSelectedForUser(user.Id).FirstOrDefault();
+            Goal[] goals = Db.Goals.WhereActiveGoalForCompany(selectedMember.CompanyId).ToArray();
+
+            _userCache = new UserInfoCache(user, userCompanies, selectedMember, goals);
             HttpContext.Session[UserInfoCacheId] = _userCache;
         }
 
         protected async Task UpdateCurrentUserCacheAsync()
         {
             _member = null;
+            ClearCurrentUserCache();
 
             ApplicationUser user = await GetCurrentUserAsync();
 
@@ -238,11 +267,12 @@ namespace PandoLogic.Controllers
                 return;
             }
 
-            // TODO: Make these requests parallel
-            Company[] companies = await Db.CompaniesWhereUserIsMember(user).ToArrayAsync();
-            Member member = await GetCurrentMemberAsync();
+            Company[] companies = await Db.CompaniesWhereUserIsMember(user.Id).ToArrayAsync();
+            Member selectedMember = await GetCurrentMemberAsync();
+            Goal[] goals = await Db.Goals.WhereActiveGoalForCompany(selectedMember.CompanyId).ToArrayAsync();
+            _member = selectedMember;
 
-            _userCache = new UserInfoCache(user, companies, member);
+            _userCache = new UserInfoCache(user, companies, selectedMember, goals);
             HttpContext.Session[UserInfoCacheId] = _userCache;
         }
 
@@ -265,8 +295,17 @@ namespace PandoLogic.Controllers
             if (_member != null)
                 return _member;
 
-            int selectedMemberId = UserCache.SelectedMemberId;
-            _member = Db.Members.Find(selectedMemberId);
+            if(_userCache != null)
+            {
+                int selectedMemberId = UserCache.SelectedMemberId;
+                _member = Db.Members.Find(selectedMemberId);
+            }
+            else
+            {
+                ApplicationUser user = GetCurrentUser();
+                _member = Db.Members.FindSelectedForUser(user.Id).FirstOrDefault();
+            }
+           
             return _member;
         }
 
@@ -274,9 +313,17 @@ namespace PandoLogic.Controllers
         {
             if (_member != null)
                 return _member;
-
-            int selectedMemberId = UserCache.SelectedMemberId;
-            _member = await Db.Members.FindAsync(selectedMemberId);
+            
+            if(_userCache != null)
+            {
+                int selectedMemberId = UserCache.SelectedMemberId;
+                _member = await Db.Members.FindAsync(selectedMemberId);
+            }
+            else
+            {
+                ApplicationUser user = await GetCurrentUserAsync();
+                _member = await Db.Members.FindSelectedForUser(user.Id).FirstOrDefaultAsync();
+            }
 
             return _member;
         }
@@ -325,7 +372,7 @@ namespace PandoLogic.Controllers
                 // Companies
                 ViewBag.CurrentUserCompanies = cache.Companies;
 
-                ViewBag.CurrentUserGoals = Db.Goals.Where(g => g.ArchiveDate == null && g.IsTemplate == false && g.CompanyId == cache.SelectedCompanyId).Include(g => g.WorkItems).OrderBy(g => g.DueDate).ToArray();
+                ViewBag.CurrentUserGoals = cache.Goals;
             }
         }
 

@@ -33,7 +33,6 @@ namespace PandoLogic.Controllers
                 this.DueDateString = goal.DueDate.Value.ToString("d");
         }
 
-        [Required]
         [Display(Name = "Due Date")]
         [DateTimeStringValidation(Format = DateFormat)]
         public string DueDateString { get; set; }
@@ -192,7 +191,9 @@ namespace PandoLogic.Controllers
 
                 Member currentMember = await GetCurrentMemberAsync();
 
-                goal.DueDate = goalViewModel.ParsedDueDateTime();
+                if(goalViewModel.HasDueDate())
+                    goal.DueDate = goalViewModel.ParsedDueDateTime();
+
                 goal.Title = goalViewModel.Title;
                 goal.Description = goalViewModel.Description;
 
@@ -211,6 +212,8 @@ namespace PandoLogic.Controllers
                 newActivity.Type = ActivityType.WorkAdded;
 
                 await Db.SaveChangesAsync();
+
+                await UpdateCurrentUserCacheGoalsAsync();
 
                 return RedirectToAction("Index");
             }
@@ -248,7 +251,9 @@ namespace PandoLogic.Controllers
             {
                 Goal goal = await Db.Goals.FindAsync(goalViewModel.Id);
 
-                goal.DueDate = goalViewModel.ParsedDueDateTime();
+                if(goalViewModel.HasDueDate())
+                    goal.DueDate = goalViewModel.ParsedDueDateTime();
+
                 goal.Title = goalViewModel.Title;
                 goal.Description = goalViewModel.Description;
 
@@ -256,7 +261,12 @@ namespace PandoLogic.Controllers
                 goal.Icon = goalViewModel.Icon;
 
                 Db.Entry(goal).State = EntityState.Modified;
+
+
                 await Db.SaveChangesAsync();
+
+                await UpdateCurrentUserCacheGoalsAsync();
+
                 return RedirectToAction("Details", new { id = goal.Id });
             }
 
@@ -296,6 +306,9 @@ namespace PandoLogic.Controllers
             newActivity.Type = ActivityType.WorkDeleted;
 
             await Db.SaveChangesAsync();
+
+            await UpdateCurrentUserCacheGoalsAsync();
+
             return RedirectToAction("Index");
         }
 

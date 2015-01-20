@@ -30,7 +30,6 @@ namespace PandoLogic.Controllers
                 this.DueDateString = workItem.DueDate.Value.ToString("d");
         }
 
-        [Required]
         [Display(Name = "Due Date")]
         [DateTimeStringValidation(Format = DateFormat)]
         public string DueDateString { get; set; }
@@ -174,6 +173,7 @@ namespace PandoLogic.Controllers
         public async Task<ActionResult> Complete(int id)
         {
             await ApplyCompleteDateToWorkItem(id, DateTime.Now);
+            await UpdateCurrentUserCacheGoalsAsync();
             return new HttpStatusCodeResult(200);
         }
 
@@ -207,9 +207,11 @@ namespace PandoLogic.Controllers
                 workItem.CompletedDate = null;
                 workItem.Title = workItemViewModel.Title;
                 workItem.Description = workItemViewModel.Description;
-                workItem.DueDate = workItemViewModel.ParsedDueDateTime();
                 workItem.AssigneeId = workItemViewModel.AssigneeId;
                 workItem.EstimatedTime = workItemViewModel.EstimatedTime;
+
+                if (workItemViewModel.HasDueDate())
+                    workItem.DueDate = workItemViewModel.ParsedDueDateTime();
 
                 if (id.HasValue)
                 {
@@ -279,8 +281,10 @@ namespace PandoLogic.Controllers
 
                 workItem.Title = workItemViewModel.Title;
                 workItem.Description = workItemViewModel.Description;
-                workItem.DueDate = workItemViewModel.ParsedDueDateTime();
                 workItem.EstimatedTime = workItemViewModel.EstimatedTime;
+
+                if(workItemViewModel.HasDueDate())
+                    workItem.DueDate = workItemViewModel.ParsedDueDateTime();                
 
                 Db.Entry(workItem).State = EntityState.Modified;
                 await Db.SaveChangesAsync();

@@ -58,5 +58,7 @@ namespace PandoLogic.Models
         public DbSet<SubscriptionPlan> SubscriptionPlans { get; set; }
 
         public DbSet<Subscription> Subscriptions { get; set; }
+
+        public DbSet<CloudFile> CloudFiles { get; set; }
     }
 }

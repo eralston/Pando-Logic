@@ -55,6 +55,18 @@ namespace PandoLogic
             CloudBlockBlob blockBlob = container.GetBlockBlobReference(blobName);
             return blockBlob.ExistsAsync();
         }
+
+        /// <summary>
+        /// Asynchronously deletes the block with the given name in the given bucket
+        /// </summary>
+        /// <param name="container"></param>
+        /// <param name="blobName"></param>
+        /// <returns></returns>
+        public static Task DeleteBlobAsync(this CloudBlobContainer container, string blobName)
+        {
+            CloudBlockBlob blockBlob = container.GetBlockBlobReference(blobName);
+            return blockBlob.DeleteAsync();
+        }
     }
 
     /// <summary>
@@ -118,15 +130,20 @@ namespace PandoLogic
         /// </summary>
         /// <param name="accountName"></param>
         /// <param name="containerName"></param>
-        /// <param name="fileName"></param>
+        /// <param name="blobName"></param>
         /// <returns></returns>
-        protected string GetContainerFileUrl(string containerName, string fileName)
+        protected string GetContainerFileUrl(string containerName, string blobName)
         {
             string accountName = Account.Credentials.AccountName;
-            return string.Format("//{0}.blob.core.windows.net/{1}/{2}", accountName, containerName, fileName);
+            return string.Format("//{0}.blob.core.windows.net/{1}/{2}", accountName, containerName, blobName);
         }
 
-        protected CloudBlobContainer GetContainer(string name)
+        /// <summary>
+        /// Gets a reference to the given container, creating it if it doesn't exist
+        /// </summary>
+        /// <param name="name"></param>
+        /// <returns></returns>
+        public CloudBlobContainer GetContainer(string name)
         {
             CloudBlobClient blobClient = Account.CreateCloudBlobClient();
 

@@ -244,6 +244,19 @@ namespace PandoLogic.Models
             return goals.Where(g => g.CompanyId == companyId);
         }
 
+        /// <summary>
+        /// Returns all active goals for the given company
+        /// </summary>
+        /// <param name="goals"></param>
+        /// <param name="companyId"></param>
+        /// <returns></returns>
+        public static IQueryable<Goal> WhereActiveGoalForCompany(this DbSet<Goal> goals, int companyId)
+        {
+            return goals.Where(g => g.ArchiveDate == null && g.IsTemplate == false && g.CompanyId == companyId)
+                .Include(g => g.WorkItems)
+                .OrderBy(g => g.DueDate);
+        }
+
         public static Goal Create(this DbSet<Goal> goals, int companyId, string userId)
         {
             Goal goal = goals.Create();

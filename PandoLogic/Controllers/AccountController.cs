@@ -282,7 +282,7 @@ namespace PandoLogic.Controllers
         private async Task LoadCompaniesForCurrentUserIntoViewBag()
         {
             ApplicationUser currentUser = await GetCurrentUserAsync();
-            ViewBag.Companies = await Db.CompaniesWhereUserIsMember(currentUser).ToArrayAsync();
+            ViewBag.Companies = await Db.CompaniesWhereUserIsMember(currentUser.Id).ToArrayAsync();
         }
 
         //
@@ -701,13 +701,16 @@ namespace PandoLogic.Controllers
 
                 if (file.ContentLength > 0)
                 {
-                    string fileName = StorageManager.GenerateUniqueName(file.FileName);
-                    await StorageManager.UserImages.UploadBlobAsync(fileName, file.InputStream);
+                    string blobName = StorageManager.GenerateUniqueName(file.FileName);
+                    await StorageManager.UserImages.UploadBlobAsync(blobName, file.InputStream);
+                    string fileUrl = StorageManager.GetUserImageUrl(blobName);
 
-                    // Set the URL
-                    string fileUrl = StorageManager.GetUserImageUrl(fileName);
-                    origUser.AvatarUrl = fileUrl;
-                    origUser.AvatarFileName = file.FileName;
+                    CloudFile newFile = Db.CloudFiles.Create(PandoStorageManager.UserImageContainerName, blobName, fileUrl, file.FileName);
+
+                    if (origUser.Avatar != null)
+                        await Db.CloudFiles.DeleteAsync(origUser.Avatar, StorageManager);
+
+                    origUser.Avatar = newFile;
                 }
             }
 

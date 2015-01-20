@@ -17,6 +17,10 @@
     text-decoration: line-through;
 }
 
+.form-box {
+    margin: 1em auto 0;
+}
+
 .sort-button {
     cursor: pointer;
 }
