@@ -382,8 +382,9 @@ namespace PandoLogic.Controllers
 
             // Setup the new activity and save
             Member member = await GetCurrentMemberAsync();
-            Activity newActivity = Db.Activities.Create(member.UserId, member.Company, strategy.Title);
-            newActivity.Description = strategy.Description;
+            Activity newActivity = Db.Activities.Create(member.UserId, member.Company, "");
+            newActivity.SetTitle(strategy.Title, Url.Action("Details", "Strategies", new { id = strategy.Id }));
+            newActivity.Description = "Strategy Adopted";
             newActivity.Type = ActivityType.WorkAdded;
 
             await Db.SaveChangesAsync();

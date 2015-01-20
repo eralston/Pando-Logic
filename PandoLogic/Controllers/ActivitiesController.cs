@@ -118,7 +118,8 @@ namespace PandoLogic.Controllers
                 Member member = await GetCurrentMemberAsync();
 
                 // Setup the new activity and save
-                Activity newActivity = Db.Activities.Create(member.UserId, member.Company, activity.Title);
+                string title = string.Format("Team Notification for {0}: {1}", member.Company.Name, activity.Title);
+                Activity newActivity = Db.Activities.Create(member.UserId, member.Company, title);
                 newActivity.Description = activity.Description;
                 newActivity.Type = ActivityType.TeamNotification;
                 await Db.SaveChangesAsync();

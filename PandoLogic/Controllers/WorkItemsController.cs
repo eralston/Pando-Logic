@@ -66,13 +66,6 @@ namespace PandoLogic.Controllers
             }
         }
 
-        private async Task ApplyCompleteDateToWorkItem(int id, DateTime? completedDate)
-        {
-            WorkItem item = await Db.WorkItems.FindAsync(id);
-            item.CompletedDate = completedDate;
-            await Db.SaveChangesAsync();
-        }
-
         #endregion
 
         /// <summary>
@@ -172,8 +165,20 @@ namespace PandoLogic.Controllers
         [Route("Complete/{id}")]
         public async Task<ActionResult> Complete(int id)
         {
-            await ApplyCompleteDateToWorkItem(id, DateTime.Now);
+            WorkItem workItem = await Db.WorkItems.FindAsync(id);
+            workItem.CompletedDate = DateTime.Now;
+
+            Member currentMember = await GetCurrentMemberAsync();
+
+            Activity newActivity = Db.Activities.Create(currentMember.UserId, currentMember.Company, workItem.Title);
+            newActivity.SetTitle(workItem.Title, Url.Action("Details", "Tasks", new { id = workItem.Id }));
+            newActivity.Description = "Task Completed";
+            newActivity.Type = ActivityType.WorkCompleted;
+
+            await Db.SaveChangesAsync();
+
             await UpdateCurrentUserCacheGoalsAsync();
+
             return new HttpStatusCodeResult(200);
         }
 
@@ -181,7 +186,20 @@ namespace PandoLogic.Controllers
         [Route("Uncomplete/{id}")]
         public async Task<ActionResult> Uncomplete(int id)
         {
-            await ApplyCompleteDateToWorkItem(id, null);
+            WorkItem workItem = await Db.WorkItems.FindAsync(id);
+            workItem.CompletedDate = null;
+
+            Member currentMember = await GetCurrentMemberAsync();
+
+            Activity newActivity = Db.Activities.Create(currentMember.UserId, currentMember.Company, workItem.Title);
+            newActivity.SetTitle(workItem.Title, Url.Action("Details", "Tasks", new { id = workItem.Id }));
+            newActivity.Description = "Undo Task Completed";
+            newActivity.Type = ActivityType.WorkUndoArchived;
+
+            await Db.SaveChangesAsync();
+
+            await UpdateCurrentUserCacheGoalsAsync();
+
             return new HttpStatusCodeResult(200);
         }
 
@@ -224,9 +242,12 @@ namespace PandoLogic.Controllers
 
                 Db.WorkItems.Add(workItem);
 
+                await Db.SaveChangesAsync();
+
                 // Add an activity model
                 Activity newActivity = Db.Activities.Create(currentMember.UserId, currentMember.Company, workItem.Title);
-                newActivity.Description = workItem.Description;
+                newActivity.SetTitle(workItem.Title, Url.Action("Details", "Tasks", new { id = workItem.Id }));
+                newActivity.Description = "Task Created";
                 newActivity.Type = ActivityType.WorkAdded;
 
                 await Db.SaveChangesAsync();
@@ -325,7 +346,7 @@ namespace PandoLogic.Controllers
             // Add an activity model
             Member currentMember = await GetCurrentMemberAsync();
             Activity newActivity = Db.Activities.Create(currentMember.UserId, currentMember.Company, workItem.Title);
-            newActivity.Description = workItem.Description;
+            newActivity.Description = "Task Deleted";
             newActivity.Type = ActivityType.WorkDeleted;
 
             await Db.SaveChangesAsync();

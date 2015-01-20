@@ -92,7 +92,7 @@ namespace PandoLogic.Controllers
         private Goal[] QueryActiveGoals(bool limited = true)
         {
             Member currentMember = GetCurrentMember();
-            if(currentMember == null)
+            if (currentMember == null)
             {
                 return null;
             }
@@ -191,7 +191,7 @@ namespace PandoLogic.Controllers
 
                 Member currentMember = await GetCurrentMemberAsync();
 
-                if(goalViewModel.HasDueDate())
+                if (goalViewModel.HasDueDate())
                     goal.DueDate = goalViewModel.ParsedDueDateTime();
 
                 goal.Title = goalViewModel.Title;
@@ -206,9 +206,12 @@ namespace PandoLogic.Controllers
 
                 Db.Goals.Add(goal);
 
+                await Db.SaveChangesAsync();
+
                 // Add an activity model
-                Activity newActivity = Db.Activities.Create(currentMember.UserId, currentMember.Company, goal.Title);
-                newActivity.Description = goal.Description;
+                Activity newActivity = Db.Activities.Create(currentMember.UserId, currentMember.Company, "");
+                newActivity.SetTitle(goal.Title, Url.Action("Details", "Goals", new { id = goal.Id }));
+                newActivity.Description = "Goal Created";
                 newActivity.Type = ActivityType.WorkAdded;
 
                 await Db.SaveChangesAsync();
@@ -251,7 +254,7 @@ namespace PandoLogic.Controllers
             {
                 Goal goal = await Db.Goals.FindAsync(goalViewModel.Id);
 
-                if(goalViewModel.HasDueDate())
+                if (goalViewModel.HasDueDate())
                     goal.DueDate = goalViewModel.ParsedDueDateTime();
 
                 goal.Title = goalViewModel.Title;
@@ -302,7 +305,7 @@ namespace PandoLogic.Controllers
             // Add an activity model
             Member currentMember = await GetCurrentMemberAsync();
             Activity newActivity = Db.Activities.Create(currentMember.UserId, currentMember.Company, goal.Title);
-            newActivity.Description = goal.Description;
+            newActivity.Description = "Goal Deleted";
             newActivity.Type = ActivityType.WorkDeleted;
 
             await Db.SaveChangesAsync();
@@ -364,8 +367,9 @@ namespace PandoLogic.Controllers
 
             // Setup the new activity and save
             Member member = await GetCurrentMemberAsync();
-            Activity newActivity = Db.Activities.Create(member.UserId, member.Company, goal.Title);
-            newActivity.Description = goal.Description;
+            Activity newActivity = Db.Activities.Create(member.UserId, member.Company, "");
+            newActivity.SetTitle(goal.Title, Url.Action("Details", "Goals", new { id = goal.Id }));
+            newActivity.Description = "Goal Archived";
             newActivity.Type = ActivityType.WorkArchived;
 
             await Db.SaveChangesAsync();
@@ -396,8 +400,9 @@ namespace PandoLogic.Controllers
 
             // Setup the new activity and save
             Member member = await GetCurrentMemberAsync();
-            Activity newActivity = Db.Activities.Create(member.UserId, member.Company, goal.Title);
-            newActivity.Description = goal.Description;
+            Activity newActivity = Db.Activities.Create(member.UserId, member.Company, "");
+            newActivity.SetTitle(goal.Title, Url.Action("Details", "Goals", new { id = goal.Id }));
+            newActivity.Description = "Goal Unarchived";
             newActivity.Type = ActivityType.WorkUndoArchived;
 
             await Db.SaveChangesAsync();

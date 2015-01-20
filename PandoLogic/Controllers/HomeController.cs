@@ -82,9 +82,9 @@ namespace PandoLogic.Controllers
             {
                 // Save an activity for this user
                 ApplicationUser currentUser = await GetCurrentUserAsync();
-                Activity newActivity = Db.Activities.Create(currentUser.Id, "Accepted Invitation");
-                string description = string.Format("You accepted the invite to join the {0} team", invite.Company.Name);
-                newActivity.Description = description;
+                Activity newActivity = Db.Activities.Create(currentUser.Id, "");
+                string linkTitle = string.Format("{0} joined {1}", currentUser.FullName, invite.Company.Name);
+                newActivity.SetTitle(linkTitle, Url.Action("Details", "Users", currentUser.Id));
                 newActivity.Type = ActivityType.TeamNotification;
 
                 // Add them to the company (and refresh user info)
@@ -124,10 +124,10 @@ namespace PandoLogic.Controllers
             {
                 // Save an activity for this user
                 ApplicationUser currentUser = await GetCurrentUserAsync();
-                Activity newActivity = Db.Activities.Create(currentUser.Id, "Declined Invitation");
-                string description = string.Format("You declined the invite to join the {0} team", invite.Company.Name);
-                newActivity.Description = description;
-                newActivity.Type = ActivityType.WorkDeleted;
+                Activity newActivity = Db.Activities.Create(currentUser.Id, "");
+                string linkTitle = string.Format("{0} declined to join {1}", currentUser.FullName, invite.Company.Name);
+                newActivity.SetTitle(linkTitle, Url.Action("Details", "Users", currentUser.Id));
+                newActivity.Type = ActivityType.TeamNotification;
             }
 
             // clear the invite

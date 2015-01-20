@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Data.Entity;
 using System.Globalization;
 using System.Linq;
+using System.Web.Mvc;
 using System.Web.Security;
 
 namespace PandoLogic.Models
@@ -73,13 +75,33 @@ namespace PandoLogic.Models
             return ret;
         }
 
+        /// <summary>
+        /// Sets the title of this activity, using the mult-part format with link URL
+        /// </summary>
+        /// <param name="linkText"></param>
+        /// <param name="linkUrl"></param>
+        /// <param name="title"></param>
+        public void SetTitle(string linkText, string linkUrl)
+        {
+            string preview = string.Format("<a href='{0}'>{1}</a>", linkUrl, linkText);
+            this.Title = preview;
+        }
+
+        [AllowHtml]
         [Required]
         public virtual string Title { get; set; }
 
+        [AllowHtml]
         [DataType(DataType.MultilineText)]
         public string Description { get; set; }
 
         public ActivityType Type { get; set; }
+
+        [DefaultValue(true)]
+        public bool IsAbleToBeEdited { get; set; }
+
+        [DefaultValue(true)]
+        public bool IsAbleToBeDeleted { get; set; }
 
         [NotMapped]
         public string IconClass

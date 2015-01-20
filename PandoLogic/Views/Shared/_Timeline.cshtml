@@ -33,7 +33,6 @@
                             {
                                 @currentDateTime.Value.ToString("D")
                             }
-
                         </span>
                     </li>
                 }
@@ -50,17 +49,27 @@
                 string deleteActionName = isFomActivityFeed.HasValue && isFomActivityFeed.Value ? "DeleteActivity" : "Delete";
                 string editActionName = isFomActivityFeed.HasValue && isFomActivityFeed.Value ? "EditActivity" : "Edit";
                             }
-                            <a href="@Url.Action(editActionName, "Activities", new { id = activity.Id })">
-                                <i class="fa fa-pencil"></i>
-                            </a>
-                            <a href="@Url.Action(deleteActionName, "Activities", new { id = activity.Id })">
-                                <i class="fa fa-trash-o"></i>
-                            </a>
+
+                            @if (activity.IsAbleToBeEdited)
+                            {
+                                <a href="@Url.Action(editActionName, "Activities", new { id = activity.Id })">
+                                    <i class="fa fa-pencil"></i>
+                                </a>
+                            }
+
+                            @if (activity.IsAbleToBeDeleted)
+                            {
+                                <a href="@Url.Action(deleteActionName, "Activities", new { id = activity.Id })">
+                                    <i class="fa fa-trash-o"></i>
+                                </a>
+                            }
+
+                            @Html.ActionLink(activity.Author.FirstName, "Details", "Users", new { id = activity.Author.Id }, null)
                             <i class="fa fa-clock-o"></i>
                             @activity.CreatedDate.Value.ToString("t")
                         </span>
 
-                        <h3 class="timeline-header @headerClass">@activity.Title</h3>
+                        <h3 class="timeline-header @headerClass">@Html.Raw(activity.Title)</h3>
 
                         @if (hasDescription)
                         {
@@ -68,6 +77,7 @@
                                 @activity.Description
                             </div>
                         }
+
                     </div>
                 </li>
             }
