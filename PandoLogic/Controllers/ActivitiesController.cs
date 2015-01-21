@@ -101,6 +101,7 @@ namespace PandoLogic.Controllers
             await LoadFeedActivities();
 
             ViewBag.IsFromActivityFeed = true;
+            ViewBag.ShowActivityTitle = true;
 
             return View();
         }
@@ -300,6 +301,8 @@ namespace PandoLogic.Controllers
                 Company company = member.Company;
                 companyId = company.Id;
             }
+
+            ViewBag.ShowActivityTitle = true;
 
             IEnumerable<Activity> activities = Db.Activities.WhereCompanyOrAuthor(companyId, this.UserCache.Id).Take(5).ToArray();
             return View(activities);

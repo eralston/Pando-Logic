@@ -85,6 +85,12 @@ namespace PandoLogic.Models
         [NotMapped]
         public int Ordinal { get; set; }
 
+        [NotMapped]
+        public string CommentControllerName { get { return "Goals"; } }
+
+        [NotMapped]
+        public string CommentActionName { get { return "Details"; } }
+
         #endregion
 
         #region Derived Properties

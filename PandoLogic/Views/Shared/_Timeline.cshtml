@@ -69,7 +69,13 @@
                             @activity.CreatedDate.Value.ToString("t")
                         </span>
 
-                        <h3 class="timeline-header @headerClass">@Html.Raw(activity.Title)</h3>
+                        @if (ViewBag.ShowActivityTitle != null && ViewBag.ShowActivityTitle == true)
+                        {
+                            <h3 class="timeline-header @headerClass">
+                                @Html.Raw(activity.Title)
+                            </h3>
+                        }
+
 
                         @if (hasDescription)
                         {

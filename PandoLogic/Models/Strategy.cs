@@ -232,6 +232,12 @@ namespace PandoLogic.Models
 
         public virtual ICollection<Activity> Comments { get; set; }
 
+        [NotMapped]
+        public string CommentControllerName { get { return "Strategies"; } }
+
+        [NotMapped]
+        public string CommentActionName { get { return "Details"; } }
+
         #endregion
     }
 

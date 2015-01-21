@@ -12,6 +12,11 @@ namespace PandoLogic.Models
     {
         int Id { get; set; }
         ICollection<Activity> Comments { get; set; }
+
+        string CommentControllerName { get; }
+        string CommentActionName { get; }
+
+        string Title { get; }
     }
 
     public static class ICommentableExtensions

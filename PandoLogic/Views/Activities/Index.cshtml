@@ -24,6 +24,9 @@
                     @Html.AntiForgeryToken()
 
                     <div class="box-body">
+                        <p class="text-muted">
+                            A notification that will appear in the activity for for the entire @ViewBag.CurrentUserSelectedCompanyName team
+                        </p>
 
                         <div class="form-group">
                             @Html.LabelFor(model => model.Title, htmlAttributes: new { @class = "control-label" })

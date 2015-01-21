@@ -135,6 +135,7 @@ namespace PandoLogic.Controllers
             ViewBag.IsMyTask = workItem.AssigneeId == UserCache.Id || workItem.AssigneeId == null;
 
             workItem.LoadComments(this, "CreateTask");
+            UnstashModelState();
 
             return View(workItem);
         }

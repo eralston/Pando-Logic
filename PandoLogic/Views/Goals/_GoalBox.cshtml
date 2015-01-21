@@ -7,7 +7,7 @@
 
 <div class="box box-primary">
     <div class="box-header">
-
+        <i class="fa fa-tasks"></i>
         @if (ViewBag.GoalBoxShowAllUrl == null)
         {
             <h3 class="box-title">
@@ -17,6 +17,7 @@
         else
         {
             <a href="@ViewBag.GoalBoxShowAllUrl">
+
                 <h3 class="box-title force-a">
                     Goals
                 </h3>
@@ -25,9 +26,10 @@
 
     </div>
     <div class="box-body">
-        <div>
-            @Html.ActionLink("Create New Goal", "Create", "Goals", null, new { @class = "btn btn-default" })
-        </div>
+        <p class="text-muted">
+            The goals currently underway for @ViewBag.CurrentUserSelectedCompanyName
+        </p>
+        @Html.ActionLink("Create New Goal", "Create", "Goals", null, new { @class = "btn btn-default" })
     </div>
     <div class="box-body no-padding">
 

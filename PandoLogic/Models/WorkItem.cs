@@ -50,9 +50,6 @@ namespace PandoLogic.Models
         [DataType(DataType.MultilineText)]
         public string Description { get; set; }
 
-        // To-Many on Activity
-        public virtual ICollection<Activity> Comments { get; set; }
-
         [Display(Name = "Estimated Hours")]
         public float? EstimatedTime { get; set; }
 
@@ -60,6 +57,19 @@ namespace PandoLogic.Models
         public DateTime? CompletedDate { get; set; }
 
         public bool IsTemplate { get; set; }
+
+        #region ICommentable
+
+        // To-Many on Activity
+        public virtual ICollection<Activity> Comments { get; set; }
+
+        [NotMapped]
+        public string CommentControllerName { get { return "Tasks"; } }
+
+        [NotMapped]
+        public string CommentActionName { get { return "Details"; } }
+
+        #endregion
     }
 
     public static class WorkItemExtensions

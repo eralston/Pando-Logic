@@ -18,7 +18,7 @@ namespace PandoLogic.Controllers
 
         private async Task AddComment(Activity comment, ICommentable commentable)
         {
-            if(commentable.Comments == null)
+            if (commentable.Comments == null)
             {
                 commentable.Comments = new List<Activity>();
             }
@@ -28,6 +28,9 @@ namespace PandoLogic.Controllers
             comment.AuthorId = UserCache.Id;
             comment.CompanyId = UserCache.SelectedCompanyId;
             comment.Type = ActivityType.Comment;
+
+            string title = string.Format("Comment on {0}", commentable.Title);
+            comment.SetTitle(title, Url.Action(commentable.CommentActionName, commentable.CommentControllerName, new { id = commentable.Id }));
 
             Db.Activities.Add(comment);
             await Db.SaveChangesAsync();
@@ -68,9 +71,13 @@ namespace PandoLogic.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Create([Bind(Include = "Id,Title")] Activity comment)
+        public async Task<ActionResult> Create([Bind(Include = "Id,Title,Description")] Activity comment)
         {
-            if (ModelState.IsValid)
+            if(string.IsNullOrWhiteSpace(comment.Description))
+            {
+                ModelState.AddModelError("Nothing!", "Empty Comment, Please Try Again");
+            }
+            else if (ModelState.IsValid)
             {
                 comment.CreatedDate = DateTime.Now;
                 comment.AuthorId = UserCache.Id;
@@ -91,19 +98,25 @@ namespace PandoLogic.Controllers
         [Route("CreateGoal/{goalId}")]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> CreateGoal(int goalId, [Bind(Include = "Id,Title")] Activity comment)
+        public async Task<ActionResult> CreateGoal(int goalId, [Bind(Include = "Id,Title,Description")] Activity comment)
         {
-            if (ModelState.IsValid)
+            if(string.IsNullOrWhiteSpace(comment.Description))
+            {
+                ModelState.AddModelError("Nothing!", "Empty Comment, Please Try Again");
+            }
+            else if (ModelState.IsValid)
             {
                 Goal goal = await Db.Goals.FindAsync(goalId);
-                // TODO: Check goal is owned by user
+
+                // TODO: Check goal is allowed for user
 
                 await AddComment(comment, goal);
 
                 return RedirectToAction("Details", "Goals", new { id = goalId });
             }
 
-            return View(comment);
+            StashModelState();
+            return RedirectToAction("Details", "Tasks", new { id = goalId });
         }
 
         // POST: Comments/CreateTask/{taskId}
@@ -112,20 +125,25 @@ namespace PandoLogic.Controllers
         [Route("CreateTask/{taskId}")]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> CreateTask(int taskId, [Bind(Include = "Id,Title")] Activity comment)
+        public async Task<ActionResult> CreateTask(int taskId, [Bind(Include = "Id,Title,Description")] Activity comment)
         {
-            if (ModelState.IsValid)
+            if(string.IsNullOrWhiteSpace(comment.Description))
+            {
+                ModelState.AddModelError("Nothing!", "Empty Comment, Please Try Again");
+            }
+            else if (ModelState.IsValid)
             {
                 WorkItem task = await Db.WorkItems.FindAsync(taskId);
-                
-                // TODO: Check goal is owned by user
+
+                // TODO: Check tasks allowed for user
 
                 await AddComment(comment, task);
 
                 return RedirectToAction("Details", "Tasks", new { id = taskId });
             }
 
-            return View(comment);
+            StashModelState();
+            return RedirectToAction("Details", "Tasks", new { id = taskId });
         }
 
         // POST: Comments/CreateStrategy/{taskId}
@@ -134,20 +152,21 @@ namespace PandoLogic.Controllers
         [Route("CreateStrategy/{id}")]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> CreateStrategy(int id, [Bind(Include = "Id,Title")] Activity comment)
+        public async Task<ActionResult> CreateStrategy(int id, [Bind(Include = "Id,Title,Description")] Activity comment)
         {
             if (ModelState.IsValid)
             {
                 Strategy strategy = await Db.Strategies.FindAsync(id);
 
-                // TODO: Check goal is owned by user
+                // TODO: Check strategy is allowed for user
 
                 await AddComment(comment, strategy);
 
                 return RedirectToAction("Details", "Strategies", new { id = id });
             }
 
-            return View(comment);
+            StashModelState();
+            return RedirectToAction("Details", "Strategies", new { id = id });
         }
 
         // GET: Comments/Edit/5
@@ -171,14 +190,14 @@ namespace PandoLogic.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Edit([Bind(Include = "Id,Title")] Activity commentViewModel)
+        public async Task<ActionResult> Edit([Bind(Include = "Id,Description")] Activity commentViewModel)
         {
             if (ModelState.IsValid)
             {
                 var comment = await Db.Activities.FindAsync(commentViewModel.Id);
                 comment.Title = commentViewModel.Title;
                 Db.Entry(comment).State = EntityState.Modified;
-                
+
                 await Db.SaveChangesAsync();
 
                 return RedirectToAction("Index");
