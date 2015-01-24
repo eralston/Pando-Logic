@@ -6,8 +6,8 @@
 
     ViewBag.Breadcrumb = new Breadcrumb(new Crumb[] {
             new Crumb("Dashboard", Url.Action("Index","Home"), "fa-dashboard"),
-            new Crumb("Companies", Url.Action("Index","Companies"), "fa-building-o"),
-            new Crumb("Company Details", Url.Action("Details","Companies", new { id = Model.Id })),
+            new Crumb("Manage Account", Url.Action("Manage", "Account"), "fa-user"),
+            new Crumb("Company", Url.Action("Details","Companies", new { id = Model.Id}), "fa-building-o"),
             new Crumb("Revoke Invite")
         });
 }

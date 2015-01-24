@@ -154,12 +154,11 @@ namespace PandoLogic.Controllers
         #endregion
 
         // GET: Companies
-        public async Task<ActionResult> Index()
+        public ActionResult Index()
         {
-            var companies = Db.Companies.Include(c => c.Address).Include(c => c.Industry);
-            return View(await companies.ToListAsync());
+            return RedirectToAction("Manage", "Account");
         }
-
+            
         // GET: Companies/Details/5
         public async Task<ActionResult> Details(int id)
         {
