@@ -951,7 +951,7 @@
     <Content Include="Views\Members\Details.cshtml" />
     <Content Include="Views\Members\Edit.cshtml" />
     <Content Include="Views\Members\Index.cshtml" />
-    <Content Include="Views\Shared\_GoogleAnalytics.cshtml" />
+    <Content Include="Views\Shared\_Analytics.cshtml" />
     <Content Include="Views\SubscriptionPlans\Create.cshtml" />
     <Content Include="Views\SubscriptionPlans\Delete.cshtml" />
     <Content Include="Views\SubscriptionPlans\Details.cshtml" />
