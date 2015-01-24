@@ -161,6 +161,7 @@ namespace PandoLogic.Models
                         .Include(a => a.Author)
                         .Include(a => a.Company)
                         .Where(a => a.CompanyId == companyId || a.AuthorId == authorId)
+                        .Where(a => a.Company.IsSoftDeleted == false)
                         .OrderByDescending(a => a.CreatedDate);
         }
     }

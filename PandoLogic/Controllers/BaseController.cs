@@ -84,6 +84,7 @@ namespace PandoLogic.Controllers
                 // Load user data
                 FirstName = user.FirstName;
                 LastName = user.LastName;
+                Email = user.Email;
                 Id = user.Id;
                 if (user.Avatar != null)
                     AvatarUrl = user.Avatar.Url;
@@ -113,13 +114,12 @@ namespace PandoLogic.Controllers
                     Company company = userCompanies[i];
                     companies[i] = new CompanyInfoCache(company);
                 }
-                Companies = companies;
-
-                
+                Companies = companies;                
             }
 
             public string FirstName { get; set; }
             public string LastName { get; set; }
+            public string Email { get; set; }
             public string JobTitle { get; set; }
             public string Id { get; set; }
             public string AvatarUrl { get; set; }
@@ -248,7 +248,16 @@ namespace PandoLogic.Controllers
                 
             Company[] userCompanies = Db.CompaniesWhereUserIsMember(user.Id).ToArray();
             Member selectedMember = Db.Members.FindSelectedForUser(user.Id).FirstOrDefault();
-            Goal[] goals = Db.Goals.WhereActiveGoalForCompany(selectedMember.CompanyId).ToArray();
+
+            Goal[] goals = null;
+            if(selectedMember != null)
+            {
+                goals = Db.Goals.WhereActiveGoalForCompany(selectedMember.CompanyId).ToArray();
+            }
+            else
+            {
+                goals = new Goal[] { };
+            }
 
             _userCache = new UserInfoCache(user, userCompanies, selectedMember, goals);
             HttpContext.Session[UserInfoCacheId] = _userCache;
@@ -269,7 +278,17 @@ namespace PandoLogic.Controllers
 
             Company[] companies = await Db.CompaniesWhereUserIsMember(user.Id).ToArrayAsync();
             Member selectedMember = await GetCurrentMemberAsync();
-            Goal[] goals = await Db.Goals.WhereActiveGoalForCompany(selectedMember.CompanyId).ToArrayAsync();
+
+            Goal[] goals;
+            if(selectedMember != null)
+            {
+                goals = await Db.Goals.WhereActiveGoalForCompany(selectedMember.CompanyId).ToArrayAsync();
+            }
+            else
+            {
+                goals = new Goal[] { };
+            }
+            
             _member = selectedMember;
 
             _userCache = new UserInfoCache(user, companies, selectedMember, goals);
@@ -360,6 +379,7 @@ namespace PandoLogic.Controllers
                 // User properties
                 ViewBag.CurrentUserFirstName = cache.FirstName;
                 ViewBag.CurrentUserLastName = cache.LastName;
+                ViewBag.CurrentUserEmail = cache.Email;
                 ViewBag.CurrentUserId = cache.Id;
                 ViewBag.CurrentUserAvatarUrl = cache.AvatarUrl;
 

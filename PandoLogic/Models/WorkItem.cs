@@ -91,7 +91,7 @@ namespace PandoLogic.Models
 
         public static IQueryable<WorkItem> WhereAssignedUser(this DbSet<WorkItem> workItems, string userId)
         {
-            return workItems.Where(w => w.AssigneeId == userId);
+            return workItems.Where(w => w.AssigneeId == userId && w.Company.IsSoftDeleted == false);
         }
 
         public static async Task RemoveWorkItemsForGoal(this ApplicationDbContext context, int goalId)

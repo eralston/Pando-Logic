@@ -965,6 +965,7 @@
     <Content Include="Views\Account\Payment.cshtml" />
     <Content Include="Views\Account\Subscription.cshtml" />
     <Content Include="Views\Companies\EditorTemplates\CompanyViewModel.cshtml" />
+    <Content Include="Views\Shared\_SupportChat.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Views\Shared\DisplayTemplates\" />

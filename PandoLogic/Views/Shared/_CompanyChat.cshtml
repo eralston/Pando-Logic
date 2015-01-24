@@ -1,13 +1,130 @@
-﻿@using PandoLogic.Hubs
-
-@if (Html.IsInCompanyContext())
-{
-    string title = string.Format("{0} Company Chat", ViewBag.CurrentUserSelectedCompanyName);
-
-    <div class="row company-chat" style="display:none">
-
-        <div class="col-md-12">
-            @Html.Partial("_Chat", new ChatInfo { ChatRoomId = string.Format("Company-{0}", @ViewBag.CurrentUserSelectedCompanyId), Title = title })
-        </div>
+﻿@*Common Chat Code*@
+<script id="chat_message_template" type="text/html">
+    <div class="item">
+        <img src="{{AvatarUrl}}" alt="user image" class="online" />
+        <p class="message">
+            <a href="{{UserUrl}}" class="name">
+                <small class="text-muted pull-right"><i class="fa fa-clock-o"></i> {{Date}}</small>
+                {{UserName}}
+            </a>
+            {{Message}}
+        </p>
     </div>
-}
+</script>
+<script id="chat_user_template" type="text/html">
+    <div class="item">
+        <img src="{{AvatarUrl}}" alt="user image" class="online" />
+        <p class="message">
+            <a href="{{UserUrl}}" class="name">
+                {{UserName}}
+            </a>
+        </p>
+    </div>
+</script>
+<script>
+
+    $(function () {
+
+        // slim scroll for chatbox
+        $('.slimscroll').slimScroll({
+            height: '250px'
+        });
+
+        if ($(".chat-box").length == 0)
+            return;
+
+        var chat = $.connection.chat;
+        var userId = "@ViewBag.CurrentUserId";
+
+        var messageTemplate = _.template($("#chat_message_template").html());
+        var userTemplate = _.template($("#chat_user_template").html());
+
+        var chatInstances = Object.create(null);
+
+        $.connection.hub.start().done(function () {
+
+            $(".chat-box").each(function () {
+
+                var $chatWrapper = $(this);
+                var chatRoomId = $chatWrapper.attr("data-chat-room-id");
+
+                var $chatInput = $chatWrapper.find(".chat-input");
+                var $chatMessages = $chatWrapper.find(".chat-messages");
+                var $chatButton = $chatWrapper.find(".chat-button");
+
+                chatInstances[chatRoomId] = $chatWrapper;
+
+                var sendMessage = function () {
+                    chat.server.send(chatRoomId, userId, $chatInput.val());
+                    $chatInput.val('').focus();
+                }
+
+                $chatInput.keypress(function (e) {
+                    if (e.which == 13) {
+                        sendMessage();
+                    }
+                });
+
+                $chatButton.click(function () {
+                    sendMessage();
+                });
+
+                // Leave the chat room when this page is unloaded
+                $(window).unload(function () {
+                    chat.server.leave(chatRoomId, userId);
+                });
+
+                chat.server.join(chatRoomId, userId);
+            });
+        });
+
+        // Whenever we receive a message, route it into the proper message window
+        chat.client.receiveMessage = function (message) {
+
+            var $chatWrapper = chatInstances[message.ChatRoomId];
+
+            var $chatMessages = $chatWrapper.find(".chat-messages");
+
+            if ($chatMessages != undefined) {
+                var msg = messageTemplate(message);
+                var $msg = $(msg);
+                $chatMessages.append($msg);
+                $chatMessages.animate({ scrollTop: 99999999 }, "slow");
+            }
+        };
+
+        // Whenever we receive a user list update, route it into the proper message window
+        chat.client.receiveUsers = function (response) {
+
+            var $chatWrapper = chatInstances[response.ChatRoomId];
+
+            var $chatUsers = $chatWrapper.find(".chat-users");
+
+            if ($chatUsers != undefined) {
+
+                $chatUsers.children().remove();
+
+                for (var i in response.Users) {
+                    var data = response.Users[i];
+                    var user = userTemplate(data);
+                    $user = $(user);
+                    $chatUsers.append($user);
+                }
+            }
+        };
+    });
+</script>
+<script>
+    $(function () {
+        $(".company-chat-toggle").click(function () {
+
+            var $chat = $(".company-chat");
+
+            if ($chat.is(":hidden")) {
+                $chat.slideDown(300);
+            } else {
+                $chat.slideUp(300);
+            }
+        });
+    });
+</script>
