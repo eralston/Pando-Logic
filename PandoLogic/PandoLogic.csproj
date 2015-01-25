@@ -211,8 +211,11 @@
     <Compile Include="Code\Adjudicator.cs" />
     <Compile Include="Code\AdminAuthorizeAttribute.cs" />
     <Compile Include="Code\Breadcrumb.cs" />
+    <Compile Include="Code\ChatDataEntities.cs" />
     <Compile Include="Code\ObjectExtensions.cs" />
+    <Compile Include="Code\StorageManager.cs" />
     <Compile Include="Code\StripeManager.cs" />
+    <Compile Include="Code\TableStorageManager.cs" />
     <Compile Include="Code\Validation\ConditionalRequiredAttribute.cs" />
     <Compile Include="Code\ControllerExtensions.cs" />
     <Compile Include="Code\Validation\DateTimeValidationAttribute.cs" />
@@ -221,7 +224,7 @@
     <Compile Include="Code\MailExtensions.cs" />
     <Compile Include="Code\PandoStorageManager.cs" />
     <Compile Include="Code\Settings.cs" />
-    <Compile Include="Code\StorageManager.cs" />
+    <Compile Include="Code\BlobStorageManager.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\ActivitiesController.cs" />
     <Compile Include="Controllers\AddressesController.cs" />
@@ -966,6 +969,7 @@
     <Content Include="Views\Account\Subscription.cshtml" />
     <Content Include="Views\Companies\EditorTemplates\CompanyViewModel.cshtml" />
     <Content Include="Views\Shared\_SupportChat.cshtml" />
+    <Content Include="Views\Shared\_CompanyChatBox.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Views\Shared\DisplayTemplates\" />

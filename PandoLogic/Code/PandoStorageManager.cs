@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Web;
 
 using Microsoft.WindowsAzure.Storage;
@@ -12,7 +13,7 @@ namespace PandoLogic
     /// <summary>
     /// Storage manager for Pando Logic containers
     /// </summary>
-    public class PandoStorageManager : StorageManager
+    public class PandoStorageManager : BlobStorageManager
     {
         #region Constants
 
@@ -27,15 +28,12 @@ namespace PandoLogic
         /// <summary>
         /// Blob container for reports in the system
         /// </summary>
-        public CloudBlobContainer UserImages
+        public async Task<CloudBlobContainer> GetUserImagesAsync()
         {
-            get
-            {
-                if (_userImageContainer == null)
-                    _userImageContainer = GetContainer(UserImageContainerName);
+            if (_userImageContainer == null)
+                _userImageContainer = await GetContainerAsync(UserImageContainerName);
 
-                return _userImageContainer;
-            }
+            return _userImageContainer;
         }
 
         /// <summary>
@@ -52,15 +50,12 @@ namespace PandoLogic
         /// <summary>
         /// Blob container for reports in the system
         /// </summary>
-        public CloudBlobContainer CompanyImages
+        public async Task<CloudBlobContainer> GetCompanyImagesAsync()
         {
-            get
-            {
-                if (_companyImageContainer == null)
-                    _companyImageContainer = GetContainer(CompanyImageContainerName);
+            if (_companyImageContainer == null)
+                _companyImageContainer = await GetContainerAsync(CompanyImageContainerName);
 
-                return _companyImageContainer;
-            }
+            return _companyImageContainer;
         }
 
         /// <summary>

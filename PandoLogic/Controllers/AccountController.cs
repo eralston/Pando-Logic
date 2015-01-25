@@ -19,6 +19,7 @@ using Owin;
 using PandoLogic.Models;
 
 using InviteOnly;
+using Microsoft.WindowsAzure.Storage.Blob;
 
 namespace PandoLogic.Controllers
 {
@@ -702,7 +703,9 @@ namespace PandoLogic.Controllers
                 if (file.ContentLength > 0)
                 {
                     string blobName = StorageManager.GenerateUniqueName(file.FileName);
-                    await StorageManager.UserImages.UploadBlobAsync(blobName, file.InputStream);
+
+                    CloudBlobContainer container = await StorageManager.GetUserImagesAsync();
+                    await container.UploadBlobAsync(blobName, file.InputStream);
                     string fileUrl = StorageManager.GetUserImageUrl(blobName);
 
                     CloudFile newFile = Db.CloudFiles.Create(PandoStorageManager.UserImageContainerName, blobName, fileUrl, file.FileName);

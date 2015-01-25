@@ -12,6 +12,7 @@ using System.Web;
 using System.Web.Mvc;
 
 using PandoLogic.Models;
+using Microsoft.WindowsAzure.Storage.Blob;
 
 namespace PandoLogic.Controllers
 {
@@ -136,7 +137,8 @@ namespace PandoLogic.Controllers
                 {
                     // If we have one, then upload to Azure
                     string blobName = StorageManager.GenerateUniqueName(file.FileName);
-                    await StorageManager.CompanyImages.UploadBlobAsync(blobName, file.InputStream);
+                    CloudBlobContainer container = await StorageManager.GetCompanyImagesAsync();
+                    await container.UploadBlobAsync(blobName, file.InputStream);
 
                     // Set the URL
                     string fileUrl = StorageManager.GetCompanyImageUrl(blobName);
