@@ -65,7 +65,7 @@ namespace PandoLogic
         public static Task DeleteBlobAsync(this CloudBlobContainer container, string blobName)
         {
             CloudBlockBlob blockBlob = container.GetBlockBlobReference(blobName);
-            return blockBlob.DeleteAsync();
+            return blockBlob.DeleteIfExistsAsync();
         }
     }
 
