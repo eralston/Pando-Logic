@@ -47,7 +47,7 @@ namespace PandoLogic.Models
         {
             MemberInvite invite = new MemberInvite();
 
-            invite.CreatedDate = DateTime.Now;
+            invite.CreatedDate = DateTime.UtcNow;
             invite.CompanyId = companyId;
             invite.Email = email;
 

@@ -189,7 +189,7 @@ namespace PandoLogic.Controllers
                 ApplicationUser user = await GetCurrentUserAsync();
 
                 Strategy strategy = Db.Strategies.Create();
-                strategy.CreatedDate = DateTime.Now;
+                strategy.CreatedDate = DateTime.UtcNow;
                 strategy.AuthorId = user.Id;
 
                 strategy.Title = strategyViewModel.Title;
@@ -248,7 +248,7 @@ namespace PandoLogic.Controllers
                     task.Title = taskViewModel.Title;
                     task.Description = taskViewModel.Description;
                     task.IsTemplate = true;
-                    task.CreatedDate = DateTime.Now;
+                    task.CreatedDate = DateTime.UtcNow;
                     task.CreatorId = user.Id;
                     goal.WorkItems.Add(task);
                 }

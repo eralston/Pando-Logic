@@ -13,6 +13,29 @@ using System.Linq;
 
 namespace PandoLogic.Models
 {
+    /// <summary>
+    /// View model for safe application user fields
+    /// </summary>
+    public class ApplicationUserViewModel
+    {
+        public ApplicationUserViewModel(ApplicationUser user)
+        {
+            this.Id = user.Id;
+            this.AvatarUrl = user.AvatarOrDefaultUrl;
+            this.FullName = user.FullName;
+            this.FirstName = user.FirstName;
+            this.LastName = user.LastName;
+            this.UserUrl = user.UserUrl;
+        }
+
+        public string Id { get; set; }
+        public string AvatarUrl { get; set; }
+        public string FullName { get; set; }
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
+        public string UserUrl { get; set; }
+    }
+
     // You can add profile data for the user by adding more properties to your ApplicationUser class, please visit http://go.microsoft.com/fwlink/?LinkID=317594 to learn more.
     public class ApplicationUser : IdentityUser
     {
@@ -83,6 +106,17 @@ namespace PandoLogic.Models
             get
             {
                 return !string.IsNullOrEmpty(this.PaymentSystemId);
+            }
+        }
+
+        /// <summary>
+        /// Gets the URL for the current user
+        /// </summary>
+        public string UserUrl
+        {
+            get
+            {
+                return string.Format("/Users/Details/{0}", Id);
             }
         }
 

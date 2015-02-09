@@ -30,7 +30,7 @@ namespace PandoLogic.Models
         {
             StrategyRating rating = ratings.Create();
 
-            rating.CreatedDate = DateTime.Now;
+            rating.CreatedDate = DateTime.UtcNow;
             rating.UserId = userId;
             rating.StrategyId = strategyId;
 

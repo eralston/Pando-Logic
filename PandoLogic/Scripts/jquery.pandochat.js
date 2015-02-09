@@ -49,10 +49,12 @@
         var chatInstances = Object.create(null);
         var userManager = Object.create(null);
 
-        // SignalR inbound multiplex via chatInstances and userManager
+        // SignalR inbound multiplex via chatInstances
 
         // Whenever we receive history, route to the chat instances
-        var chat = $.connection.chat;
+        chat = $.connection.chat;
+        $.connection.hub.logging = true;
+
         chat.client.receiveMessage = function (message) {
 
             var chatInstance = chatInstances[message.ChatRoomId];
@@ -70,6 +72,7 @@
             var chatInstance = chatInstances[history[0].ChatRoomId];
             if (chatInstance == undefined)
                 return;
+
             chatInstance.receiveHistory(history);
         };
 
@@ -90,8 +93,8 @@
 
                 var $chatWrapper = $(this);
                 var chatRoomId = $chatWrapper.attr("data-chat-room-id");
-                chat.server.join(chatRoomId, options.userId);                
-            });
+                chat.server.join(chatRoomId, options.userId);
+            });            
         });
 
         // Safe for chaining
@@ -110,6 +113,23 @@
             // Make an object for containing all functions
             var self = {
 
+                applyUserInfoToMessage: function (message) {
+                    // Find the user for this message or use a guest stand-in
+                    var user = userManager[message.UserId];
+                    if (user == undefined || user == null) {
+                        user = {
+                            Id: "",
+                            AvatarUrl: "/Content/images/user-icon.png",
+                            FullName: "Guest",
+                            FirstName: "",
+                            LastName: "",
+                            UserUrl: ""
+                        };
+                    }
+                    message = $.extend(user, message);
+                    return message;
+                },
+
                 // Updates the displayed list of users to match the given response
                 receiveUsers: function (response) {
 
@@ -120,12 +140,17 @@
                         var user = userTemplate(data);
                         $user = $(user);
                         $chatUsers.append($user);
+
+                        userManager[user.Id] = data;
                     }
                 },
 
                 // Appends the given message to the chat window
                 receiveMessage: function (message) {
 
+                    message = self.applyUserInfoToMessage(message);
+
+                    // apply the message to the screen
                     var msg = messageTemplate(message);
                     var $msg = $(msg);
                     $chatMessages.append($msg);
@@ -137,6 +162,7 @@
 
                     for (var index in history) {
                         var message = history[index];
+                        message = self.applyUserInfoToMessage(message);
                         var msg = messageTemplate(message);
                         var $msg = $(msg);
                         $chatMessages.append($msg);
@@ -147,9 +173,10 @@
 
                 // Sends a message using the current state of the chat box
                 // This will also blank the chat input field after sending
-                sendMessage: function() {
-                    chat.server.send(chatRoomId, userId, $chatInput.val());
-                    $chatInput.val('').focus();                    
+                sendMessage: function () {
+                    var msg = $chatInput.val();
+                    chat.server.sendMessage(chatRoomId, userId, msg);
+                    $chatInput.val('').focus();
                 },
 
                 // Initial UI Setup stuff, using the methods in the object
@@ -186,11 +213,4 @@
 // slim scroll for chatbox
 $('.slimscroll').slimScroll({
     height: '250px'
-});
-
-// TODO: Optionally create a bootstrapping plugin by initializing at the bottom of the file
-$(function () {
-
-    // Find anything with class postal-code-form and make it so
-    // EG: $(".postal-code-form").postalcode();
 });

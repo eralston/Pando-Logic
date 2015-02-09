@@ -92,7 +92,7 @@ namespace PandoLogic.Controllers
                 ClearCurrentUserCache();
 
                 // clear the invite
-                invite.FulfilledDate = DateTime.Now;
+                invite.FulfilledDate = DateTime.UtcNow;
                 Db.Invites.Remove(invite.Invite);
                 invite.Invite = null;
 
@@ -131,7 +131,7 @@ namespace PandoLogic.Controllers
             }
 
             // clear the invite
-            invite.FulfilledDate = DateTime.Now;
+            invite.FulfilledDate = DateTime.UtcNow;
             Db.Invites.Remove(invite.Invite);
             invite.Invite = null;
 

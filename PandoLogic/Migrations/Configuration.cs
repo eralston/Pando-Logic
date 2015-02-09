@@ -45,23 +45,23 @@ namespace PandoLogic.Migrations
         {
             context.Industries.AddOrUpdate(
                     i => i.Title,
-                    new Industry { Title = "Agriculture", CreatedDate = DateTime.Now },
-                    new Industry { Title = "Arts", CreatedDate = DateTime.Now },
-                    new Industry { Title = "Consumer Goods", CreatedDate = DateTime.Now },
-                    new Industry { Title = "Construction", CreatedDate = DateTime.Now },
-                    new Industry { Title = "Corporate Services", CreatedDate = DateTime.Now },
-                    new Industry { Title = "Education", CreatedDate = DateTime.Now },
-                    new Industry { Title = "Finance", CreatedDate = DateTime.Now },
-                    new Industry { Title = "Government", CreatedDate = DateTime.Now },
-                    new Industry { Title = "High Tech", CreatedDate = DateTime.Now },
-                    new Industry { Title = "Legal", CreatedDate = DateTime.Now },
-                    new Industry { Title = "Manufacturing", CreatedDate = DateTime.Now },
-                    new Industry { Title = "Media", CreatedDate = DateTime.Now },
-                    new Industry { Title = "Medical and Health Care", CreatedDate = DateTime.Now },
-                    new Industry { Title = "Organizations & Non-Profits", CreatedDate = DateTime.Now },
-                    new Industry { Title = "Recreation, Travel, and Entertainment", CreatedDate = DateTime.Now },
-                    new Industry { Title = "Service", CreatedDate = DateTime.Now },
-                    new Industry { Title = "Transportation", CreatedDate = DateTime.Now }
+                    new Industry { Title = "Agriculture", CreatedDate = DateTime.UtcNow },
+                    new Industry { Title = "Arts", CreatedDate = DateTime.UtcNow },
+                    new Industry { Title = "Consumer Goods", CreatedDate = DateTime.UtcNow },
+                    new Industry { Title = "Construction", CreatedDate = DateTime.UtcNow },
+                    new Industry { Title = "Corporate Services", CreatedDate = DateTime.UtcNow },
+                    new Industry { Title = "Education", CreatedDate = DateTime.UtcNow },
+                    new Industry { Title = "Finance", CreatedDate = DateTime.UtcNow },
+                    new Industry { Title = "Government", CreatedDate = DateTime.UtcNow },
+                    new Industry { Title = "High Tech", CreatedDate = DateTime.UtcNow },
+                    new Industry { Title = "Legal", CreatedDate = DateTime.UtcNow },
+                    new Industry { Title = "Manufacturing", CreatedDate = DateTime.UtcNow },
+                    new Industry { Title = "Media", CreatedDate = DateTime.UtcNow },
+                    new Industry { Title = "Medical and Health Care", CreatedDate = DateTime.UtcNow },
+                    new Industry { Title = "Organizations & Non-Profits", CreatedDate = DateTime.UtcNow },
+                    new Industry { Title = "Recreation, Travel, and Entertainment", CreatedDate = DateTime.UtcNow },
+                    new Industry { Title = "Service", CreatedDate = DateTime.UtcNow },
+                    new Industry { Title = "Transportation", CreatedDate = DateTime.UtcNow }
                 );
         }
 

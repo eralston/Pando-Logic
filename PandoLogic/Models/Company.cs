@@ -63,7 +63,7 @@ namespace PandoLogic.Models
         {
             Company company = new Company();
 
-            company.CreatedDate = DateTime.Now;
+            company.CreatedDate = DateTime.UtcNow;
             company.Creator = creatorUser;
 
             companies.Add(company);

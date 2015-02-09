@@ -199,7 +199,7 @@ namespace PandoLogic.Models
         /// </summary>
         public void Archive()
         {
-            DateTime archiveDate = DateTime.Now;
+            DateTime archiveDate = DateTime.UtcNow;
 
             ArchiveDate = archiveDate;
 
@@ -267,7 +267,7 @@ namespace PandoLogic.Models
         {
             Goal goal = goals.Create();
 
-            goal.CreatedDate = DateTime.Now;
+            goal.CreatedDate = DateTime.UtcNow;
             goal.StartDate = goal.CreatedDate;
             goal.CompanyId = companyId;
             goal.CreatorId = userId;

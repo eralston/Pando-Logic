@@ -131,7 +131,7 @@ namespace PandoLogic.Models
         {
             Activity activity = activities.Create();
 
-            activity.CreatedDate = DateTime.Now;
+            activity.CreatedDate = DateTime.UtcNow;
             activity.AuthorId = authorUserId;
             activity.Company = null;
             activity.Title = title;
@@ -145,7 +145,7 @@ namespace PandoLogic.Models
         {
             Activity activity = activities.Create();
 
-            activity.CreatedDate = DateTime.Now;
+            activity.CreatedDate = DateTime.UtcNow;
             activity.AuthorId = authorUserId;
             activity.Company = company;
             activity.Title = title;

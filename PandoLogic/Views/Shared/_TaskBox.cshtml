@@ -4,7 +4,7 @@
 @{
     string title = @ViewBag.TaskBoxTitle ?? "Tasks";
 
-    DateTime now = DateTime.Now;
+    DateTime now = DateTime.UtcNow;
 }
 
 <div class="box box-primary">

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -14,6 +15,7 @@ namespace PandoLogic.Hubs
 {
     /// <summary>
     /// Small ViewModel for presenting chat setup data to JavaScript
+    /// This is used in the CSHTML template
     /// </summary>
     public class ChatSessionInfo
     {
@@ -21,17 +23,19 @@ namespace PandoLogic.Hubs
         public string Title { get; set; }
     }
 
-    public class ChatUsersInfo
+    /// <summary>
+    /// ViewModel for passing down user list for a single room
+    /// </summary>
+    public class ChatOccupantInfo
     {
-        public ChatUsersInfo() { }
-        public ChatUsersInfo(IEnumerable<ChatUserEntity> users, string chatRoomId)
+        public ChatOccupantInfo(string roomId, ApplicationUserViewModel[] userArray)
         {
-            this.ChatRoomId = chatRoomId;
-            this.Users = users;
+            this.ChatRoomId = roomId;
+            this.Users = userArray;
         }
 
         public string ChatRoomId { get; set; }
-        public IEnumerable<ChatUserEntity> Users { get; set; }
+        public ApplicationUserViewModel[] Users { get; set; }
     }
 
     /// <summary>
@@ -60,48 +64,16 @@ namespace PandoLogic.Hubs
         #region Private Methods (Not available in Js)
 
         /// <summary>
-        /// Adds the given user to the given room
-        /// As a side-effect, this will update all people currently in the room about the user's entrance
+        /// Sends out an updates to everyone in the given room informing them who is currently in it according to the DB
         /// </summary>
         /// <param name="chatRoomId"></param>
-        /// <param name="currentUser"></param>
         /// <returns></returns>
-        private async Task AddUserToRoom(string chatRoomId, ApplicationUser currentUser)
+        private async Task UpdateOccupantListForRoom(string chatRoomId)
         {
-            // Update the list of users for everyone in this room
-            await Storage.AddUserToRoomAsync(chatRoomId, Context.ConnectionId, currentUser);
-            IEnumerable<ChatUserEntity> users = await Storage.GetUsersForRoomAsync(chatRoomId);
-            ChatUsersInfo usersInfo = new ChatUsersInfo(users, chatRoomId);
-            Clients.Group(chatRoomId).receiveUsers(usersInfo);
-
-            // Send this user the history of messages
-            IEnumerable<ChatMessageEntity> history = await Storage.GetMessagesForRoomAsync(chatRoomId);
-            Clients.Caller.receiveHistory(history);
-
-            // Tell everyone else the current user joined
-            string systemMessage = string.Format("{0} has joined", currentUser.FullName);
-            ChatMessageEntity entity = await Storage.AddMessageToRoomAsync(chatRoomId, currentUser.Id, systemMessage, ChatMessageEntity.MessageType.System);
-            Clients.Group(chatRoomId).receiveMessage(entity);
-        }
-
-        /// <summary>
-        /// Asynchrously removes the given user from the given room
-        /// As a side-effect, this will send a message to that room indicating the user has left
-        /// </summary>
-        /// <param name="chatRoomId"></param>
-        /// <param name="currentUser"></param>
-        /// <returns></returns>
-        private async Task RemoveUserFromRoom(string chatRoomId, ApplicationUser currentUser)
-        {
-            // Update the list of users for everyone in this room
-            await Storage.RemoveUserFromRoomAsync(chatRoomId, Context.ConnectionId);
-            IEnumerable<ChatUserEntity> chat = await Storage.GetUsersForRoomAsync(chatRoomId);
-            this.Clients.Group(chatRoomId).receiveUsers(chat);
-
-            // Tell everyone else the current user joined
-            string systemMessage = string.Format("{0} has left", currentUser.FullName);
-            ChatMessageEntity entity = await Storage.AddMessageToRoomAsync(chatRoomId, currentUser.Id, systemMessage, ChatMessageEntity.MessageType.System);
-            this.Clients.Group(chatRoomId).receiveMessage(entity);
+            ChatUser[] chatUsers = await Db.ChatUsers.WhereInRoom(chatRoomId).ToArrayAsync();
+            ApplicationUserViewModel[] userViewModels = chatUsers.ToApplicationUserViewModels();
+            ChatOccupantInfo occupantInfo = new ChatOccupantInfo(chatRoomId, userViewModels);
+            Clients.Group(chatRoomId).receiveUsers(occupantInfo);
         }
 
         #endregion
@@ -116,14 +88,28 @@ namespace PandoLogic.Hubs
         /// <returns></returns>
         public async Task Join(string chatRoomId, string userId)
         {
-            // Add this connection to the given groups
-            await Groups.Add(Context.ConnectionId, chatRoomId);
-
             // Pull the current user information
             // TODO: Make this auth driven instead of an argument
             ApplicationUser currentUser = this.Db.Users.Find(userId);
 
-            await AddUserToRoom(chatRoomId, currentUser);
+            // Add an entry to SignalR group for this connection
+            await Groups.Add(Context.ConnectionId, chatRoomId);
+
+            // Add an entry to the room for the current user
+            ChatUser user = Db.ChatUsers.Create(chatRoomId, Context.ConnectionId, currentUser.Id);
+            await Db.SaveChangesAsync();
+
+            // Tell everyone who is in the room
+            await UpdateOccupantListForRoom(chatRoomId);
+
+            // Send this user the history of messages
+            IEnumerable<ChatMessageEntity> history = await Storage.GetMessagesForRoomAsync(chatRoomId);
+            Clients.Caller.receiveHistory(history);
+
+            // Tell everyone else the current user joined
+            string systemMessage = string.Format("{0} has joined", currentUser.FullName);
+            ChatMessageEntity entity = await Storage.AddMessageToRoomAsync(chatRoomId, currentUser.Id, systemMessage, ChatMessageType.System);
+            Clients.Group(chatRoomId).receiveMessage(entity);
         }
 
         /// <summary>
@@ -132,13 +118,13 @@ namespace PandoLogic.Hubs
         /// <param name="chatRoomId"></param>
         /// <param name="userId"></param>
         /// <param name="message"></param>
-        public async void Send(string chatRoomId, string userId, string message)
+        public async Task SendMessage(string chatRoomId, string userId, string message)
         {
             ApplicationUser currentUser = this.Db.Users.Find(userId);
-
             // Tell everyone about the current message
-            ChatMessageEntity entity = await Storage.AddMessageToRoomAsync(chatRoomId, currentUser.Id, message, ChatMessageEntity.MessageType.User);
-            Clients.Group(chatRoomId).receiveMessage(entity);
+            ChatMessageEntity entity = await Storage.AddMessageToRoomAsync(chatRoomId, currentUser.Id, message, ChatMessageType.User);
+            ChatMessageViewModel messageViewModel = new ChatMessageViewModel(entity, chatRoomId);
+            Clients.Group(chatRoomId).receiveMessage(messageViewModel);
         }
 
         /// <summary>
@@ -146,15 +132,23 @@ namespace PandoLogic.Hubs
         /// </summary>
         /// <param name="chatRoomId"></param>
         /// <param name="userId"></param>
-        public async void Leave(string chatRoomId, string userId)
+        public async Task Leave(string chatRoomId, string userId)
         {
             // Take this user out of the group
             await Groups.Remove(Context.ConnectionId, chatRoomId);
 
-            // Build a leave message for the joining user
-            ApplicationUser currentUser = this.Db.Users.Find(userId);
+            // Update the list of users for everyone in this room
+            Db.ChatUsers.RemoveForUserAndRoom(chatRoomId, userId);
+            await Db.SaveChangesAsync();
 
-            await RemoveUserFromRoom(chatRoomId, currentUser);
+            // Tell everyone the room occupants have changed
+            await UpdateOccupantListForRoom(chatRoomId);
+
+            // Tell everyone else the current user left
+            ApplicationUser currentUser = this.Db.Users.Find(userId);
+            string systemMessage = string.Format("{0} has left", currentUser.FullName);
+            ChatMessageEntity entity = await Storage.AddMessageToRoomAsync(chatRoomId, userId, systemMessage, ChatMessageType.System);
+            this.Clients.Group(chatRoomId).receiveMessage(entity);
         }
 
         /// <summary>
@@ -165,11 +159,8 @@ namespace PandoLogic.Hubs
         public override Task OnDisconnected(bool stopCalled)
         {
             string connectionId = Context.ConnectionId;
-            IEnumerable<ChatUserEntity> usersWithConnectionId = Storage.GetUsersForConnectionId(connectionId);
-            foreach (ChatUserEntity user in usersWithConnectionId)
-            {
-                Storage.DeleteUser(user);
-            }
+            Db.ChatUsers.RemoveAllWithConnectionId(connectionId);
+            Db.SaveChanges();
 
             return base.OnDisconnected(stopCalled);
         }

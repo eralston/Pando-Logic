@@ -167,7 +167,7 @@ namespace PandoLogic.Controllers
         public async Task<ActionResult> Complete(int id)
         {
             WorkItem workItem = await Db.WorkItems.FindAsync(id);
-            workItem.CompletedDate = DateTime.Now;
+            workItem.CompletedDate = DateTime.UtcNow;
 
             Member currentMember = await GetCurrentMemberAsync();
 
@@ -219,7 +219,7 @@ namespace PandoLogic.Controllers
 
                 Member currentMember = await GetCurrentMemberAsync();
 
-                workItem.CreatedDate = DateTime.Now;
+                workItem.CreatedDate = DateTime.UtcNow;
                 workItem.CompanyId = currentMember.CompanyId;
                 workItem.CreatorId = currentMember.UserId;
 

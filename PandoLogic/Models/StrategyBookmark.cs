@@ -32,7 +32,7 @@ namespace PandoLogic.Models
         {
             StrategyBookmark bookmark = bookmarks.Create();
 
-            bookmark.CreatedDate = DateTime.Now;
+            bookmark.CreatedDate = DateTime.UtcNow;
             bookmark.UserId = userId;
             bookmark.StrategyId = strategyId;
 

@@ -197,7 +197,7 @@ namespace PandoLogic.Controllers
                 goal.Title = goalViewModel.Title;
                 goal.Description = goalViewModel.Description;
 
-                goal.CreatedDate = DateTime.Now;
+                goal.CreatedDate = DateTime.UtcNow;
                 goal.CompanyId = currentMember.CompanyId;
                 goal.CreatorId = currentMember.UserId;
 

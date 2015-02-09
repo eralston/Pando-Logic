@@ -252,6 +252,7 @@
     <Compile Include="Models\Activity.cs" />
     <Compile Include="Models\Address.cs" />
     <Compile Include="Models\ApplicationDbContext.cs" />
+    <Compile Include="Models\ChatUser.cs" />
     <Compile Include="Models\CloudFile.cs" />
     <Compile Include="Models\Company.cs" />
     <Compile Include="Models\ApplicationUser.cs" />

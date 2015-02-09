@@ -41,7 +41,7 @@ namespace PandoLogic.Models
         /// </summary>
         public void SetSelected()
         {
-            LastSelectedDate = DateTime.Now;
+            LastSelectedDate = DateTime.UtcNow;
         }
     }
 
@@ -51,7 +51,7 @@ namespace PandoLogic.Models
         {
             Member member = new Member();
 
-            member.CreatedDate = DateTime.Now;
+            member.CreatedDate = DateTime.UtcNow;
             member.Company = company;
             member.User = user;
             member.LastSelectedDate = member.CreatedDate;

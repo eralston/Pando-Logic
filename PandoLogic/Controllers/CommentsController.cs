@@ -24,7 +24,7 @@ namespace PandoLogic.Controllers
             }
             commentable.Comments.Add(comment);
 
-            comment.CreatedDate = DateTime.Now;
+            comment.CreatedDate = DateTime.UtcNow;
             comment.AuthorId = UserCache.Id;
             comment.CompanyId = UserCache.SelectedCompanyId;
             comment.Type = ActivityType.Comment;
@@ -79,7 +79,7 @@ namespace PandoLogic.Controllers
             }
             else if (ModelState.IsValid)
             {
-                comment.CreatedDate = DateTime.Now;
+                comment.CreatedDate = DateTime.UtcNow;
                 comment.AuthorId = UserCache.Id;
                 comment.CompanyId = UserCache.SelectedCompanyId;
 

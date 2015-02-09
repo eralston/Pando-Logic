@@ -107,7 +107,7 @@ namespace PandoLogic.Models
         {
             WorkItem task = tasks.Create();
 
-            task.CreatedDate = DateTime.Now;
+            task.CreatedDate = DateTime.UtcNow;
             task.CreatorId = userId;
             task.CompanyId = companyId;
 

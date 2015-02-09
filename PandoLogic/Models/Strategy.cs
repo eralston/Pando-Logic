@@ -87,7 +87,7 @@ namespace PandoLogic.Models
             newStrategyGoal.Goal = newGoalTemplate;
 
             // Set the fixed fields
-            newStrategyGoal.CreatedDate = DateTime.Now;
+            newStrategyGoal.CreatedDate = DateTime.UtcNow;
             newGoalTemplate.CreatedDate = newStrategyGoal.CreatedDate;
             newGoalTemplate.IsTemplate = true;
 
@@ -113,7 +113,7 @@ namespace PandoLogic.Models
 
         public DateTime GetFirstStartDateForIntervalFromNow()
         {
-            DateTime now = DateTime.Now;
+            DateTime now = DateTime.UtcNow;
 
             if (Interval == StrategyInterval.None)
                 return now;
