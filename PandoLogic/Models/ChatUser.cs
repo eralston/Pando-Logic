@@ -40,7 +40,7 @@ namespace PandoLogic.Models
         {
             ChatUser newUser = users.Create();
 
-            newUser.CreatedDate = DateTime.UtcNow;
+            newUser.CreatedDateUtc = DateTime.UtcNow;
 
             newUser.ConnectionId = connectionId;
             newUser.ChatRoomId = chatRoomId;

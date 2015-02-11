@@ -60,7 +60,7 @@ namespace PandoLogic.Controllers
         private void ApplyToProperties(Company company)
         {
             this.Avatar = company.Avatar;
-            this.FoundedDate = company.FoundedDate;
+            this.FoundedDateUtc = company.FoundedDateUtc;
             this.Id = company.Id;
             this.Industry = company.Industry;
             this.Name = company.Name;
@@ -121,11 +121,11 @@ namespace PandoLogic.Controllers
 
             if (company.HasFoundedDate())
             {
-                origCompany.FoundedDate = company.ParsedDateTime();
+                origCompany.FoundedDateUtc = company.ParsedDateTime();
             }
             else
             {
-                origCompany.FoundedDate = null;
+                origCompany.FoundedDateUtc = null;
             }
 
             // Check for avatar upload

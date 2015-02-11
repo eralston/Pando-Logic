@@ -52,20 +52,20 @@
                                 </a>
                             </td>
                             <td>
-                                @if (goal.ArchiveDate.HasValue)
+                                @if (goal.ArchiveDateUtc.HasValue)
                                 {
-                                    <span>Archived on @goal.ArchiveDate.Value.ToString("d")</span>
+                                    <span>Archived on @goal.ArchiveDateUtc.Value.ToString("d")</span>
                                 }
                                 else
                                 {
-                                    if (goal.DueDate < now)
+                                    if (goal.DueDateUtc < now)
                                     {
                                         <i class="fa fa-warning" title="This task is overdue"></i>
                                     }
 
-                                    if (goal.DueDate.HasValue)
+                                    if (goal.DueDateUtc.HasValue)
                                     {
-                                        <span>@goal.DueDate.Value.ToString("d")</span>
+                                        <span>@goal.DueDateUtc.Value.ToString("d")</span>
                                     }
                                     else
                                     {
@@ -73,8 +73,6 @@
                                     }
                                 }
                             </td>
-
-
 
                             <td>
                                 <div class="progress sm active bg-red">

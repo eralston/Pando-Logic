@@ -35,7 +35,7 @@ namespace PandoLogic.Controllers
 
             if (ViewBag.UserMember != null)
             {
-                ViewBag.AssignedTasks = await Db.WorkItems.WhereAssignedUserAndCompany(UserCache.Id, member.CompanyId).Where(t => t.CompletedDate == null).ToArrayAsync();
+                ViewBag.AssignedTasks = await Db.WorkItems.WhereAssignedUserAndCompany(UserCache.Id, member.CompanyId).Where(t => t.CompletedDateUtc == null).ToArrayAsync();
             }
 
             return View(applicationUser);

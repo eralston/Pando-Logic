@@ -33,7 +33,7 @@ namespace PandoLogic.Models
         /// The member with 
         /// NOTE: In practice, this is secondary to the user's session information
         /// </summary>
-        public DateTime? LastSelectedDate { get; set; }
+        public DateTime? LastSelectedDateUtc { get; set; }
 
         /// <summary>
         /// Sets the last selected date for this member record
@@ -41,7 +41,7 @@ namespace PandoLogic.Models
         /// </summary>
         public void SetSelected()
         {
-            LastSelectedDate = DateTime.UtcNow;
+            LastSelectedDateUtc = DateTime.UtcNow;
         }
     }
 
@@ -51,10 +51,10 @@ namespace PandoLogic.Models
         {
             Member member = new Member();
 
-            member.CreatedDate = DateTime.UtcNow;
+            member.CreatedDateUtc = DateTime.UtcNow;
             member.Company = company;
             member.User = user;
-            member.LastSelectedDate = member.CreatedDate;
+            member.LastSelectedDateUtc = member.CreatedDateUtc;
 
             members.Add(member);
 
@@ -70,7 +70,7 @@ namespace PandoLogic.Models
         public static IQueryable<Member> FindSelectedForUser(this DbSet<Member> members, string userId)
         {
             // Find all members for the current user
-            var userMembers = members.WhererUserIsMember(userId).OrderByDescending(m => m.LastSelectedDate).Include(m => m.Company);
+            var userMembers = members.WhererUserIsMember(userId).OrderByDescending(m => m.LastSelectedDateUtc).Include(m => m.Company);
             return userMembers;
         }
 

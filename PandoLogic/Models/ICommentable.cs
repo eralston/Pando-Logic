@@ -25,7 +25,7 @@ namespace PandoLogic.Models
         {
             if(commentable.Comments != null)
             {
-                controller.ViewBag.Comments = commentable.Comments.OrderByDescending(c => c.CreatedDate);
+                controller.ViewBag.Comments = commentable.Comments.OrderByDescending(c => c.CreatedDateUtc);
             }
             else
             {

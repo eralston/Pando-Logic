@@ -22,7 +22,7 @@ namespace PandoLogic.Models
     public class Address : BaseModel
     {
         [Display(Name = "Updated Date")]
-        public DateTime? LastUpdate { get; set; }
+        public DateTime? LastUpdateUtc { get; set; }
 
         [Required]
         [Display(Name = "Address")]

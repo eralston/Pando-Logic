@@ -42,7 +42,7 @@ namespace PandoLogic.Models
         public static CloudFile Create(this DbSet<CloudFile> files, string containerName, string blobName, string url, string displayName = "")
         {
             CloudFile file = new CloudFile();
-            file.CreatedDate = DateTime.UtcNow;
+            file.CreatedDateUtc = DateTime.UtcNow;
 
             file.Url = url;
             file.DisplayName = displayName;

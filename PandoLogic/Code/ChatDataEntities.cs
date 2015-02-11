@@ -22,7 +22,7 @@ namespace PandoLogic
         {
             this.Message = message.Message;
             this.Type = message.Type;
-            this.PostDateUTC = message.PostDateUTC;
+            this.PostDateUTC = message.CreatedDateUtc;
             this.UserId = message.UserId;
             this.ChatRoomId = roomId;
         }
@@ -75,8 +75,9 @@ namespace PandoLogic
 
             // One row per chat message
             // These are intrinsic to creating the message
-            this.RowKey = string.Format("{0:D19}", DateTime.MaxValue.Ticks - DateTime.UtcNow.Ticks);
-            this.PostDateUTC = DateTime.UtcNow;
+            // this.RowKey = string.Format("{0:D19}", DateTime.MaxValue.Ticks - DateTime.UtcNow.Ticks);
+            this.RowKey = string.Format("{0:D19}", DateTime.UtcNow.Ticks);
+            this.CreatedDateUtc = DateTime.UtcNow;
 
             // The configurable fields for this record
             this.Type = type;
@@ -107,13 +108,13 @@ namespace PandoLogic
 
         public ChatMessageType Type { get; set; }
 
-        public DateTime PostDateUTC { get; set; }
+        public DateTime CreatedDateUtc { get; set; }
 
         public string Date
         {
             get
             {
-                return PostDateUTC.ToString();
+                return CreatedDateUtc.ToString();
             }
         }
 

@@ -38,11 +38,11 @@ namespace PandoLogic.Models
 
         [Display(Name = "Start Date")]
         [DataType(DataType.DateTime)]
-        public DateTime? StartDate { get; set; }
+        public DateTime? StartDateUtc { get; set; }
 
         [Display(Name = "Due Date")]
         [DataType(DataType.DateTime)]
-        public DateTime? DueDate { get; set; }
+        public DateTime? DueDateUtc { get; set; }
 
         [Required]
         public string Title { get; set; }
@@ -54,7 +54,7 @@ namespace PandoLogic.Models
         public float? EstimatedTime { get; set; }
 
         [Display(Name = "Completed Date")]
-        public DateTime? CompletedDate { get; set; }
+        public DateTime? CompletedDateUtc { get; set; }
 
         public bool IsTemplate { get; set; }
 
@@ -107,7 +107,7 @@ namespace PandoLogic.Models
         {
             WorkItem task = tasks.Create();
 
-            task.CreatedDate = DateTime.UtcNow;
+            task.CreatedDateUtc = DateTime.UtcNow;
             task.CreatorId = userId;
             task.CompanyId = companyId;
 

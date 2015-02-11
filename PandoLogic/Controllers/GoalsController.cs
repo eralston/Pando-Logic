@@ -29,8 +29,8 @@ namespace PandoLogic.Controllers
             this.Description = goal.Description;
             this.Color = goal.Color;
             this.Icon = goal.Icon;
-            if (goal.DueDate.HasValue)
-                this.DueDateString = goal.DueDate.Value.ToString("d");
+            if (goal.DueDateUtc.HasValue)
+                this.DueDateString = goal.DueDateUtc.Value.ToString("d");
         }
 
         [Display(Name = "Due Date")]
@@ -55,11 +55,11 @@ namespace PandoLogic.Controllers
 
         private async Task ApplyGoalToViewBag(Goal goal, bool limited = true)
         {
-            IQueryable<WorkItem> query = Db.WorkItems.WhereGoal(goal.Id).OrderBy(t => t.DueDate);
+            IQueryable<WorkItem> query = Db.WorkItems.WhereGoal(goal.Id).OrderBy(t => t.DueDateUtc);
 
             if (limited)
             {
-                query = query.Take(5).Where(w => w.CompletedDate == null);
+                query = query.Take(5).Where(w => w.CompletedDateUtc == null);
             }
 
             ViewBag.Tasks = await query.ToArrayAsync();
@@ -76,7 +76,7 @@ namespace PandoLogic.Controllers
 
         private IQueryable<Goal> BuildGoalQuery(bool limited, Member currentMember)
         {
-            IQueryable<Goal> query = Db.Goals.WhereMember(currentMember).OrderBy(g => g.DueDate).Include(g => g.WorkItems);
+            IQueryable<Goal> query = Db.Goals.WhereMember(currentMember).OrderBy(g => g.DueDateUtc).Include(g => g.WorkItems);
 
             if (limited)
             {
@@ -98,7 +98,7 @@ namespace PandoLogic.Controllers
             }
 
             IQueryable<Goal> query = BuildGoalQuery(limited, currentMember);
-            query = query.Where(g => g.ArchiveDate == null);
+            query = query.Where(g => g.ArchiveDateUtc == null);
             var goals = query.ToArray();
             return goals;
         }
@@ -118,7 +118,7 @@ namespace PandoLogic.Controllers
 
             if (!showAll)
             {
-                query = query.Where(g => g.ArchiveDate == null);
+                query = query.Where(g => g.ArchiveDateUtc == null);
                 ViewBag.GoalBoxShowAll = true;
                 ViewBag.GoalBoxShowAllUrl = Url.Action("Index", new { ShowAll = true });
                 ViewBag.GoalBoxShowAllTitle = "Show Archived";
@@ -192,12 +192,12 @@ namespace PandoLogic.Controllers
                 Member currentMember = await GetCurrentMemberAsync();
 
                 if (goalViewModel.HasDueDate())
-                    goal.DueDate = goalViewModel.ParsedDueDateTime();
+                    goal.DueDateUtc = goalViewModel.ParsedDueDateTime();
 
                 goal.Title = goalViewModel.Title;
                 goal.Description = goalViewModel.Description;
 
-                goal.CreatedDate = DateTime.UtcNow;
+                goal.CreatedDateUtc = DateTime.UtcNow;
                 goal.CompanyId = currentMember.CompanyId;
                 goal.CreatorId = currentMember.UserId;
 
@@ -255,7 +255,7 @@ namespace PandoLogic.Controllers
                 Goal goal = await Db.Goals.FindAsync(goalViewModel.Id);
 
                 if (goalViewModel.HasDueDate())
-                    goal.DueDate = goalViewModel.ParsedDueDateTime();
+                    goal.DueDateUtc = goalViewModel.ParsedDueDateTime();
 
                 goal.Title = goalViewModel.Title;
                 goal.Description = goalViewModel.Description;

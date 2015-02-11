@@ -57,7 +57,7 @@ namespace PandoLogic.Models
         {
             Subscription newSub = new Subscription();
 
-            newSub.CreatedDate = DateTime.UtcNow;
+            newSub.CreatedDateUtc = DateTime.UtcNow;
 
             newSub.Company = company;
             newSub.User = user;

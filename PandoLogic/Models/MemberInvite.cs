@@ -17,7 +17,7 @@ namespace PandoLogic.Models
     public class MemberInvite : BaseModel
     {
         [Display(Name = "Fulfilled Date")]
-        public DateTime? FulfilledDate { get; set; }
+        public DateTime? FulfilledDateUtc { get; set; }
 
         // To-One on Company
         [ForeignKey("Company")]
@@ -47,7 +47,7 @@ namespace PandoLogic.Models
         {
             MemberInvite invite = new MemberInvite();
 
-            invite.CreatedDate = DateTime.UtcNow;
+            invite.CreatedDateUtc = DateTime.UtcNow;
             invite.CompanyId = companyId;
             invite.Email = email;
 

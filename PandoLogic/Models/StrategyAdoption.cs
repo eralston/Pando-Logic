@@ -37,7 +37,7 @@ namespace PandoLogic.Models
         {
             StrategyAdoption adoption = adoptions.Create();
 
-            adoption.CreatedDate = DateTime.UtcNow;
+            adoption.CreatedDateUtc = DateTime.UtcNow;
 
             adoption.Strategy = strategy;
             adoption.UserId = userId;

@@ -87,8 +87,8 @@ namespace PandoLogic.Models
             newStrategyGoal.Goal = newGoalTemplate;
 
             // Set the fixed fields
-            newStrategyGoal.CreatedDate = DateTime.UtcNow;
-            newGoalTemplate.CreatedDate = newStrategyGoal.CreatedDate;
+            newStrategyGoal.CreatedDateUtc = DateTime.UtcNow;
+            newGoalTemplate.CreatedDateUtc = newStrategyGoal.CreatedDateUtc;
             newGoalTemplate.IsTemplate = true;
 
             // Map the existing goal into the new goal
@@ -215,8 +215,8 @@ namespace PandoLogic.Models
 
                 Goal newGoal = context.Goals.CreateFromTemplate(context.WorkItems, goal, companyId, userId);
 
-                newGoal.StartDate = goalStartDate;
-                newGoal.DueDate = goalDueDate;
+                newGoal.StartDateUtc = goalStartDate;
+                newGoal.DueDateUtc = goalDueDate;
 
                 adoption.Goals.Add(newGoal);
 
@@ -246,12 +246,12 @@ namespace PandoLogic.Models
     {
         public static IQueryable<Strategy> WhereMadeByUser(this DbSet<Strategy> strategies, string userId)
         {
-            return strategies.Where(s => s.AuthorId == userId && !s.IsDeleted).Include(s => s.Goals).OrderByDescending(s => s.CreatedDate);
+            return strategies.Where(s => s.AuthorId == userId && !s.IsDeleted).Include(s => s.Goals).OrderByDescending(s => s.CreatedDateUtc);
         }
 
         public static IQueryable<Strategy> WhereLatestFive(this DbSet<Strategy> strategies)
         {
-            return strategies.Where(s => !s.IsDeleted).Include(s => s.Author).OrderByDescending(s => s.CreatedDate).Take(5);
+            return strategies.Where(s => !s.IsDeleted).Include(s => s.Author).OrderByDescending(s => s.CreatedDateUtc).Take(5);
         }
 
         public static IQueryable<Strategy> SearchStrategies(this ApplicationDbContext context)

@@ -58,7 +58,7 @@ namespace PandoLogic.Controllers
                 StripeManager.CreatePlan(subscriptionPlan);
 
                 // Save to our database
-                subscriptionPlan.CreatedDate = DateTime.UtcNow;
+                subscriptionPlan.CreatedDateUtc = DateTime.UtcNow;
                 Db.SubscriptionPlans.Add(subscriptionPlan);
                 await Db.SaveChangesAsync();
 

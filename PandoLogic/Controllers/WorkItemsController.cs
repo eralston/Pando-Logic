@@ -26,8 +26,8 @@ namespace PandoLogic.Controllers
             this.Id = workItem.Id;
             this.Title = workItem.Title;
             this.Description = workItem.Description;
-            if (workItem.DueDate.HasValue)
-                this.DueDateString = workItem.DueDate.Value.ToString("d");
+            if (workItem.DueDateUtc.HasValue)
+                this.DueDateString = workItem.DueDateUtc.Value.ToString("d");
         }
 
         [Display(Name = "Due Date")]
@@ -86,12 +86,12 @@ namespace PandoLogic.Controllers
                     return RedirectToAction("Index");
 
                 ViewBag.GoalId = id;
-                query = Db.WorkItems.WhereGoal(id.Value).OrderBy(w => w.DueDate);
+                query = Db.WorkItems.WhereGoal(id.Value).OrderBy(w => w.DueDateUtc);
             }
             else
             {
                 int companyId = UserCache.SelectedCompanyId;
-                query = Db.WorkItems.WhereCompany(companyId).OrderBy(w => w.DueDate);
+                query = Db.WorkItems.WhereCompany(companyId).OrderBy(w => w.DueDateUtc);
             }
 
             // filter on querystring logic 
@@ -99,7 +99,7 @@ namespace PandoLogic.Controllers
 
             if (!showAll)
             {
-                query = query.Where(w => w.CompletedDate == null);
+                query = query.Where(w => w.CompletedDateUtc == null);
                 ViewBag.TaskBoxShowAll = true;
                 ViewBag.TaskBoxShowAllUrl = Url.Action("Index", new { ShowAll = true });
                 ViewBag.TaskBoxShowAllTitle = "Show Completed";
@@ -167,7 +167,7 @@ namespace PandoLogic.Controllers
         public async Task<ActionResult> Complete(int id)
         {
             WorkItem workItem = await Db.WorkItems.FindAsync(id);
-            workItem.CompletedDate = DateTime.UtcNow;
+            workItem.CompletedDateUtc = DateTime.UtcNow;
 
             Member currentMember = await GetCurrentMemberAsync();
 
@@ -188,7 +188,7 @@ namespace PandoLogic.Controllers
         public async Task<ActionResult> Uncomplete(int id)
         {
             WorkItem workItem = await Db.WorkItems.FindAsync(id);
-            workItem.CompletedDate = null;
+            workItem.CompletedDateUtc = null;
 
             Member currentMember = await GetCurrentMemberAsync();
 
@@ -219,18 +219,18 @@ namespace PandoLogic.Controllers
 
                 Member currentMember = await GetCurrentMemberAsync();
 
-                workItem.CreatedDate = DateTime.UtcNow;
+                workItem.CreatedDateUtc = DateTime.UtcNow;
                 workItem.CompanyId = currentMember.CompanyId;
                 workItem.CreatorId = currentMember.UserId;
 
-                workItem.CompletedDate = null;
+                workItem.CompletedDateUtc = null;
                 workItem.Title = workItemViewModel.Title;
                 workItem.Description = workItemViewModel.Description;
                 workItem.AssigneeId = workItemViewModel.AssigneeId;
                 workItem.EstimatedTime = workItemViewModel.EstimatedTime;
 
                 if (workItemViewModel.HasDueDate())
-                    workItem.DueDate = workItemViewModel.ParsedDueDateTime();
+                    workItem.DueDateUtc = workItemViewModel.ParsedDueDateTime();
 
                 if (id.HasValue)
                 {
@@ -306,7 +306,7 @@ namespace PandoLogic.Controllers
                 workItem.EstimatedTime = workItemViewModel.EstimatedTime;
 
                 if(workItemViewModel.HasDueDate())
-                    workItem.DueDate = workItemViewModel.ParsedDueDateTime();                
+                    workItem.DueDateUtc = workItemViewModel.ParsedDueDateTime();                
 
                 Db.Entry(workItem).State = EntityState.Modified;
                 await Db.SaveChangesAsync();
@@ -372,7 +372,7 @@ namespace PandoLogic.Controllers
         public ActionResult Widget()
         {
             ApplicationUser user = GetCurrentUser();
-            WorkItem[] workItems = Db.WorkItems.WhereAssignedUser(user.Id).Where(w => w.CompletedDate == null).OrderBy(w => w.DueDate).Take(5).ToArray();
+            WorkItem[] workItems = Db.WorkItems.WhereAssignedUser(user.Id).Where(w => w.CompletedDateUtc == null).OrderBy(w => w.DueDateUtc).Take(5).ToArray();
 
             ViewBag.TaskBoxShowAll = true;
             ViewBag.TaskBoxShowAllUrl = Url.Action("Index");

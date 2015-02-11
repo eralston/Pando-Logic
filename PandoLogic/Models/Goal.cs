@@ -51,13 +51,21 @@ namespace PandoLogic.Models
         public int? CompanyId { get; set; }
         public virtual Company Company { get; set; }
 
+        /// <summary>
+        /// Gets or sets the start date for a goal
+        /// NOTE: This should be translated to UTC from localized user input
+        /// </summary>
         [Display(Name = "Start Date")]
         [DataType(DataType.DateTime)]
-        public DateTime? StartDate { get; set; }
+        public DateTime? StartDateUtc { get; set; }
 
+        /// <summary>
+        /// Gets or sets the targeted completion datetime for a goal
+        /// NOTE: This should be translated to UTC from localized user input
+        /// </summary>
         [Display(Name = "Due Date")]
         [DataType(DataType.DateTime)]
-        public DateTime? DueDate { get; set; }
+        public DateTime? DueDateUtc { get; set; }
 
         [Required]
         public string Title { get; set; }
@@ -72,7 +80,7 @@ namespace PandoLogic.Models
         public virtual ICollection<Activity> Comments { get; set; }
 
         [Display(Name = "Archive Date")]
-        public DateTime? ArchiveDate { get; set; }
+        public DateTime? ArchiveDateUtc { get; set; }
 
         public bool IsTemplate { get; set; }
 
@@ -160,7 +168,7 @@ namespace PandoLogic.Models
                 return _progress;
             }
 
-            if (this.ArchiveDate.HasValue)
+            if (this.ArchiveDateUtc.HasValue)
             {
                 _progress = "100";
                 return _progress;
@@ -188,7 +196,7 @@ namespace PandoLogic.Models
             int complete = 0;
             foreach (WorkItem item in this.WorkItems)
             {
-                if (item.CompletedDate.HasValue)
+                if (item.CompletedDateUtc.HasValue)
                     ++complete;
             }
             return complete;
@@ -201,13 +209,13 @@ namespace PandoLogic.Models
         {
             DateTime archiveDate = DateTime.UtcNow;
 
-            ArchiveDate = archiveDate;
+            ArchiveDateUtc = archiveDate;
 
             foreach (WorkItem task in WorkItems)
             {
-                if (!task.CompletedDate.HasValue)
+                if (!task.CompletedDateUtc.HasValue)
                 {
-                    task.CompletedDate = archiveDate;
+                    task.CompletedDateUtc = archiveDate;
                 }
             }
         }
@@ -217,18 +225,18 @@ namespace PandoLogic.Models
         /// </summary>
         public void UndoArchive()
         {
-            DateTime? archiveDate = this.ArchiveDate;
+            DateTime? archiveDate = this.ArchiveDateUtc;
 
             if (!archiveDate.HasValue)
                 return;
 
-            this.ArchiveDate = null;
+            this.ArchiveDateUtc = null;
 
             foreach (WorkItem task in WorkItems)
             {
-                if (task.CompletedDate.HasValue && task.CompletedDate.Value == archiveDate.Value)
+                if (task.CompletedDateUtc.HasValue && task.CompletedDateUtc.Value == archiveDate.Value)
                 {
-                    task.CompletedDate = null;
+                    task.CompletedDateUtc = null;
                 }
             }
         }
@@ -258,17 +266,17 @@ namespace PandoLogic.Models
         /// <returns></returns>
         public static IQueryable<Goal> WhereActiveGoalForCompany(this DbSet<Goal> goals, int companyId)
         {
-            return goals.Where(g => g.ArchiveDate == null && g.IsTemplate == false && g.CompanyId == companyId)
+            return goals.Where(g => g.ArchiveDateUtc == null && g.IsTemplate == false && g.CompanyId == companyId)
                 .Include(g => g.WorkItems)
-                .OrderBy(g => g.DueDate);
+                .OrderBy(g => g.DueDateUtc);
         }
 
         public static Goal Create(this DbSet<Goal> goals, int companyId, string userId)
         {
             Goal goal = goals.Create();
 
-            goal.CreatedDate = DateTime.UtcNow;
-            goal.StartDate = goal.CreatedDate;
+            goal.CreatedDateUtc = DateTime.UtcNow;
+            goal.StartDateUtc = goal.CreatedDateUtc;
             goal.CompanyId = companyId;
             goal.CreatorId = userId;
 

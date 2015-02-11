@@ -54,7 +54,7 @@ namespace PandoLogic.Controllers
         {
             if (ModelState.IsValid)
             {
-                subscription.CreatedDate = DateTime.UtcNow;
+                subscription.CreatedDateUtc = DateTime.UtcNow;
 
                 Db.Subscriptions.Add(subscription);
                 await Db.SaveChangesAsync();

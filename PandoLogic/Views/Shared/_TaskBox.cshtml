@@ -35,7 +35,7 @@
 
                     @foreach (WorkItem item in Model)
                     {
-                        bool isDone = item.CompletedDate.HasValue;
+                        bool isDone = item.CompletedDateUtc.HasValue;
                         string rowClass = isDone ? "done" : "";
                         <tr class="@rowClass">
                             <td>
@@ -54,13 +54,13 @@
                                 </a>
                             </td>
                             <td>
-                                @if (item.DueDate < now)
+                                @if (item.DueDateUtc < now)
                                 {
                                     <i class="fa fa-warning" title="This task is overdue"></i>
                                 }
-                                @if (item.DueDate.HasValue)
+                                @if (item.DueDateUtc.HasValue)
                                 {
-                                    <span>@item.DueDate.Value.ToString("d")</span>
+                                    <span>@item.DueDateUtc.Value.ToString("d")</span>
                                 }
                                 else
                                 {

@@ -31,7 +31,7 @@
                             <i class="fa fa-trash-o"></i>
                             Delete
                         </a>
-                        if (!Model.ArchiveDate.HasValue)
+                        if (!Model.ArchiveDateUtc.HasValue)
                         {
                             <a class="btn btn-default btn-flat btn-sm" href="@Url.Action("Archive", new { id = Model.Id })">
                                 <i class="fa fa-archive"></i>

@@ -32,7 +32,7 @@ namespace PandoLogic.Models
         {
             StrategyBookmark bookmark = bookmarks.Create();
 
-            bookmark.CreatedDate = DateTime.UtcNow;
+            bookmark.CreatedDateUtc = DateTime.UtcNow;
             bookmark.UserId = userId;
             bookmark.StrategyId = strategyId;
 
@@ -56,7 +56,7 @@ namespace PandoLogic.Models
 
         public static IQueryable<StrategyBookmark> WhereUser(this DbSet<StrategyBookmark> bookmarks, string userId)
         {
-            return bookmarks.Where(b => b.UserId == userId && !b.Strategy.IsDeleted).Include(b => b.Strategy).OrderBy(b => b.CreatedDate);
+            return bookmarks.Where(b => b.UserId == userId && !b.Strategy.IsDeleted).Include(b => b.Strategy).OrderBy(b => b.CreatedDateUtc);
         }
 
         public static async Task<IEnumerable<Strategy>> StrategiesWhereBookmarkedByUserAsync(this DbSet<StrategyBookmark> bookmarks, string userId)

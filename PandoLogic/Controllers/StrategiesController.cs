@@ -189,7 +189,7 @@ namespace PandoLogic.Controllers
                 ApplicationUser user = await GetCurrentUserAsync();
 
                 Strategy strategy = Db.Strategies.Create();
-                strategy.CreatedDate = DateTime.UtcNow;
+                strategy.CreatedDateUtc = DateTime.UtcNow;
                 strategy.AuthorId = user.Id;
 
                 strategy.Title = strategyViewModel.Title;
@@ -248,7 +248,7 @@ namespace PandoLogic.Controllers
                     task.Title = taskViewModel.Title;
                     task.Description = taskViewModel.Description;
                     task.IsTemplate = true;
-                    task.CreatedDate = DateTime.UtcNow;
+                    task.CreatedDateUtc = DateTime.UtcNow;
                     task.CreatorId = user.Id;
                     goal.WorkItems.Add(task);
                 }
@@ -432,7 +432,7 @@ namespace PandoLogic.Controllers
 
                 default:
                     ViewBag.SortOrder = "Created Date";
-                    query = query.OrderByDescending(s => s.CreatedDate);
+                    query = query.OrderByDescending(s => s.CreatedDateUtc);
                     break;
             }
 

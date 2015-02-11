@@ -49,7 +49,7 @@ namespace PandoLogic.Controllers
         {
             if (ModelState.IsValid)
             {
-                industry.CreatedDate = DateTime.UtcNow;
+                industry.CreatedDateUtc = DateTime.UtcNow;
                 Db.Industries.Add(industry);
                 await Db.SaveChangesAsync();
                 return RedirectToAction("Index");

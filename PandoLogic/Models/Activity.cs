@@ -131,7 +131,7 @@ namespace PandoLogic.Models
         {
             Activity activity = activities.Create();
 
-            activity.CreatedDate = DateTime.UtcNow;
+            activity.CreatedDateUtc = DateTime.UtcNow;
             activity.AuthorId = authorUserId;
             activity.Company = null;
             activity.Title = title;
@@ -145,7 +145,7 @@ namespace PandoLogic.Models
         {
             Activity activity = activities.Create();
 
-            activity.CreatedDate = DateTime.UtcNow;
+            activity.CreatedDateUtc = DateTime.UtcNow;
             activity.AuthorId = authorUserId;
             activity.Company = company;
             activity.Title = title;
@@ -162,7 +162,7 @@ namespace PandoLogic.Models
                         .Include(a => a.Company)
                         .Where(a => a.CompanyId == companyId || a.AuthorId == authorId)
                         .Where(a => a.Company.IsSoftDeleted == false)
-                        .OrderByDescending(a => a.CreatedDate);
+                        .OrderByDescending(a => a.CreatedDateUtc);
         }
     }
 }

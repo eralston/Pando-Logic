@@ -88,8 +88,8 @@ namespace PandoLogic.Controllers
             if (ModelState.IsValid)
             {
                 Address add = new Address();
-                add.CreatedDate = DateTime.UtcNow;
-                add.LastUpdate = DateTime.UtcNow;
+                add.CreatedDateUtc = DateTime.UtcNow;
+                add.LastUpdateUtc = DateTime.UtcNow;
 
                 add.Address1 = address.Address1;
                 add.Address2 = address.Address2;

@@ -17,10 +17,10 @@
                 <a href="@Url.Action("Details", "Goals", new { id = goal.Id })">
                     <div class="small-box @goal.ColorClass">
                         <div class="inner">
-                            @if (goal.DueDate.HasValue)
+                            @if (goal.DueDateUtc.HasValue)
                             {
                                 <p class="pull-right">
-                                    @goal.DueDate.Value.ToString("d")
+                                    @goal.DueDateUtc.Value.ToString("d")
                                 </p>
                             }
                             <h3>

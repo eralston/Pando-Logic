@@ -21,6 +21,6 @@ namespace PandoLogic.Models
 
         [Display(Name = "Created Date")]
         [DataType(DataType.DateTime)]
-        public DateTime? CreatedDate { get; set; }
+        public DateTime? CreatedDateUtc { get; set; }
     }
 }

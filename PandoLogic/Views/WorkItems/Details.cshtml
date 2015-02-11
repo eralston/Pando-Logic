@@ -100,11 +100,11 @@
                     }
 
                     <dt>
-                        @Html.DisplayNameFor(model => model.CreatedDate)
+                        @Html.DisplayNameFor(model => model.CreatedDateUtc)
                     </dt>
 
                     <dd>
-                        @Html.DisplayFor(model => model.CreatedDate)
+                        @Html.DisplayFor(model => model.CreatedDateUtc)
                     </dd>
 
                     @if (Model.EstimatedTime.HasValue)
@@ -119,11 +119,11 @@
                     }
 
                     <dt>
-                        @Html.DisplayNameFor(model => model.DueDate)
+                        @Html.DisplayNameFor(model => model.DueDateUtc)
                     </dt>
 
                     <dd>
-                        @Html.DisplayFor(model => model.DueDate)
+                        @Html.DisplayFor(model => model.DueDateUtc)
                     </dd>
                 </dl>
             </div>

@@ -49,9 +49,13 @@ namespace PandoLogic.Models
         [Display(Name = "Postal Code")]
         public string ZipCode { get; set; }
 
+        /// <summary>
+        /// Gets or sets the founding date for this entity
+        /// NOTE: This should be translated from the user's local time then stored in UTC
+        /// </summary>
         [Display(Name = "Founded Date")]
         [DataType(DataType.DateTime)]
-        public DateTime? FoundedDate { get; set; }
+        public DateTime? FoundedDateUtc { get; set; }
 
         [DefaultValue(false)]
         public bool IsSoftDeleted { get; set; }
@@ -63,7 +67,7 @@ namespace PandoLogic.Models
         {
             Company company = new Company();
 
-            company.CreatedDate = DateTime.UtcNow;
+            company.CreatedDateUtc = DateTime.UtcNow;
             company.Creator = creatorUser;
 
             companies.Add(company);

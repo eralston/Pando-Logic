@@ -16,9 +16,9 @@
 
             @foreach (Activity activity in Model)
             {
-                if (!currentDateTime.HasValue || currentDateTime.Value.Date != activity.CreatedDate.Value.Date)
+                if (!currentDateTime.HasValue || currentDateTime.Value.Date != activity.CreatedDateUtc.Value.Date)
                 {
-                    currentDateTime = activity.CreatedDate;
+                    currentDateTime = activity.CreatedDateUtc;
                     <li class="time-label">
                         <span class="bg-aqua">
                             @if (currentDateTime.Value.Date == today.Date)
@@ -66,7 +66,7 @@
 
                             @Html.ActionLink(activity.Author.FirstName, "Details", "Users", new { id = activity.Author.Id }, null)
                             <i class="fa fa-clock-o"></i>
-                            @activity.CreatedDate.Value.ToString("t")
+                            @activity.CreatedDateUtc.Value.ToString("t")
                         </span>
 
                         @if (ViewBag.ShowActivityTitle != null && ViewBag.ShowActivityTitle == true)

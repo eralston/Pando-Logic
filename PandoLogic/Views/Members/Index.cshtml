@@ -24,7 +24,7 @@
                 @Html.DisplayNameFor(model => model.User.FirstName)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.CreatedDate)
+                @Html.DisplayNameFor(model => model.CreatedDateUtc)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.JobTitle)
@@ -44,13 +44,13 @@
                 @Html.DisplayFor(modelItem => item.User.FirstName)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.CreatedDate)
+                @Html.DisplayFor(modelItem => item.CreatedDateUtc)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.JobTitle)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.LastSelectedDate)
+                @Html.DisplayFor(modelItem => item.LastSelectedDateUtc)
             </td>
             <td>
                 @Html.ActionLink("Edit", "Edit", new { id=item.Id }) |
