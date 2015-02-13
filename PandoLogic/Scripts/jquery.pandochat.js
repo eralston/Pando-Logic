@@ -1,6 +1,6 @@
 ﻿///
 /// jqury.pandochat.js
-/// A jQuery plug-in for SignalR-based chat originally built for Pando Logic
+/// A jQuery plug-in for SignalR-based chat originally built for BizSprout
 /// This depends on the SignalR scripts for the chat hub
 /// This also depends on the slimscroll plug-in
 ///

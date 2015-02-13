@@ -11,7 +11,7 @@ using Microsoft.WindowsAzure.Storage.Blob;
 namespace PandoLogic
 {
     /// <summary>
-    /// Storage manager for Pando Logic containers
+    /// Storage manager for 
     /// </summary>
     public class PandoStorageManager : BlobStorageManager
     {

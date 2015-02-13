@@ -23,7 +23,7 @@ namespace PandoLogic.Controllers
         }
 
         /// <summary>
-        /// Called when a user verifies their e-mail address, confirming their Pando Logic account
+        /// Called when a user verifies their e-mail address, confirming their BizSprout account
         /// </summary>
         /// <returns></returns>
         [InviteOnly]
@@ -48,7 +48,7 @@ namespace PandoLogic.Controllers
         }
 
         /// <summary>
-        /// The page for accepting or declining an invitation to a team on pando logic
+        /// The page for accepting or declining an invitation to a team on BizSprout
         /// </summary>
         /// <returns></returns>
         [InviteOnly]

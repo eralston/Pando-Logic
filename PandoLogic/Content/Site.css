@@ -33,13 +33,13 @@
 
     font-size: 20px !important;
     font-family: 'Varela Round', sans-serif;
-    text-transform: uppercase;
+    text-transform: none !important;
 }
 
 .centered-logo {
     font-size: 3em !important;
     font-family: 'Varela Round', sans-serif;
-    text-transform: uppercase;
+    text-transform: none;
     text-align: center;
     color: lightgray;
 }

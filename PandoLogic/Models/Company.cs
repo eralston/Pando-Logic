@@ -11,7 +11,7 @@ using System.Web.Security;
 namespace PandoLogic.Models
 {
     /// <summary>
-    /// An organization using Pando Logic to track its progress
+    /// An organization using BizSprout to track its progress
     /// </summary>
     public class Company : BaseModel
     {

@@ -36,7 +36,7 @@
                 <div class="box-body">
 
                     <p class="text-muted">
-                        You are invited to join the company @Model.Company.Name on Pando Logic.
+                        You are invited to join the company @Model.Company.Name on BizSprout.
                     </p>
                     <div class="form-actions no-color">
                         @using (Html.BeginForm("AcceptInvite", "Home", FormMethod.Post, new { style = "display:inline" }))
@@ -69,7 +69,7 @@ else
         {
             <div class="body bg-gray">
                 <p class="text-muted">
-                    You are invited to join the company @Model.Company.Name on Pando Logic. Please login or register to accept this invite.
+                    You are invited to join the company @Model.Company.Name on BizSprout. Please login or register to accept this invite.
                 </p>
                 @Html.AntiForgeryToken()
                 @Html.ValidationSummary(true, "", new { @class = "text-danger" })
