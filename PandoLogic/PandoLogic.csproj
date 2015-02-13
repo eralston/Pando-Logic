@@ -213,7 +213,7 @@
     <Compile Include="Code\Breadcrumb.cs" />
     <Compile Include="Code\ChatDataEntities.cs" />
     <Compile Include="Code\ObjectExtensions.cs" />
-    <Compile Include="Code\StorageManager.cs" />
+    <Compile Include="Code\BaseStorageManager.cs" />
     <Compile Include="Code\StripeManager.cs" />
     <Compile Include="Code\TableStorageManager.cs" />
     <Compile Include="Code\Validation\ConditionalRequiredAttribute.cs" />

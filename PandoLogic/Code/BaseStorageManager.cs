@@ -12,7 +12,7 @@ namespace PandoLogic
     /// A base class for managing azure storage (blob or table)
     /// This implements controlling the connection string and loading it from the app settings
     /// </summary>
-    public class StorageManager
+    public abstract class BaseStorageManager
     {
         #region Static Properties
 

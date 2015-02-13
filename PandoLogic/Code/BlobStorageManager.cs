@@ -73,7 +73,7 @@ namespace PandoLogic
     /// A class for centralizing logic for accessing Azure storage, including reading the connection string and managing the account
     /// Child classes implement mapping of specific containers
     /// </summary>
-    public abstract class BlobStorageManager : StorageManager
+    public abstract class BlobStorageManager : BaseStorageManager
     {
         #region Methods
 

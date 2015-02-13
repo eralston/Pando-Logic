@@ -23,6 +23,8 @@ namespace PandoLogic
         /// <returns></returns>
         public static Task<TableResult> InsertEntityAsync(this CloudTable table, TableEntity entity)
         {
+            System.Diagnostics.Trace.TraceInformation("Inserting entity into azure table '{0}' with partition '{1}' and row '{2}'", table.Name, entity.PartitionKey, entity.RowKey);
+
             // Create the TableOperation that inserts the customer entity.
             TableOperation insertOperation = TableOperation.Insert(entity);
 
@@ -38,6 +40,8 @@ namespace PandoLogic
         /// <returns></returns>
         public static Task<TableResult> InsertOrReplaceEntityAsync(this CloudTable table, TableEntity entity)
         {
+            System.Diagnostics.Trace.TraceInformation("Inserting or replacing entity into azure table '{0}' with partition '{1}' and row '{2}'", table.Name, entity.PartitionKey, entity.RowKey);
+
             // Create the InsertOrReplace TableOperation
             TableOperation insertOrReplaceOperation = TableOperation.InsertOrReplace(entity);
 
@@ -56,6 +60,8 @@ namespace PandoLogic
         /// <returns></returns>
         public static async Task<EntityType> RetrieveEntityAsync<EntityType>(this CloudTable table, string partition, string rowKey) where EntityType : TableEntity
         {
+            System.Diagnostics.Trace.TraceInformation("Asynchronously retrieving entity from azure table '{0}' with partition '{1}' and row '{2}'", table.Name, partition, rowKey);
+
             // Setup the retrieve
             TableOperation retrieveOperation = TableOperation.Retrieve<EntityType>(partition, rowKey);
 
@@ -76,21 +82,9 @@ namespace PandoLogic
         /// <returns></returns>
         public static IEnumerable<EntityType> RetrieveAllEntitiesInPartitionAsync<EntityType>(this CloudTable table, string partitionId) where EntityType : TableEntity, new()
         {
+            System.Diagnostics.Trace.TraceInformation("Retrieving all entities from azure table '{0}' in partition '{1}'", table.Name, partitionId);
+
             TableQuery<EntityType> query = new TableQuery<EntityType>().Where(TableQuery.GenerateFilterCondition("PartitionKey", QueryComparisons.Equal, partitionId));
-
-            return table.ExecuteQuery(query);
-        }
-
-        /// <summary>
-        /// Retrieves all entities with the given rowkey, regardless of partition
-        /// </summary>
-        /// <typeparam name="EntityType"></typeparam>
-        /// <param name="table"></param>
-        /// <param name="rowKey"></param>
-        /// <returns></returns>
-        public static IEnumerable<EntityType> RetrieveEntitiesInAllPartitionWithRowKeyAsync<EntityType>(this CloudTable table, string rowKey) where EntityType : TableEntity, new()
-        {
-            TableQuery<EntityType> query = new TableQuery<EntityType>().Where(TableQuery.GenerateFilterCondition("RowKey", QueryComparisons.Equal, rowKey));
 
             return table.ExecuteQuery(query);
         }
@@ -103,6 +97,8 @@ namespace PandoLogic
         /// <returns></returns>
         public static Task<TableResult> DeleteEntityAsync(this CloudTable table, TableEntity entity)
         {
+            System.Diagnostics.Trace.TraceInformation("Asynchronously deleting entity from azure table '{0}' with partition '{1}' and row '{2}'", table.Name, entity.PartitionKey, entity.RowKey);
+
             // Create the Delete TableOperation
             TableOperation deleteOperation = TableOperation.Delete(entity);
 
@@ -118,6 +114,8 @@ namespace PandoLogic
         /// <returns></returns>
         public static TableResult DeleteEntity(this CloudTable table, TableEntity entity)
         {
+            System.Diagnostics.Trace.TraceInformation("Deleting entity from azure table '{0}' with partition '{1}' and row '{2}'", table.Name, entity.PartitionKey, entity.RowKey);
+
             // Create the Delete TableOperation
             TableOperation deleteOperation = TableOperation.Delete(entity);
 
@@ -130,7 +128,7 @@ namespace PandoLogic
     /// A helper class for managing Azure Table storage
     /// http://azure.microsoft.com/en-us/documentation/articles/storage-dotnet-how-to-use-tables/
     /// </summary>
-    public class TableStorageManager : StorageManager
+    public class TableStorageManager : BaseStorageManager
     {
         CloudTableClient _tableClient = null;
         /// <summary>
@@ -151,7 +149,7 @@ namespace PandoLogic
         /// <param name="tableName"></param>
         /// <returns></returns>
         protected CloudTable GetTableReference(string tableName)
-        {          
+        {
             // Get a reference to the table
             CloudTable table = TableClient.GetTableReference(tableName);
 
