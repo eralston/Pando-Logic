@@ -16,13 +16,16 @@ namespace PandoLogic
         System
     }
 
+    /// <summary>
+    /// ViewModel for sending down the vital data of a ChatMessageEntity down to the client
+    /// </summary>
     public class ChatMessageViewModel
     {
         public ChatMessageViewModel(ChatMessageEntity message, string roomId)
         {
             this.Message = message.Message;
             this.Type = message.Type;
-            this.PostDateUTC = message.CreatedDateUtc;
+            this.CreatedDateUtc = message.CreatedDateUtc;
             this.UserId = message.UserId;
             this.ChatRoomId = roomId;
         }
@@ -36,13 +39,13 @@ namespace PandoLogic
 
         public ChatMessageType Type { get; set; }
 
-        public DateTime PostDateUTC { get; set; }
+        public DateTime CreatedDateUtc { get; set; }
 
-        public string Date
+        public string CreatedDateString
         {
             get
             {
-                return PostDateUTC.ToString();
+                return CreatedDateUtc.ToString();
             }
         }
 
@@ -74,19 +77,21 @@ namespace PandoLogic
             this.PartitionKey = chatRoomId;
 
             // One row per chat message
-            // These are intrinsic to creating the message
-            // this.RowKey = string.Format("{0:D19}", DateTime.MaxValue.Ticks - DateTime.UtcNow.Ticks);
+            // This will cause them to sort ascending when queried back out
             this.RowKey = string.Format("{0:D19}", DateTime.UtcNow.Ticks);
+
+            // Created date is observed by the server and stored in UTC
             this.CreatedDateUtc = DateTime.UtcNow;
 
             // The configurable fields for this record
-            this.Type = type;
+            this.TypeId = (int)type;
             this.Message = message;
             this.UserId = userId;
         }
 
         /// <summary>
         /// Gets or sets the chat room ID for this message (this is the partition key)
+        /// NOTE: This is NOT persisted to table storage because it's just a remapping of PartitionKey
         /// </summary>
         [IgnoreProperty]
         public string ChatRoomId
@@ -106,19 +111,19 @@ namespace PandoLogic
         /// </summary>
         public string Message { get; set; }
 
-        public ChatMessageType Type { get; set; }
-
         public DateTime CreatedDateUtc { get; set; }
 
-        public string Date
+        public string UserId { get; set; }
+
+        public int TypeId { get; set; }
+
+        public ChatMessageType Type
         {
             get
             {
-                return CreatedDateUtc.ToString();
+                return (ChatMessageType)this.TypeId;
             }
         }
-
-        public string UserId { get; set; }
     }
 
     /// <summary>

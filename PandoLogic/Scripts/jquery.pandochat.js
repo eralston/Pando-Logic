@@ -43,6 +43,7 @@
         var userId = settings.userId;
 
         // One-time per page load setup
+        var systemMessageTemplate = _.template($("#system_chat_message_template").html());
         var messageTemplate = _.template($("#chat_message_template").html());
         var userTemplate = _.template($("#chat_user_template").html());
 
@@ -141,7 +142,17 @@
                         $user = $(user);
                         $chatUsers.append($user);
 
-                        userManager[user.Id] = data;
+                        userManager[data.Id] = data;
+                    }
+                },
+
+                // Creates an element for the given message
+                elementForMessage: function(message) {
+
+                    if (message.Type == 0) {
+                        return messageTemplate(message);
+                    } else {
+                        return systemMessageTemplate(message);
                     }
                 },
 
@@ -151,7 +162,7 @@
                     message = self.applyUserInfoToMessage(message);
 
                     // apply the message to the screen
-                    var msg = messageTemplate(message);
+                    var msg = self.elementForMessage(message);                    
                     var $msg = $(msg);
                     $chatMessages.append($msg);
                     $chatMessages.animate({ scrollTop: 99999999 }, "slow");
@@ -163,7 +174,7 @@
                     for (var index in history) {
                         var message = history[index];
                         message = self.applyUserInfoToMessage(message);
-                        var msg = messageTemplate(message);
+                        var msg = self.elementForMessage(message);
                         var $msg = $(msg);
                         $chatMessages.append($msg);
                     }
