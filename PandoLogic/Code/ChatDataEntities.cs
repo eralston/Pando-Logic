@@ -77,11 +77,8 @@ namespace PandoLogic
             this.PartitionKey = chatRoomId;
 
             // One row per chat message
-            // This will cause them to sort ascending when queried back out
+            // This will cause them to sort ascending by time when queried back out
             this.RowKey = string.Format("{0:D19}", DateTime.UtcNow.Ticks);
-
-            // Created date is observed by the server and stored in UTC
-            this.CreatedDateUtc = DateTime.UtcNow;
 
             // The configurable fields for this record
             this.TypeId = (int)type;
@@ -111,6 +108,10 @@ namespace PandoLogic
         /// </summary>
         public string Message { get; set; }
 
+        /// <summary>
+        /// The UTC datetime when this message was made
+        /// NOTE: This is theoretically redundant to Timestamp, but in practice easier to handle in the presentation layer
+        /// </summary>
         public DateTime CreatedDateUtc { get; set; }
 
         public string UserId { get; set; }

@@ -21,6 +21,7 @@ namespace PandoLogic.Hubs
     {
         public string ChatRoomId { get; set; }
         public string Title { get; set; }
+        public bool IsAnnouncedJoinAndLeave { get; set; }
     }
 
     /// <summary>
@@ -86,7 +87,7 @@ namespace PandoLogic.Hubs
         /// <param name="chatRoomId"></param>
         /// <param name="userId"></param>
         /// <returns></returns>
-        public async Task Join(string chatRoomId, string userId)
+        public async Task Join(string chatRoomId, string userId, bool isAnnounced)
         {
             // Pull the current user information
             // TODO: Make this auth driven instead of an argument
@@ -106,10 +107,14 @@ namespace PandoLogic.Hubs
             IEnumerable<ChatMessageEntity> history = await Storage.GetMessagesForRoomAsync(chatRoomId);
             Clients.Caller.receiveHistory(history);
 
-            // Tell everyone else the current user joined
-            string systemMessage = string.Format("{0} has joined", currentUser.FullName);
-            ChatMessageEntity entity = await Storage.AddMessageToRoomAsync(chatRoomId, currentUser.Id, systemMessage, ChatMessageType.System);
-            Clients.Group(chatRoomId).receiveMessage(entity);
+            if(isAnnounced)
+            {
+                // Tell everyone else the current user joined
+                string systemMessage = string.Format("{0} has joined", currentUser.FullName);
+                // NOTE: Do NOT persist join messages, just make an entity for sending
+                ChatMessageEntity entity = new ChatMessageEntity(chatRoomId, userId, systemMessage, ChatMessageType.System);
+                Clients.Group(chatRoomId).receiveMessage(entity);
+            }
         }
 
         /// <summary>
@@ -132,7 +137,7 @@ namespace PandoLogic.Hubs
         /// </summary>
         /// <param name="chatRoomId"></param>
         /// <param name="userId"></param>
-        public async Task Leave(string chatRoomId, string userId)
+        public async Task Leave(string chatRoomId, string userId, bool isAnnounced)
         {
             // Take this user out of the group
             await Groups.Remove(Context.ConnectionId, chatRoomId);
@@ -144,11 +149,15 @@ namespace PandoLogic.Hubs
             // Tell everyone the room occupants have changed
             await UpdateOccupantListForRoom(chatRoomId);
 
-            // Tell everyone else the current user left
-            ApplicationUser currentUser = this.Db.Users.Find(userId);
-            string systemMessage = string.Format("{0} has left", currentUser.FullName);
-            ChatMessageEntity entity = await Storage.AddMessageToRoomAsync(chatRoomId, userId, systemMessage, ChatMessageType.System);
-            this.Clients.Group(chatRoomId).receiveMessage(entity);
+            if(isAnnounced)
+            {
+                // Tell everyone else the current user left
+                ApplicationUser currentUser = this.Db.Users.Find(userId);
+                string systemMessage = string.Format("{0} has left", currentUser.FullName);
+                // NOTE: Do NOT persist leave messages, just make an entity for sending
+                ChatMessageEntity entity = new ChatMessageEntity(chatRoomId, userId, systemMessage, ChatMessageType.System);
+                this.Clients.Group(chatRoomId).receiveMessage(entity);
+            }
         }
 
         /// <summary>

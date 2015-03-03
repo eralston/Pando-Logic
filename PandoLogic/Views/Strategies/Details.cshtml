@@ -55,7 +55,7 @@
         </div>
     </div>
     <div class="col-md-6">
-        @Html.Partial("_Chat", new ChatInfo { ChatRoomId = string.Format("Strategy-{0}", @Model.Id), Title = "Strategy Chat" })
+        @Html.Partial("_Chat", new ChatSessionInfo { ChatRoomId = string.Format("Strategy-{0}", @Model.Id), Title = "Strategy Chat", IsAnnouncedJoinAndLeave = true })
         @Html.Partial("_Comments", new Activity())
     </div>
 </div>

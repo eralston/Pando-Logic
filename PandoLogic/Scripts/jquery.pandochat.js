@@ -94,7 +94,8 @@
 
                 var $chatWrapper = $(this);
                 var chatRoomId = $chatWrapper.attr("data-chat-room-id");
-                chat.server.join(chatRoomId, options.userId);
+                var announceJoin = $chatWrapper.attr("data-chat-announce-flag") || false;
+                chat.server.join(chatRoomId, options.userId, announceJoin);
             });            
         });
 
@@ -208,7 +209,8 @@
 
                     // Leave the chat room when this page is unloaded
                     $(window).unload(function () {
-                        chat.server.leave(chatRoomId, userId);
+                        var announceLeave = $chatWrapper.attr("data-chat-announce-flag") || false;
+                        chat.server.leave(chatRoomId, userId, announceLeave);
                     });
                 }
             };

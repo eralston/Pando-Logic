@@ -7,7 +7,7 @@
     <div class="row company-chat" style="display:none">
 
         <div class="col-md-12">
-            @Html.Partial("_Chat", new ChatSessionInfo { ChatRoomId = string.Format("Company-{0}", @ViewBag.CurrentUserSelectedCompanyId), Title = title })
+            @Html.Partial("_Chat", new ChatSessionInfo { ChatRoomId = string.Format("Company-{0}", @ViewBag.CurrentUserSelectedCompanyId), Title = title, IsAnnouncedJoinAndLeave = false })
         </div>
     </div>
 }
