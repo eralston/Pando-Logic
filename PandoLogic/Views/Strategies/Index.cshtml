@@ -32,6 +32,11 @@
                 <i class="fa fa-bookmark"></i>
                 <h3 class="box-title">Bookmarked Strategies</h3>
             </div>
+            <div class="box-body">
+                <p class="text-muted">
+                    Strategies marked for later reference
+                </p>
+            </div>
             <div class="box-body no-padding">
                 @Html.Partial("_StrategyTable", ViewBag.BookmarkedStrategies as IEnumerable<Strategy>)
             </div>
@@ -46,6 +51,11 @@
                         Latest from the Strategy Exchange
                     </a>
                 </h3>
+            </div>
+            <div class="box-body">
+                <p class="text-muted">
+                    Strategies recently added to the public strategy exchange
+                </p>
             </div>
             <div class="box-body no-padding">
                 @Html.Partial("_StrategyTable", Model)

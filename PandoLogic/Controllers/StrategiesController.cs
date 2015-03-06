@@ -161,7 +161,7 @@ namespace PandoLogic.Controllers
 
             // Setup goals
             strategy.MarkOrder();
-            
+
             return View(strategy);
         }
 
@@ -261,7 +261,7 @@ namespace PandoLogic.Controllers
                 int next = index + 1;
                 if (next == goals.Length)
                 {
-                    return RedirectToAction("Index");
+                    return RedirectToAction("Details", new { id = strategyGoal.StrategyId });
                 }
                 else
                 {
@@ -456,7 +456,7 @@ namespace PandoLogic.Controllers
                 return new HttpNotFoundResult();
 
             StrategyRating strategyRating = await Db.StrategyRatings.FindForUserAsync(UserCache.Id, strategyId.Value);
-            if(strategyRating == null)
+            if (strategyRating == null)
             {
                 strategyRating = Db.StrategyRatings.Create(UserCache.Id, strategyId.Value);
             }
@@ -464,10 +464,10 @@ namespace PandoLogic.Controllers
             strategyRating.Rating = rating.Value;
 
             await Db.SaveChangesAsync();
-            
+
             Strategy strategy = await Db.Strategies.FindAsync(strategyId);
             StrategyRating[] ratings = await Db.StrategyRatings.Where(sr => sr.StrategyId == strategyId).ToArrayAsync();
-            if(ratings.Length == 0)
+            if (ratings.Length == 0)
             {
                 strategy.Rating = 0f;
             }
@@ -483,7 +483,7 @@ namespace PandoLogic.Controllers
 
                 strategy.Rating = total / possible;
             }
-            
+
             await Db.SaveChangesAsync();
 
             return RedirectToAction("Details", new { id = strategyId });

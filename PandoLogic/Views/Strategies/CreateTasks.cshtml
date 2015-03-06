@@ -18,7 +18,17 @@
         <div class="box box-primary">
             <div class="box-header">
                 <h3 class="box-title">Create Tasks for Goal "@Html.DisplayFor(s => s.Title)"</h3>
+                
             </div>
+            <div class="box-body">
+                <p class="text-muted">
+                    The goal has been created!
+                    You now can create all of the tasks you want under it, like a checklist to make sure the goal is achieved.
+                    Most goals have three to five tasks under it.
+                </p>
+            </div>
+            
+            
             <div class="callout callout-info">
                 @if (!string.IsNullOrEmpty(Model.Description))
                 {
