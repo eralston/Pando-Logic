@@ -13,7 +13,7 @@ namespace PandoLogic.Models
     /// <summary>
     /// An instance for every adoption by a user and company of a strategy
     /// </summary>
-    public class StrategyAdoption : BaseModel
+    public class StrategyAdoption : BaseModel, IRequiredCompanyOwnedModel, IUserOwnedModel
     {
         [ForeignKey("Company")]
         public int CompanyId { get; set; }

@@ -29,50 +29,10 @@
                 @using (Html.BeginForm())
                 {
                     @Html.AntiForgeryToken()
-                    @Html.HiddenFor(model => model.IsSummaryRequired)
-
-                    <div class="form-group">
-                        @Html.LabelFor(model => model.Title, htmlAttributes: new { @class = "control-label" })
-                        <p class="text-muted">Maximum 100 Characters. Pick something simple and descriptive.</p>
-                        <div class="">
-                            @Html.EditorFor(model => model.Title, new { htmlAttributes = new { @class = "form-control", placeholder = Html.DisplayNameFor(model => model.Title) } })
-                            @Html.ValidationMessageFor(model => model.Title, "", new { @class = "text-danger" })
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        @Html.LabelFor(model => model.Summary, htmlAttributes: new { @class = "control-label" })
-                        <p class="text-muted">Maximum 200 Characters. Describe the necessity or benefit of the strategy.</p>
-                        <div class="">
-                            @Html.EditorFor(model => model.Summary, new { htmlAttributes = new { @class = "form-control", placeholder = Html.DisplayNameFor(model => model.Summary) } })
-                            @Html.ValidationMessageFor(model => model.Summary, "", new { @class = "text-danger" })
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        @Html.LabelFor(model => model.Description, htmlAttributes: new { @class = "control-label" })
-                        <p class="text-muted">A primer on the why, what, and how of this strategy.</p>
-                        <div class="">
-                            @Html.EditorFor(model => model.Description, new { htmlAttributes = new { @class = "form-control", placeholder = Html.DisplayNameFor(model => model.Description) } })
-                            @Html.ValidationMessageFor(model => model.Description, "", new { @class = "text-danger" })
-                        </div>
-                    </div>
-                    <div id="goals" class="dynamic-child-list">
-                        <h4>Goals</h4>
-                        <p class="text-muted">
-                            Goals are checklists of tasks that make up each part of the strategy.
-                            Most strategies have three to give goals.
-                            Many great strategies have only one.
-                            You will get to add the tasks under each goal in the next pages.
-                        </p>
-                        @Html.EditorFor(model => model.Children)
-                    </div>
+                    
+                    @Html.EditorForModel()
 
                     <div class="box-body">
-                        <div class="form-group">
-                            @Html.AddLink("Add Goal", "#goals", ".goal", "Children", typeof(ChildWorkItemViewModel), "btn btn-default")
-                        </div>
-
                         <div class="form-group">
                             <button class="btn btn-primary">
                                 Create Strategy &amp; Continue

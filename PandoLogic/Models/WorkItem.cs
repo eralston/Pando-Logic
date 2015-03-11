@@ -14,12 +14,12 @@ namespace PandoLogic.Models
     /// These are called "Tasks" in the UIs
     /// A single unit of work, usually under a goal
     /// </summary>
-    public class WorkItem : BaseModel, ICommentable
+    public class WorkItem : BaseModel, ICommentable, IUserOwnedModel, IOptionalCompanyOwnedModel
     {
         // To-One on ApplicationUser
-        [ForeignKey("Creator")]
-        public string CreatorId { get; set; }
-        public virtual ApplicationUser Creator { get; set; }
+        [ForeignKey("User")]
+        public string UserId { get; set; }
+        public virtual ApplicationUser User { get; set; }
 
         // To-One on Company
         [ForeignKey("Company")]
@@ -76,17 +76,17 @@ namespace PandoLogic.Models
     {
         public static IQueryable<WorkItem> WhereCompany(this DbSet<WorkItem> workItems, int companyId)
         {
-            return workItems.Where(w => w.CompanyId == companyId).Include(w => w.Assignee).Include(w => w.Creator);
+            return workItems.Where(w => w.CompanyId == companyId).Include(w => w.Assignee).Include(w => w.User);
         }
 
         public static IQueryable<WorkItem> WhereCompanyNonGoal(this DbSet<WorkItem> workItems, int companyId)
         {
-            return workItems.Where(w => w.CompanyId == companyId && w.GoalId == null).Include(w => w.Assignee).Include(w => w.Creator);
+            return workItems.Where(w => w.CompanyId == companyId && w.GoalId == null).Include(w => w.Assignee).Include(w => w.User);
         }
 
         public static IQueryable<WorkItem> WhereGoal(this DbSet<WorkItem> workItems, int goalId)
         {
-            return workItems.Where(w => w.GoalId == goalId).Include(w => w.Assignee).Include(w => w.Creator);
+            return workItems.Where(w => w.GoalId == goalId).Include(w => w.Assignee).Include(w => w.User);
         }
 
         public static IQueryable<WorkItem> WhereAssignedUser(this DbSet<WorkItem> workItems, string userId)
@@ -108,7 +108,7 @@ namespace PandoLogic.Models
             WorkItem task = tasks.Create();
 
             task.CreatedDateUtc = DateTime.UtcNow;
-            task.CreatorId = userId;
+            task.UserId = userId;
             task.CompanyId = companyId;
 
             tasks.Add(task);

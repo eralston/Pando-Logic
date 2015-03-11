@@ -22,9 +22,9 @@ namespace PandoLogic.Models
     }
 
     /// <summary>
-    /// 
+    /// Modelo for repeatable collections of goals with related tasks underneath them
     /// </summary>
-    public class Strategy : BaseModel, ICommentable
+    public class Strategy : BaseModel, ICommentable, IUserOwnedModel
     {
         [Required]
         [MaxLength(100)]
@@ -40,9 +40,9 @@ namespace PandoLogic.Models
 
         // To-One on User Who Originated this action
         // This is optional, since some activities are done by the system
-        [ForeignKey("Author")]
-        public string AuthorId { get; set; }
-        public virtual ApplicationUser Author { get; set; }
+        [ForeignKey("User")]
+        public string UserId { get; set; }
+        public virtual ApplicationUser User { get; set; }
 
         [Display(Name = "Goal Interval")]
         public StrategyInterval Interval { get; set; }
@@ -76,7 +76,7 @@ namespace PandoLogic.Models
         /// Adds a new copy of the given goal to this strategy's collection
         /// </summary>
         /// <param name="existingGoal"></param>
-        public void AddCopyOfGoalAsTemplate(Goal existingGoal)
+        public void AddCopyOfGoalAsTemplate(Goal existingGoal, ApplicationUser user, Company company)
         {
             // Make a new goal and link to strategy
             StrategyGoal newStrategyGoal = new StrategyGoal();
@@ -85,9 +85,11 @@ namespace PandoLogic.Models
             // Link the objects to this strategy 
             newStrategyGoal.Strategy = this;
             newStrategyGoal.Goal = newGoalTemplate;
+            newStrategyGoal.CreatedDateUtc = DateTime.UtcNow;
 
             // Set the fixed fields
-            newStrategyGoal.CreatedDateUtc = DateTime.UtcNow;
+            newGoalTemplate.User = user;
+            newGoalTemplate.Company = company;
             newGoalTemplate.CreatedDateUtc = newStrategyGoal.CreatedDateUtc;
             newGoalTemplate.IsTemplate = true;
 
@@ -246,17 +248,17 @@ namespace PandoLogic.Models
     {
         public static IQueryable<Strategy> WhereMadeByUser(this DbSet<Strategy> strategies, string userId)
         {
-            return strategies.Where(s => s.AuthorId == userId && !s.IsDeleted).Include(s => s.Goals).OrderByDescending(s => s.CreatedDateUtc);
+            return strategies.Where(s => s.UserId == userId && !s.IsDeleted).Include(s => s.Goals).OrderByDescending(s => s.CreatedDateUtc);
         }
 
         public static IQueryable<Strategy> WhereLatestFive(this DbSet<Strategy> strategies)
         {
-            return strategies.Where(s => !s.IsDeleted).Include(s => s.Author).OrderByDescending(s => s.CreatedDateUtc).Take(5);
+            return strategies.Where(s => !s.IsDeleted).Include(s => s.User).OrderByDescending(s => s.CreatedDateUtc).Take(5);
         }
 
         public static IQueryable<Strategy> SearchStrategies(this ApplicationDbContext context)
         {
-            return context.Strategies.Where(s => s.IsDeleted == false).Include(s => s.Author).Include(s => s.Adoptions).Include(s => s.Ratings);
+            return context.Strategies.Where(s => s.IsDeleted == false).Include(s => s.User).Include(s => s.Adoptions).Include(s => s.Ratings);
         }
     }
 }

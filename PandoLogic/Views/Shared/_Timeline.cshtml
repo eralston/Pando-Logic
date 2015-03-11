@@ -64,7 +64,7 @@
                                 </a>
                             }
 
-                            @Html.ActionLink(activity.Author.FirstName, "Details", "Users", new { id = activity.Author.Id }, null)
+                            @Html.ActionLink(activity.User.FirstName, "Details", "Users", new { id = activity.User.Id }, null)
                             <i class="fa fa-clock-o"></i>
                             @activity.CreatedDateUtc.Value.ToString("t")
                         </span>

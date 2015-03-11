@@ -63,8 +63,6 @@ namespace PandoLogic.Models
         /// <returns></returns>
         public static async Task DeleteAsync(this DbSet<CloudFile> files, CloudFile file, BlobStorageManager storageManager)
         {
-            Task task = null;
-
             if(file.ContainerName != null && file.BlobName != null)
             {
                 var container = await storageManager.GetContainerAsync(file.ContainerName);

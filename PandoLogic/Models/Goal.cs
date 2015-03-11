@@ -12,7 +12,7 @@ namespace PandoLogic.Models
     /// <summary>
     /// A unit of high-level planning for an organization
     /// </summary>
-    public class Goal : BaseModel, PandoLogic.Models.ICommentable
+    public class Goal : BaseModel, ICommentable, IOptionalCompanyOwnedModel, IUserOwnedModel
     {
         /// <summary>
         /// List of configurable colors for goals
@@ -42,9 +42,9 @@ namespace PandoLogic.Models
         }
 
         // To-One on ApplicationUser
-        [ForeignKey("Creator")]
-        public string CreatorId { get; set; }
-        public virtual ApplicationUser Creator { get; set; }
+        [ForeignKey("User")]
+        public string UserId { get; set; }
+        public virtual ApplicationUser User { get; set; }
 
         // To-One on Company
         [ForeignKey("Company")]
@@ -278,7 +278,7 @@ namespace PandoLogic.Models
             goal.CreatedDateUtc = DateTime.UtcNow;
             goal.StartDateUtc = goal.CreatedDateUtc;
             goal.CompanyId = companyId;
-            goal.CreatorId = userId;
+            goal.UserId = userId;
 
             goal.WorkItems = new List<WorkItem>();
 

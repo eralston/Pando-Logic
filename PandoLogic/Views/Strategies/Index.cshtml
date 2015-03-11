@@ -21,7 +21,7 @@
                 <p class="text-muted">
                     Strategies you created
                 </p>
-                @Html.ActionLink("Create New", "Create", null, new { @class = "btn btn-default" })
+                @Html.ActionLink("Create New Strategy", "Create", null, new { @class = "btn btn-primary" })
             </div>
             <div class="box-body  no-padding">
                 @Html.Partial("_StrategyTable", ViewBag.MyStrategies as IEnumerable<Strategy>)

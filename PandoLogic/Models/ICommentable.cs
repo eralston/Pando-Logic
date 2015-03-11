@@ -8,9 +8,8 @@ namespace PandoLogic.Models
     /// <summary>
     /// This interface should be implemented by any model object that wishes to accept comments
     /// </summary>
-    public interface ICommentable
+    public interface ICommentable : IBaseModel
     {
-        int Id { get; set; }
         ICollection<Activity> Comments { get; set; }
 
         string CommentControllerName { get; }

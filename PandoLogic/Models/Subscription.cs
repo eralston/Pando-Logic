@@ -15,7 +15,7 @@ namespace PandoLogic.Models
     /// A model for connection users to their subscriptions
     /// There should be one instance for each payment relationship between PandoLogic and a customer (one for each company)
     /// </summary>
-    public class Subscription : BaseModel
+    public class Subscription : BaseModel, IRequiredCompanyOwnedModel, IUserOwnedModel
     {
         [Display(Name = "Active Until")]
         public DateTime? ActiveUntil { get; set; }

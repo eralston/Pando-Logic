@@ -30,8 +30,8 @@
                     @Html.DisplayFor(modelItem => item.Summary)
                 </td>
                 <td>
-                    <a href="@Url.Action("Details", "Users", new { id = item.AuthorId })">
-                        @Html.DisplayFor(modelItem => item.Author.FullName)
+                    <a href="@Url.Action("Details", "Users", new { id = item.UserId })">
+                        @Html.DisplayFor(modelItem => item.User.FullName)
                     </a>
                 </td>
                 <td>

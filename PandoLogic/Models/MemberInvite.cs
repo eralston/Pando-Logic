@@ -14,7 +14,7 @@ namespace PandoLogic.Models
     /// An invitation for a user not yet in the system that connects a company to just an e-mail address
     /// Onboarding a new team member converts this record into a new Member object onces an ApplicationUser exists
     /// </summary>
-    public class MemberInvite : BaseModel
+    public class MemberInvite : BaseModel, IRequiredCompanyOwnedModel
     {
         [Display(Name = "Fulfilled Date")]
         public DateTime? FulfilledDateUtc { get; set; }

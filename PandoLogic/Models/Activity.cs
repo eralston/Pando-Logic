@@ -30,7 +30,7 @@ namespace PandoLogic.Models
     /// <summary>
     /// A model for saving a historic record of actions in the system, in particular to review actions of a team
     /// </summary>
-    public class Activity : BaseModel
+    public class Activity : BaseModel, IUserOwnedModel, IOptionalCompanyOwnedModel
     {
         /// <summary>
         /// Returns the class names for the given activity type
@@ -111,9 +111,9 @@ namespace PandoLogic.Models
 
         // To-One on User Who Originated this action
         // This is optional, since some activities are done by the system
-        [ForeignKey("Author")]
-        public string AuthorId { get; set; }
-        public virtual ApplicationUser Author { get; set; }
+        [ForeignKey("User")]
+        public string UserId { get; set; }
+        public virtual ApplicationUser User { get; set; }
 
         // To-One on Company
         [ForeignKey("Company")]
@@ -132,7 +132,7 @@ namespace PandoLogic.Models
             Activity activity = activities.Create();
 
             activity.CreatedDateUtc = DateTime.UtcNow;
-            activity.AuthorId = authorUserId;
+            activity.UserId = authorUserId;
             activity.Company = null;
             activity.Title = title;
 
@@ -146,7 +146,7 @@ namespace PandoLogic.Models
             Activity activity = activities.Create();
 
             activity.CreatedDateUtc = DateTime.UtcNow;
-            activity.AuthorId = authorUserId;
+            activity.UserId = authorUserId;
             activity.Company = company;
             activity.Title = title;
 
@@ -158,9 +158,9 @@ namespace PandoLogic.Models
         public static IOrderedQueryable<Activity> WhereCompanyOrAuthor(this DbSet<Activity> activities, int? companyId, string authorId)
         {
             return activities
-                        .Include(a => a.Author)
+                        .Include(a => a.User)
                         .Include(a => a.Company)
-                        .Where(a => a.CompanyId == companyId || a.AuthorId == authorId)
+                        .Where(a => a.CompanyId == companyId || a.UserId == authorId)
                         .Where(a => a.Company.IsSoftDeleted == false)
                         .OrderByDescending(a => a.CreatedDateUtc);
         }

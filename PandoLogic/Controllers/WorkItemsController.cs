@@ -221,7 +221,7 @@ namespace PandoLogic.Controllers
 
                 workItem.CreatedDateUtc = DateTime.UtcNow;
                 workItem.CompanyId = currentMember.CompanyId;
-                workItem.CreatorId = currentMember.UserId;
+                workItem.UserId = currentMember.UserId;
 
                 workItem.CompletedDateUtc = null;
                 workItem.Title = workItemViewModel.Title;

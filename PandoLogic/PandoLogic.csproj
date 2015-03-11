@@ -233,6 +233,7 @@
     <Compile Include="Controllers\AddressesController.cs" />
     <Compile Include="Code\IPersistenceContext.cs" />
     <Compile Include="Controllers\MembersController.cs" />
+    <Compile Include="Controllers\ParentWorkItemViewModel.cs" />
     <Compile Include="Controllers\SubscriptionPlansController.cs" />
     <Compile Include="Controllers\SubscriptionsController.cs" />
     <Compile Include="Controllers\UsersController.cs" />
@@ -260,6 +261,7 @@
     <Compile Include="Models\Company.cs" />
     <Compile Include="Models\ApplicationUser.cs" />
     <Compile Include="Models\Goal.cs" />
+    <Compile Include="Models\ModelOwnershipClasses.cs" />
     <Compile Include="Models\ICommentable.cs" />
     <Compile Include="Models\Industry.cs" />
     <Compile Include="Models\Member.cs" />
@@ -1002,6 +1004,8 @@
     <Content Include="Views\Companies\EditorTemplates\CompanyViewModel.cshtml" />
     <Content Include="Views\Shared\_SupportChat.cshtml" />
     <Content Include="Views\Shared\_CompanyChatBox.cshtml" />
+    <Content Include="Views\Strategies\EditorTemplates\ParentWorkItemViewModel.cshtml" />
+    <Content Include="Views\Strategies\EditTasks.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Views\Shared\DisplayTemplates\" />

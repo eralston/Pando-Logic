@@ -15,115 +15,148 @@ using System.Web.Routing;
 
 namespace PandoLogic.Controllers
 {
-    [NotMapped]
-    public class ParentWorkItemViewModel
-    {
-        #region Properties
-
-        public int Id { get; set; }
-
-        [Required]
-        [MaxLength(100)]
-        public virtual string Title { get; set; }
-
-        [ConditionalRequired(IgnoreFlagName = "IsSummaryRequired", IgnoreFlagValue = false)]
-        [MaxLength(200)]
-        public string Summary { get; set; }
-
-        [Required]
-        [DataType(DataType.MultilineText)]
-        public string Description { get; set; }
-
-        public StrategyInterval Interval { get; set; }
-
-        public bool IsSummaryRequired { get; set; }
-
-        public List<ChildWorkItemViewModel> Children { get; set; }
-
-        #endregion
-
-        #region Methods
-
-        public ParentWorkItemViewModel() { }
-
-        public ParentWorkItemViewModel(Strategy strategy)
-        {
-            Id = strategy.Id;
-            Title = strategy.Title;
-            Summary = strategy.Summary;
-            Description = strategy.Description;
-            Children = new List<ChildWorkItemViewModel>();
-        }
-
-        public ParentWorkItemViewModel(Goal goal)
-        {
-            Id = goal.Id;
-            Title = goal.Title;
-            Description = goal.Description;
-            Children = new List<ChildWorkItemViewModel>();
-        }
-
-        public void CreateChildren(int count = 1)
-        {
-            if (Children == null)
-            {
-                Children = new List<ChildWorkItemViewModel>();
-            }
-            for (int i = 0; i < count; i++)
-            {
-                Children.Add(new ChildWorkItemViewModel());
-            }
-        }
-
-        public void MarkOrder()
-        {
-            int i = 1;
-            foreach (ChildWorkItemViewModel phase in Children)
-            {
-                phase.Ordinal = i;
-                ++i;
-            }
-        }
-
-        #endregion
-    }
-
-    [NotMapped]
-    public class ChildWorkItemViewModel
-    {
-        public int Ordinal { get; set; }
-
-        public bool IsMarkedForDelete { get; set; }
-
-        [ConditionalRequired(IgnoreFlagName = "IsMarkedForDelete", IgnoreFlagValue = true)]
-        public string Title { get; set; }
-
-        [DataType(DataType.MultilineText)]
-        [ConditionalRequired(IgnoreFlagName = "IsMarkedForDelete", IgnoreFlagValue = true)]
-        public string Description { get; set; }
-    }
-
+    /// <summary>
+    /// Controller for CRUD + Bookmarking and rating of Strategy models
+    /// </summary>
     public class StrategiesController : BaseController
     {
         #region Methods
 
-        private void ValidateHasChildren(ParentWorkItemViewModel strategyViewModel, string errorMessage)
+        /// <summary>
+        /// Validates that the viewModel has children; otherwise, it adds the error message to the ModelState for this request
+        /// </summary>
+        /// <param name="viewModel"></param>
+        /// <param name="errorMessage"></param>
+        private void ValidateHasChildren(ParentWorkItemViewModel viewModel, string errorMessage)
         {
             // Validate children
-            if (strategyViewModel.Children != null)
+            if (viewModel.Children != null)
             {
-                strategyViewModel.Children = strategyViewModel.Children.Where(c => c.IsMarkedForDelete == false).ToList();
+                viewModel.Children = viewModel.Children.Where(c => c.IsMarkedForDelete == false).ToList();
             }
 
-            if (strategyViewModel.Children == null || strategyViewModel.Children.Count == 0)
+            if (viewModel.Children == null || viewModel.Children.Count == 0)
             {
                 ModelState.AddModelError("Custom", errorMessage);
             }
         }
 
+        /// <summary>
+        /// Edits all tasks under a given goal, using the data from the given view model
+        /// </summary>
+        /// <param name="goalViewModel"></param>
+        /// <param name="goal"></param>
+        /// <param name="user"></param>
+        /// <returns></returns>
+        private async Task EditWorkItemsUnderGoal(ParentWorkItemViewModel goalViewModel, Goal goal, ApplicationUser user)
+        {
+            foreach (ChildWorkItemViewModel workItemViewModel in goalViewModel.Children)
+            {
+                if (workItemViewModel.Id.HasValue)
+                {
+                    WorkItem workItem = await Db.WorkItems.FindAsync(workItemViewModel.Id);
+                    if (workItemViewModel.IsMarkedForDelete)
+                    {
+                        // If we're nuking this task
+                        Db.WorkItems.Remove(workItem);
+                    }
+                    else
+                    {
+                        // Edit existing strategy goal
+                        workItem.Title = workItemViewModel.Title;
+                        workItem.Description = workItemViewModel.Description;
+                    }
+                }
+                else
+                {
+                    // Skip any already marked for delete
+                    if (workItemViewModel.IsMarkedForDelete)
+                        continue;
+
+                    // Create bran new work item
+                    WorkItem task = Db.WorkItems.Create();
+                    task.Title = workItemViewModel.Title;
+                    task.Description = workItemViewModel.Description;
+                    task.IsTemplate = true;
+                    task.CreatedDateUtc = DateTime.UtcNow;
+                    task.UserId = user.Id;
+                    goal.WorkItems.Add(task);
+                }
+
+            }
+        }
+
+        /// <summary>
+        /// Edits all of the goals under the given strategy using child work item data from the given viewmodel
+        /// </summary>
+        /// <param name="strategyViewModel"></param>
+        /// <param name="strategy"></param>
+        /// <returns></returns>
+        private async Task EditGoalsUnderStrategy(ParentWorkItemViewModel strategyViewModel, Strategy strategy)
+        {
+            foreach (ChildWorkItemViewModel goalViewModel in strategyViewModel.Children)
+            {
+                if (goalViewModel.RelationshipId.HasValue)
+                {
+                    StrategyGoal sGoal = await Db.StrategyGoals.FindAsync(goalViewModel.RelationshipId);
+                    if (goalViewModel.IsMarkedForDelete)
+                    {
+                        // If we're nuking this goal 
+                        Db.Goals.Remove(sGoal.Goal);
+                        Db.StrategyGoals.Remove(sGoal);
+                    }
+                    else
+                    {
+                        // Edit existing strategy goal
+                        sGoal.Goal.Title = goalViewModel.Title;
+                        sGoal.Goal.Description = goalViewModel.Description;
+                    }
+                }
+                else
+                {
+                    // Skip any already marked for delete
+                    if (goalViewModel.IsMarkedForDelete)
+                        continue;
+
+                    // If it's a brand new goal, then create a whole new one!
+                    Goal goal = new Goal() { Title = goalViewModel.Title, Description = goalViewModel.Description };
+                    Member currentMember = await GetCurrentMemberAsync();
+                    ApplicationUser currentUser = await GetCurrentUserAsync();
+                    strategy.AddCopyOfGoalAsTemplate(goal, currentUser, currentMember.Company);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Returns a redirect action to either the next goal in the the parent strategy for the parent goal 
+        /// OR 
+        /// Return a redirect action to the details of the parent strategy if that was the last goal for the parent strategy
+        /// </summary>
+        /// <param name="goal"></param>
+        /// <returns></returns>
+        private async Task<ActionResult> RedirectToNextGoalOrStrategyDetails(Goal goal)
+        {
+            StrategyGoal strategyGoal = await Db.StrategyGoals.Where(sg => sg.GoalId == goal.Id).Include(sg => sg.Goal).Include(sg => sg.Strategy.Goals).FirstOrDefaultAsync();
+            StrategyGoal[] goals = strategyGoal.Strategy.Goals.OrderBy(g => g.Id).ToArray();
+            int index = Array.IndexOf(goals, strategyGoal);
+            int next = index + 1;
+            if (next == goals.Length)
+            {
+                return RedirectToAction("Details", new { id = strategyGoal.StrategyId });
+            }
+            else
+            {
+                StrategyGoal sg = goals[next];
+                return RedirectToAction("CreateTasks", new { id = sg.GoalId });
+            }
+        }
+
         #endregion
 
-        // GET: Strategies
+        /// <summary>
+        /// Gets the strategy dashboard for the current user, including strategies they created and a preview of the exchange
+        /// </summary>
+        /// <returns></returns>
         public async Task<ActionResult> Index()
         {
             var strategies = await Db.Strategies.WhereLatestFive().ToArrayAsync();
@@ -132,7 +165,11 @@ namespace PandoLogic.Controllers
             return View(strategies);
         }
 
-        // GET: Strategies/Details/5
+        /// <summary>
+        /// Gets the details pages for the strategy with the given ID
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public async Task<ActionResult> Details(int id)
         {
             Strategy strategy = await Db.Strategies.FindAsync(id);
@@ -145,7 +182,7 @@ namespace PandoLogic.Controllers
             ViewBag.IsStrategyBookmarked = await Db.StrategyBookmarks.IsBookmarked(UserCache.Id, id);
 
             // Apply whether or not this is my strategy
-            ViewBag.IsMyStrategy = strategy.AuthorId == UserCache.Id;
+            ViewBag.IsMyStrategy = strategy.IsOwnedByUser(UserCache.Id);
 
             // Setup the rating
             StrategyRating rating = await Db.StrategyRatings.FindForUserAsync(UserCache.Id, id);
@@ -165,7 +202,10 @@ namespace PandoLogic.Controllers
             return View(strategy);
         }
 
-        // GET: Strategies/Create
+        /// <summary>
+        /// Gets the create page for strategies
+        /// </summary>
+        /// <returns></returns>
         public ActionResult Create()
         {
             ParentWorkItemViewModel viewModel = new ParentWorkItemViewModel();
@@ -175,9 +215,11 @@ namespace PandoLogic.Controllers
             return View(viewModel);
         }
 
-        // POST: Strategies/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        /// <summary>
+        /// Posts changes to create a strategy with the given view model for the current user
+        /// </summary>
+        /// <param name="strategyViewModel"></param>
+        /// <returns></returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Create(ParentWorkItemViewModel strategyViewModel)
@@ -190,7 +232,7 @@ namespace PandoLogic.Controllers
 
                 Strategy strategy = Db.Strategies.Create();
                 strategy.CreatedDateUtc = DateTime.UtcNow;
-                strategy.AuthorId = user.Id;
+                strategy.UserId = user.Id;
 
                 strategy.Title = strategyViewModel.Title;
                 strategy.Summary = strategyViewModel.Summary;
@@ -201,13 +243,7 @@ namespace PandoLogic.Controllers
 
                 Db.Strategies.Add(strategy);
 
-                foreach (ChildWorkItemViewModel strategyGoal in strategyViewModel.Children)
-                {
-                    Goal goal = new Goal();
-                    goal.Title = strategyGoal.Title;
-                    goal.Description = strategyGoal.Description;
-                    strategy.AddCopyOfGoalAsTemplate(goal);
-                }
+                await EditGoalsUnderStrategy(strategyViewModel, strategy);
 
                 await Db.SaveChangesAsync();
 
@@ -221,6 +257,11 @@ namespace PandoLogic.Controllers
             return View(strategyViewModel);
         }
 
+        /// <summary>
+        /// Gets the page for creating workitems under the givne goal ID
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public async Task<ActionResult> CreateTasks(int id)
         {
             Goal goal = await Db.Goals.FindAsync(id);
@@ -231,6 +272,11 @@ namespace PandoLogic.Controllers
             return View(strategyVm);
         }
 
+        /// <summary>
+        /// Posts create info to the given goal's work item children
+        /// </summary>
+        /// <param name="goalViewModel"></param>
+        /// <returns></returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> CreateTasks(ParentWorkItemViewModel goalViewModel)
@@ -242,32 +288,11 @@ namespace PandoLogic.Controllers
                 Goal goal = await Db.Goals.FindAsync(goalViewModel.Id);
                 ApplicationUser user = await GetCurrentUserAsync();
 
-                foreach (ChildWorkItemViewModel taskViewModel in goalViewModel.Children)
-                {
-                    WorkItem task = Db.WorkItems.Create();
-                    task.Title = taskViewModel.Title;
-                    task.Description = taskViewModel.Description;
-                    task.IsTemplate = true;
-                    task.CreatedDateUtc = DateTime.UtcNow;
-                    task.CreatorId = user.Id;
-                    goal.WorkItems.Add(task);
-                }
+                await EditWorkItemsUnderGoal(goalViewModel, goal, user);
 
                 await Db.SaveChangesAsync();
 
-                StrategyGoal strategyGoal = await Db.StrategyGoals.Where(sg => sg.GoalId == goal.Id).Include(sg => sg.Goal).Include(sg => sg.Strategy.Goals).FirstOrDefaultAsync();
-                StrategyGoal[] goals = strategyGoal.Strategy.Goals.OrderBy(g => g.Id).ToArray();
-                int index = Array.IndexOf(goals, strategyGoal);
-                int next = index + 1;
-                if (next == goals.Length)
-                {
-                    return RedirectToAction("Details", new { id = strategyGoal.StrategyId });
-                }
-                else
-                {
-                    StrategyGoal sg = goals[next];
-                    return RedirectToAction("CreateTasks", new { id = sg.GoalId });
-                }
+                return await RedirectToNextGoalOrStrategyDetails(goal);
             }
 
             goalViewModel.IsSummaryRequired = false;
@@ -276,19 +301,25 @@ namespace PandoLogic.Controllers
             return View(goalViewModel);
         }
 
-        // GET: Strategies/Edit/5
-        public async Task<ActionResult> Edit(int? id)
+        /// <summary>
+        /// Gets the edit page for changing the given strategy
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public async Task<ActionResult> Edit(int id)
         {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
             Strategy strategy = await Db.Strategies.FindAsync(id);
+
             if (strategy == null)
             {
                 return HttpNotFound();
             }
-            return View(strategy);
+
+            strategy.ExceptIfNotOwnedByUser(this.UserCache.Id);
+
+            ParentWorkItemViewModel viewModel = new ParentWorkItemViewModel(strategy);
+
+            return View(viewModel);
         }
 
         // POST: Strategies/Edit/5
@@ -296,30 +327,97 @@ namespace PandoLogic.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Edit([Bind(Include = "Id,Summary,Title,Description")] Strategy strategy)
+        public async Task<ActionResult> Edit(ParentWorkItemViewModel strategyViewModel)
         {
+            ValidateHasChildren(strategyViewModel, "Strategies must contain at least one goal");
+
             if (ModelState.IsValid)
             {
-                Db.Entry(strategy).State = EntityState.Modified;
+                ApplicationUser user = await GetCurrentUserAsync();
+
+                Strategy strategy = await Db.Strategies.FindAsync(strategyViewModel.Id);
+
+                strategy.UserId = user.Id;
+                strategy.Title = strategyViewModel.Title;
+                strategy.Summary = strategyViewModel.Summary;
+                strategy.Description = strategyViewModel.Description;
+                strategy.Interval = strategyViewModel.Interval;
+
                 strategy.UpdateSearchText();
+
+                await EditGoalsUnderStrategy(strategyViewModel, strategy);
+
                 await Db.SaveChangesAsync();
-                return RedirectToAction("Index");
+
+                // Redirect to the first goal under this strategy
+                int goalId = strategy.Goals.OrderBy(g => g.Id).First().GoalId;
+
+                return RedirectToAction("EditTasks", new { id = goalId });
             }
-            return View(strategy);
+
+            strategyViewModel.IsSummaryRequired = true;
+            strategyViewModel.MarkOrder();
+            
+            return View(strategyViewModel);
+        }
+
+        /// <summary>
+        /// Edits the tasks with goal matching the given ID
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public async Task<ActionResult> EditTasks(int id)
+        {
+            Goal goal = await Db.Goals.FindAsync(id);
+            goal.ExceptIfNotOwnedByUser(UserCache.Id);
+
+            ParentWorkItemViewModel strategyVm = new ParentWorkItemViewModel(goal);
+            strategyVm.CreateChildren(1);
+            strategyVm.MarkOrder();
+            strategyVm.IsSummaryRequired = false;
+            return View(strategyVm);
+        }
+
+        /// <summary>
+        /// Posts the changes to edit the tasks under a given goal view model
+        /// </summary>
+        /// <param name="goalViewModel"></param>
+        /// <returns></returns>
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> EditTasks(ParentWorkItemViewModel goalViewModel)
+        {
+            ValidateHasChildren(goalViewModel, "Goals must contain at least one task");
+
+            if (ModelState.IsValid)
+            {
+                Goal goal = await Db.Goals.FindAsync(goalViewModel.Id);
+                ApplicationUser user = await GetCurrentUserAsync();
+
+                await EditWorkItemsUnderGoal(goalViewModel, goal, user);
+
+                await Db.SaveChangesAsync();
+
+                return await RedirectToNextGoalOrStrategyDetails(goal);
+            }
+
+            goalViewModel.IsSummaryRequired = false;
+            goalViewModel.MarkOrder();
+
+            return View(goalViewModel);
         }
 
         // GET: Strategies/Delete/5
-        public async Task<ActionResult> Delete(int? id)
+        public async Task<ActionResult> Delete(int id)
         {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
             Strategy strategy = await Db.Strategies.FindAsync(id);
             if (strategy == null)
             {
                 return HttpNotFound();
             }
+
+            strategy.ExceptIfNotOwnedByUser(UserCache.Id);
+
             return View(strategy);
         }
 
@@ -329,14 +427,23 @@ namespace PandoLogic.Controllers
         public async Task<ActionResult> DeleteConfirmed(int id)
         {
             Strategy strategy = await Db.Strategies.FindAsync(id);
+            
+            strategy.ExceptIfNotOwnedByUser(UserCache.Id);
+
+            // Mark as deleted
             strategy.IsDeleted = true;
             await Db.SaveChangesAsync();
             return RedirectToAction("Index");
         }
 
+        /// <summary>
+        /// Bookmarks a strategy with the given ID for the current user
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public async Task<ActionResult> Bookmark(int id)
         {
-            StrategyBookmark bookmark = await Db.StrategyBookmarks.FindBookmarkAsync(UserCache.Id, id);
+            StrategyBookmark bookmark = await Db.StrategyBookmarks.FindBookmarkByUserAndStrategyAsync(UserCache.Id, id);
             if (bookmark == null)
             {
                 bookmark = Db.StrategyBookmarks.Create(UserCache.Id, id);
@@ -344,13 +451,17 @@ namespace PandoLogic.Controllers
                 await Db.SaveChangesAsync();
             }
 
-
             return RedirectToAction("Details", new { id = id });
         }
 
+        /// <summary>
+        /// Deletes the bookmark for a strategy with the given ID for the current user
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public async Task<ActionResult> Unbookmark(int id)
         {
-            StrategyBookmark bookmark = await Db.StrategyBookmarks.FindBookmarkAsync(UserCache.Id, id);
+            StrategyBookmark bookmark = await Db.StrategyBookmarks.FindBookmarkByUserAndStrategyAsync(UserCache.Id, id);
             if (bookmark != null)
             {
                 Db.StrategyBookmarks.Remove(bookmark);
@@ -361,6 +472,11 @@ namespace PandoLogic.Controllers
             return RedirectToAction("Details", new { id = id });
         }
 
+        /// <summary>
+        /// Gets the confirmation screen for the user to adopt a given strategy
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public async Task<ActionResult> Adopt(int id)
         {
             Strategy strategy = await Db.Strategies.FindAsync(id);
@@ -371,7 +487,11 @@ namespace PandoLogic.Controllers
             return View(strategy);
         }
 
-        // POST: Strategies/Delete/5
+        /// <summary>
+        /// Posts to cause a user to adopt a strategy, replicating its goals and tasks into the current user's system
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpPost, ActionName("Adopt")]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> AdoptConfirmed(int id)
@@ -392,6 +512,12 @@ namespace PandoLogic.Controllers
             return RedirectToAction("Index", "Goals");
         }
 
+        /// <summary>
+        /// Rebuilds the search field for ALL strategies in the system
+        /// WARNING: This might take a while in a production system and should only be used for holy shit debug purposes
+        /// TODO: Convert search to Azure search-as-a-service
+        /// </summary>
+        /// <returns></returns>
         public async Task<ActionResult> RebuildIndex()
         {
             Strategy[] strategies = await Db.Strategies.ToArrayAsync();
@@ -406,6 +532,12 @@ namespace PandoLogic.Controllers
             return RedirectToAction("Index");
         }
 
+        /// <summary>
+        /// Gets the exchange page, which is a list of all strategies available for public review in the 
+        /// </summary>
+        /// <param name="sort"></param>
+        /// <param name="search"></param>
+        /// <returns></returns>
         public async Task<ActionResult> Exchange(string sort, string search)
         {
             search = search ?? "";
@@ -448,6 +580,13 @@ namespace PandoLogic.Controllers
             return View(strategies);
         }
 
+        /// <summary>
+        /// Adds another rating to the database for the given strategy and rating
+        /// This will re-calculate ratings for the given strategy based on the current values in the database
+        /// </summary>
+        /// <param name="strategyId"></param>
+        /// <param name="rating"></param>
+        /// <returns></returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Rate(int? strategyId, float? rating)
@@ -465,6 +604,7 @@ namespace PandoLogic.Controllers
 
             await Db.SaveChangesAsync();
 
+            // TODO: Make this much more efficient by making the database do it with views when querying
             Strategy strategy = await Db.Strategies.FindAsync(strategyId);
             StrategyRating[] ratings = await Db.StrategyRatings.Where(sr => sr.StrategyId == strategyId).ToArrayAsync();
             if (ratings.Length == 0)

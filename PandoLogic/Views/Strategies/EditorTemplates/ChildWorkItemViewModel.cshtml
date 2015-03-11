@@ -7,6 +7,8 @@
 }
 <div class="box-footer goal">
     <h4>@ViewBag.ChildModelTitle <span class="index">@Model.Ordinal</span></h4>
+    @Html.HiddenFor(sp => sp.Id)
+    @Html.HiddenFor(sp => sp.RelationshipId)
     @Html.HiddenFor(sp => sp.IsMarkedForDelete, new { @class = "mark-for-delete" })
     @Html.RemoveLink(removeTitle, "div.goal", "input.mark-for-delete")
 

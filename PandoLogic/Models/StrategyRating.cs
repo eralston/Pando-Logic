@@ -10,7 +10,7 @@ using System.Web.Security;
 
 namespace PandoLogic.Models
 {
-    public class StrategyRating : BaseModel
+    public class StrategyRating : BaseModel, IUserOwnedModel
     {
         [Range(0.0f, 5.0f)]
         public float Rating { get; set; }

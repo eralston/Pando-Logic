@@ -25,7 +25,7 @@ namespace PandoLogic.Controllers
             commentable.Comments.Add(comment);
 
             comment.CreatedDateUtc = DateTime.UtcNow;
-            comment.AuthorId = UserCache.Id;
+            comment.UserId = UserCache.Id;
             comment.CompanyId = UserCache.SelectedCompanyId;
             comment.Type = ActivityType.Comment;
 
@@ -41,7 +41,7 @@ namespace PandoLogic.Controllers
         // GET: Comments
         public async Task<ActionResult> Index()
         {
-            var comments = Db.Activities.Include(c => c.Author);
+            var comments = Db.Activities.Include(c => c.User);
             return View(await comments.ToListAsync());
         }
 
@@ -80,7 +80,7 @@ namespace PandoLogic.Controllers
             else if (ModelState.IsValid)
             {
                 comment.CreatedDateUtc = DateTime.UtcNow;
-                comment.AuthorId = UserCache.Id;
+                comment.UserId = UserCache.Id;
                 comment.CompanyId = UserCache.SelectedCompanyId;
 
                 Db.Activities.Add(comment);

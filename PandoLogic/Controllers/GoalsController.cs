@@ -64,7 +64,7 @@ namespace PandoLogic.Controllers
 
             ViewBag.Tasks = await query.ToArrayAsync();
             ViewBag.GoalId = goal.Id;
-            ViewBag.IsMyGoal = goal.CreatorId == UserCache.Id;
+            ViewBag.IsMyGoal = goal.UserId == UserCache.Id;
 
             if (limited)
             {
@@ -199,7 +199,7 @@ namespace PandoLogic.Controllers
 
                 goal.CreatedDateUtc = DateTime.UtcNow;
                 goal.CompanyId = currentMember.CompanyId;
-                goal.CreatorId = currentMember.UserId;
+                goal.UserId = currentMember.UserId;
 
                 goal.Color = goalViewModel.Color;
                 goal.Icon = goalViewModel.Icon;

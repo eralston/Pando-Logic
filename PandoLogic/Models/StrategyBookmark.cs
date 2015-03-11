@@ -13,7 +13,7 @@ namespace PandoLogic.Models
     /// <summary>
     /// Bookmark for the user, enabling them to save a working list of strategies
     /// </summary>
-    public class StrategyBookmark : BaseModel
+    public class StrategyBookmark : BaseModel, IUserOwnedModel
     {
         // To-One on ApplicationUser
         [ForeignKey("User")]
@@ -43,12 +43,12 @@ namespace PandoLogic.Models
 
         public static async Task<bool> IsBookmarked(this DbSet<StrategyBookmark> bookmarks, string userId, int strategyId)
         {
-            StrategyBookmark bookmark = await FindBookmarkAsync(bookmarks, userId, strategyId);
+            StrategyBookmark bookmark = await FindBookmarkByUserAndStrategyAsync(bookmarks, userId, strategyId);
             bool isBookmarked = bookmark != null;
             return isBookmarked;
         }
 
-        public static async Task<StrategyBookmark> FindBookmarkAsync(this DbSet<StrategyBookmark> bookmarks, string userId, int strategyId)
+        public static async Task<StrategyBookmark> FindBookmarkByUserAndStrategyAsync(this DbSet<StrategyBookmark> bookmarks, string userId, int strategyId)
         {
             StrategyBookmark bookmark = await bookmarks.Where(sb => sb.UserId == userId && sb.StrategyId == strategyId && !sb.Strategy.IsDeleted).FirstOrDefaultAsync();
             return bookmark;

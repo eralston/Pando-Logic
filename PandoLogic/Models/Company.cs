@@ -13,12 +13,12 @@ namespace PandoLogic.Models
     /// <summary>
     /// An organization using BizSprout to track its progress
     /// </summary>
-    public class Company : BaseModel
+    public class Company : BaseModel, IUserOwnedModel
     {
         // To-One on ApplicationUser
-        [ForeignKey("Creator")]
-        public string CreatorId { get; set; }
-        public virtual ApplicationUser Creator { get; set; }
+        [ForeignKey("User")]
+        public string UserId { get; set; }
+        public virtual ApplicationUser User { get; set; }
 
         // Required Field
         [Display(Name = "Company Name")]
@@ -68,7 +68,7 @@ namespace PandoLogic.Models
             Company company = new Company();
 
             company.CreatedDateUtc = DateTime.UtcNow;
-            company.Creator = creatorUser;
+            company.User = creatorUser;
 
             companies.Add(company);
 
