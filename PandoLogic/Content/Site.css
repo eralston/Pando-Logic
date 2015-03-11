@@ -1,6 +1,4 @@
-﻿
-
-.bg-pinstripe {
+﻿.bg-pinstripe {
     background-image: url("/img/pinstripe.png");
 }
 
@@ -11,6 +9,11 @@
     line-height: 2em;
     text-align: center;
     border-radius: 50%;
+}
+
+.image > img, .img-circle {
+  width: 45px;
+  height: 45px;
 }
 
 .done td {
@@ -29,7 +32,7 @@
     cursor: pointer;
 }
 
-.logo {
+.logo, .main-header .logo {
 
     font-size: 20px !important;
     font-family: 'Varela Round', sans-serif;
