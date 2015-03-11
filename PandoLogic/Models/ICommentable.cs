@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 using System.Web.Mvc;
 
@@ -33,6 +34,11 @@ namespace PandoLogic.Models
             
             controller.ViewBag.CommentId = commentable.Id;
             controller.ViewBag.CommentAction = commentAction;
+        }
+
+        public static void RemoveComments(this DbSet<Activity> activites, ICommentable commentable)
+        {
+            activites.RemoveRange(commentable.Comments);
         }
     }
 }

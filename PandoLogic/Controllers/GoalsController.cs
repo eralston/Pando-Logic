@@ -298,6 +298,7 @@ namespace PandoLogic.Controllers
         {
             // Remove the goal
             Goal goal = await Db.Goals.FindAsync(id);
+            Db.Activities.RemoveComments(goal);
             Db.Goals.Remove(goal);
 
             await Db.RemoveWorkItemsForGoal(goal.Id);
@@ -374,6 +375,8 @@ namespace PandoLogic.Controllers
 
             await Db.SaveChangesAsync();
 
+            await UpdateCurrentUserCacheGoalsAsync();
+
             return RedirectToAction("Index", "Goals");
         }
 
@@ -406,6 +409,8 @@ namespace PandoLogic.Controllers
             newActivity.Type = ActivityType.WorkUndoArchived;
 
             await Db.SaveChangesAsync();
+
+            await UpdateCurrentUserCacheGoalsAsync();
 
             return RedirectToAction("Details", new { id = id });
         }

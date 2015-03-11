@@ -19,7 +19,7 @@
         </p>
         @if (ViewBag.AllowCreateNewTaskBox ?? true)
         {
-            @Html.ActionLink("Create New Task", "Create", "Tasks", new { id = ViewBag.GoalId }, new { @class = "btn btn-default" })
+            @Html.ActionLink("Create New Task", "Create", "Tasks", new { id = ViewBag.GoalId }, new { @class = "btn btn-primary" })
         }
     </div>
 

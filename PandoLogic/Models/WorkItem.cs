@@ -96,9 +96,10 @@ namespace PandoLogic.Models
 
         public static async Task RemoveWorkItemsForGoal(this ApplicationDbContext context, int goalId)
         {
-            WorkItem[] workItems = await context.WorkItems.WhereGoal(goalId).ToArrayAsync();
+            WorkItem[] workItems = await context.WorkItems.WhereGoal(goalId).Include(i => i.Comments).ToArrayAsync();
             foreach (WorkItem item in workItems)
             {
+                context.Activities.RemoveComments(item);
                 context.WorkItems.Remove(item);
             }
         }

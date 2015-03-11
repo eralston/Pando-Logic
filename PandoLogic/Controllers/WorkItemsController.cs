@@ -342,6 +342,7 @@ namespace PandoLogic.Controllers
         {
             WorkItem workItem = await Db.WorkItems.FindAsync(id);
             int? goalId = workItem.GoalId;
+            Db.Activities.RemoveComments(workItem);
             Db.WorkItems.Remove(workItem);
 
             // Add an activity model

@@ -58,6 +58,7 @@ namespace PandoLogic.Controllers
                     if (workItemViewModel.IsMarkedForDelete)
                     {
                         // If we're nuking this task
+                        Db.Activities.RemoveComments(workItem);
                         Db.WorkItems.Remove(workItem);
                     }
                     else
@@ -101,7 +102,8 @@ namespace PandoLogic.Controllers
                     StrategyGoal sGoal = await Db.StrategyGoals.FindAsync(goalViewModel.RelationshipId);
                     if (goalViewModel.IsMarkedForDelete)
                     {
-                        // If we're nuking this goal 
+                        // If we're nuking this goal
+                        Db.Activities.RemoveComments(sGoal.Goal);
                         Db.Goals.Remove(sGoal.Goal);
                         Db.StrategyGoals.Remove(sGoal);
                     }
@@ -518,6 +520,8 @@ namespace PandoLogic.Controllers
             newActivity.Type = ActivityType.WorkAdded;
 
             await Db.SaveChangesAsync();
+
+            await UpdateCurrentUserCacheGoalsAsync();
 
             return RedirectToAction("Index", "Goals");
         }
