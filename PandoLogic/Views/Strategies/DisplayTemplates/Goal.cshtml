@@ -1,24 +1,16 @@
 ﻿@using PandoLogic.Models
 @model Goal
 
-@{
-    string classes = Model.Ordinal == 0 ? "in" : "";
-    string accordionId = string.Format("collapse{0}", Model.Ordinal);
-    string accordionHref = string.Format("#{0}", accordionId);
-}
-
 <div class="panel box box-info">
     <div class="box-header">
         <h4 class="box-title">
-            <a data-toggle="collapse" data-parent="#accordion" href="@accordionHref">
-                @{
-                    int order = @Model.Ordinal + 1;
-                }
-                Goal @order - @Model.Title
-            </a>
+            @{
+                int order = @Model.Ordinal + 1;
+            }
+            Goal @order - @Model.Title
         </h4>
     </div>
-    <div id="@accordionId" class="panel-collapse collapse @classes">
+    <div class="panel-collapse">
         <div class="box-body">
             @Html.DisplayFor(model => model.Description)
         </div>

@@ -76,7 +76,7 @@ namespace PandoLogic.Models
         /// Adds a new copy of the given goal to this strategy's collection
         /// </summary>
         /// <param name="existingGoal"></param>
-        public void AddCopyOfGoalAsTemplate(Goal existingGoal, ApplicationUser user, Company company)
+        public void AddCopyOfGoalAsTemplate(Goal existingGoal)
         {
             // Make a new goal and link to strategy
             StrategyGoal newStrategyGoal = new StrategyGoal();
@@ -88,12 +88,12 @@ namespace PandoLogic.Models
             newStrategyGoal.CreatedDateUtc = DateTime.UtcNow;
 
             // Set the fixed fields
-            newGoalTemplate.User = user;
-            newGoalTemplate.Company = company;
             newGoalTemplate.CreatedDateUtc = newStrategyGoal.CreatedDateUtc;
             newGoalTemplate.IsTemplate = true;
 
             // Map the existing goal into the new goal
+            newGoalTemplate.CompanyId = existingGoal.CompanyId;
+            newGoalTemplate.UserId = existingGoal.UserId;
             newGoalTemplate.Title = existingGoal.Title;
             newGoalTemplate.Description = existingGoal.Description;
 

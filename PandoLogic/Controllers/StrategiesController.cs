@@ -92,7 +92,7 @@ namespace PandoLogic.Controllers
         /// <param name="strategyViewModel"></param>
         /// <param name="strategy"></param>
         /// <returns></returns>
-        private async Task EditGoalsUnderStrategy(ParentWorkItemViewModel strategyViewModel, Strategy strategy)
+        private async Task EditGoalsUnderStrategy(ParentWorkItemViewModel strategyViewModel, Strategy strategy, string userId, int companyId)
         {
             foreach (ChildWorkItemViewModel goalViewModel in strategyViewModel.Children)
             {
@@ -119,10 +119,8 @@ namespace PandoLogic.Controllers
                         continue;
 
                     // If it's a brand new goal, then create a whole new one!
-                    Goal goal = new Goal() { Title = goalViewModel.Title, Description = goalViewModel.Description };
-                    Member currentMember = await GetCurrentMemberAsync();
-                    ApplicationUser currentUser = await GetCurrentUserAsync();
-                    strategy.AddCopyOfGoalAsTemplate(goal, currentUser, currentMember.Company);
+                    Goal goal = Db.Goals.Create(companyId, userId);
+                    strategy.AddCopyOfGoalAsTemplate(goal);
                 }
             }
         }
@@ -228,11 +226,11 @@ namespace PandoLogic.Controllers
 
             if (ModelState.IsValid)
             {
-                ApplicationUser user = await GetCurrentUserAsync();
+                Member member = await GetCurrentMemberAsync();
 
                 Strategy strategy = Db.Strategies.Create();
                 strategy.CreatedDateUtc = DateTime.UtcNow;
-                strategy.UserId = user.Id;
+                strategy.UserId = UserCache.Id;
 
                 strategy.Title = strategyViewModel.Title;
                 strategy.Summary = strategyViewModel.Summary;
@@ -243,7 +241,7 @@ namespace PandoLogic.Controllers
 
                 Db.Strategies.Add(strategy);
 
-                await EditGoalsUnderStrategy(strategyViewModel, strategy);
+                await EditGoalsUnderStrategy(strategyViewModel, strategy, UserCache.Id, member.CompanyId);
 
                 await Db.SaveChangesAsync();
 
@@ -333,11 +331,13 @@ namespace PandoLogic.Controllers
 
             if (ModelState.IsValid)
             {
-                ApplicationUser user = await GetCurrentUserAsync();
+                Member member = await GetCurrentMemberAsync();
 
                 Strategy strategy = await Db.Strategies.FindAsync(strategyViewModel.Id);
 
-                strategy.UserId = user.Id;
+                strategy.ExceptIfNotOwnedByUser(this.UserCache.Id);
+
+                strategy.UserId = UserCache.Id;
                 strategy.Title = strategyViewModel.Title;
                 strategy.Summary = strategyViewModel.Summary;
                 strategy.Description = strategyViewModel.Description;
@@ -345,7 +345,7 @@ namespace PandoLogic.Controllers
 
                 strategy.UpdateSearchText();
 
-                await EditGoalsUnderStrategy(strategyViewModel, strategy);
+                await EditGoalsUnderStrategy(strategyViewModel, strategy, UserCache.Id, member.CompanyId);
 
                 await Db.SaveChangesAsync();
 
@@ -369,7 +369,8 @@ namespace PandoLogic.Controllers
         public async Task<ActionResult> EditTasks(int id)
         {
             Goal goal = await Db.Goals.FindAsync(id);
-            goal.ExceptIfNotOwnedByUser(UserCache.Id);
+
+            // TODO: Verify rights to modify this goal
 
             ParentWorkItemViewModel strategyVm = new ParentWorkItemViewModel(goal);
             strategyVm.CreateChildren(1);
@@ -407,7 +408,12 @@ namespace PandoLogic.Controllers
             return View(goalViewModel);
         }
 
-        // GET: Strategies/Delete/5
+        /// <summary>
+        /// Gets the delete confirmation page for the given goal
+        /// NOTE: Users should only be able to fulfill this action if they "own" the strategy
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public async Task<ActionResult> Delete(int id)
         {
             Strategy strategy = await Db.Strategies.FindAsync(id);
@@ -421,7 +427,11 @@ namespace PandoLogic.Controllers
             return View(strategy);
         }
 
-        // POST: Strategies/Delete/5
+        /// <summary>
+        /// Posts the confirmation to delete the given strategy
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> DeleteConfirmed(int id)
