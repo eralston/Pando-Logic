@@ -10,7 +10,7 @@
     {
         @Html.AntiForgeryToken()
         <div class="body bg-gray">
-            @Html.ValidationSummary("", new { @class = "text-danger" })
+            @Html.ValidationSummary("", new { @class = "" })
             <span class='payment-errors text-danger'></span>
             <div class="form-group">
                 <input data-stripe="number" class="form-control" placeholder="Card Number" />

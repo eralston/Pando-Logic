@@ -17,16 +17,8 @@
                 </div>
             </div>
         </a>
-        <!-- search form -->
-        @*<form action="#" method="get" class="sidebar-form">
-                <div class="input-group">
-                    <input type="text" name="q" class="form-control" placeholder="Search..." />
-                    <span class="input-group-btn">
-                        <button type='submit' name='seach' id='search-btn' class="btn btn-flat"><i class="fa fa-search"></i></button>
-                    </span>
-                </div>
-            </form>*@
         <ul class="sidebar-menu">
+            <li class="header">MAIN MENU</li>
             <li class="">
                 <a href="@Url.Action("Index","Home")">
                     <i class="fa fa-dashboard"></i> <span>Dashboard</span>
@@ -57,6 +49,16 @@
                     <i class="fa fa-puzzle-piece"></i> <span>Strategies</span>
                 </a>
             </li>
+            @if (Html.IsInCompanyContext())
+            {
+                <li class="header">CHAT</li>
+                <li class="">
+                    <a class="company-chat-toggle" data-toggle="">
+                        <i class="fa fa-comments-o"></i>
+                        Team Chat
+                    </a>
+                </li>
+            }
         </ul>
 
     </section>

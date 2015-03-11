@@ -3,13 +3,13 @@
 <div class="form-group">
     @Html.LabelFor(model => model.Title, htmlAttributes: new { @class = "control-label" })
     @Html.EditorFor(model => model.Title, new { htmlAttributes = new { @class = "form-control", placeholder = Html.DisplayNameFor(model => model.Title) } })
-    @Html.ValidationMessageFor(model => model.Title, "", new { @class = "text-danger" })
+    @Html.ValidationMessageFor(model => model.Title, "", new { @class = "" })
 </div>
 
 <div class="form-group">
     @Html.LabelFor(model => model.Description, htmlAttributes: new { @class = "control-label" })
     @Html.EditorFor(model => model.Description, new { htmlAttributes = new { @class = "form-control", placeholder = Html.DisplayNameFor(model => model.Description) } })
-    @Html.ValidationMessageFor(model => model.Description, "", new { @class = "text-danger" })
+    @Html.ValidationMessageFor(model => model.Description, "", new { @class = "" })
 </div>
 
 <div class="form-group">
@@ -26,5 +26,5 @@
     @Html.LabelFor(model => model.DueDateString, htmlAttributes: new { @class = "control-label" })
 
     @Html.EditorFor(model => model.DueDateString, new { htmlAttributes = new { @class = "form-control date-field", placeholder = Html.DisplayNameFor(model => model.DueDateString) } })
-    @Html.ValidationMessageFor(model => model.DueDateString, "", new { @class = "text-danger" })
+    @Html.ValidationMessageFor(model => model.DueDateString, "", new { @class = "" })
 </div>

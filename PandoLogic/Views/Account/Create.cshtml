@@ -13,7 +13,7 @@
         @Html.AntiForgeryToken()
 
         <div class="body bg-gray">
-            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+            @Html.ValidationSummary(true, "", new { @class = "" })
 
             @Html.Partial("_ApplicationUserProfile", Model)
         </div>

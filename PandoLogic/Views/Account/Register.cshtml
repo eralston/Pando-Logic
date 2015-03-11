@@ -10,7 +10,7 @@
     {
         @Html.AntiForgeryToken()
         <div class="body bg-gray">
-            @Html.ValidationSummary("", new { @class = "text-danger" })
+            @Html.ValidationSummary("", new { @class = "" })
             <div class="form-group">
                 @Html.TextBoxFor(m => m.FirstName, new { @class = "form-control", placeholder = "First Name" })
             </div>
