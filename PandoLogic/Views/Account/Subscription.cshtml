@@ -8,10 +8,13 @@
     Layout = "~/Views/Shared/_PublicLayout.cshtml";
 }
 
-<div class="form-box">
-    <div class="header">Subscription Plan</div>
-    <div class="body bg-gray">
-        <p>Pick the plan that's right for @Model.Company.Name</p>
+<div class="box-header">
+    <i class="fa  fa-users"></i>
+    <h2 class="box-title">@ViewBag.Title</h2>
+</div>
+<div class="box-body">
+    <div class="">
+        <p class="text-muted">Pick the plan that's right for @Model.Company.Name</p>
         @foreach (SubscriptionPlan plan in Model.Plans)
         {
             using (Html.BeginForm("Subscription", "Account", FormMethod.Post))
@@ -19,7 +22,7 @@
                 @Html.AntiForgeryToken()
                 @Html.Hidden("PlanId", plan.Id)
                 @Html.Hidden("CompanyId", Model.Company.Id)
-                <div class="box box-primary">
+                <div class="box">
                     <div class="box-header">
                         <h3 class="box-title">@plan.Title</h3>
                     </div>
@@ -27,7 +30,7 @@
                         <p>
                             @plan.Description
                         </p>
-                        <button class="btn btn-default btn-block">
+                        <button class="btn btn-primary btn-block">
                             <strong>@plan.Title </strong>
                             $@plan.Price
                         </button>
@@ -35,12 +38,13 @@
                 </div>
             }
         }
-
-    </div>
-    <div class="footer">
-        @if (ViewBag.HasExistingSubscription != null)
-        {
-            <a href="@Url.Action("Details", "Companies", new { id = Model.Company.Id })" class="btn btn-primary btn-block">Nevermind, I Don't Want to Change My Subscription</a>
-        }
     </div>
 </div>
+
+@if (ViewBag.HasExistingSubscription != null)
+{
+    <div class="box-footer">
+        <a href="@Url.Action("Details", "Companies", new { id = Model.Company.Id })" class="btn btn-primary btn-block">Nevermind, I Don't Want to Change My Subscription</a>
+    </div>
+}
+

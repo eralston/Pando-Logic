@@ -1,15 +1,18 @@
 ﻿@model PandoLogic.Controllers.PaymentViewModel
 @{
-    ViewBag.Title = "Payment Info";
+    ViewBag.Title = "Account Payment";
     Layout = "~/Views/Shared/_PublicLayout.cshtml";
 }
 
-<div class="form-box" id="login-box">
-    <div class="header">Payment Info</div>
+<div class="box-header">
+    <i class="fa  fa-credit-card"></i>
+    <h2 class="box-title">@ViewBag.Title</h2>
+</div>
+<div class="box-body">
     @using (Html.BeginForm("Payment", "Account", FormMethod.Post, new { role = "form", id = "payment-form" }))
     {
         @Html.AntiForgeryToken()
-        <div class="body bg-gray">
+        <div class="">
             @Html.ValidationSummary("", new { @class = "" })
             <span class='payment-errors text-danger'></span>
             <div class="form-group">

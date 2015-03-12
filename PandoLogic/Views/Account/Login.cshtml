@@ -5,14 +5,15 @@
     ViewBag.Title = "Log in";
     Layout = "~/Views/Shared/_PublicLayout.cshtml";
 }
+<div class="box-header">
+    <i class="fa fa-user"></i>
+    <h2 class="box-title">Sign In</h2>
+</div>
 
-<div class="form-box" id="login-box">
-
-    <div class="header">Sign In</div>
-
+<div class="box-body">
     @using (Html.BeginForm("Login", "Account", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, new { role = "form" }))
     {
-        <div class="body bg-gray">
+        <div class="">
             @Html.AntiForgeryToken()
             @Html.ValidationSummary(true, "", new { @class = "" })
             <div class="form-group">
@@ -29,20 +30,8 @@
             </div>
         </div>
         <div class="footer">
-            <button type="submit" class="btn btn-primary btn-block">Sign me in</button>
-
-            @*<p><a href="#">I forgot my password</a></p>*@
-
+            <button type="submit" class="btn btn-primary btn-block">Sign In</button>
             @Html.ActionLink("No Account? Register", "Register", null, new { @class = "text-center" })
         </div>
     }
-
-    @*<div class="margin text-center">
-            <span>Sign in using social networks</span>
-            <br />
-            <button class="btn bg-light-blue btn-circle"><i class="fa fa-facebook"></i></button>
-            <button class="btn bg-aqua btn-circle"><i class="fa fa-twitter"></i></button>
-            <button class="btn bg-red btn-circle"><i class="fa fa-google-plus"></i></button>
-
-        </div>*@
 </div>

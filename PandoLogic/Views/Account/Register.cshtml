@@ -4,12 +4,15 @@
     Layout = "~/Views/Shared/_PublicLayout.cshtml";
 }
 
-<div class="form-box" id="login-box">
-    <div class="header">Register New Account</div>
+<div class="box-header">
+    <i class="fa  fa-user-plus"></i>
+    <h2 class="box-title">Register</h2>
+</div>
+<div class="box-body">
     @using (Html.BeginForm("Register", "Account", FormMethod.Post, new { role = "form" }))
     {
         @Html.AntiForgeryToken()
-        <div class="body bg-gray">
+        <div class="">
             @Html.ValidationSummary("", new { @class = "" })
             <div class="form-group">
                 @Html.TextBoxFor(m => m.FirstName, new { @class = "form-control", placeholder = "First Name" })
@@ -29,17 +32,9 @@
         </div>
         <div class="footer">
 
-            <button type="submit" class="btn btn-primary btn-block">Sign me up</button>
+            <button type="submit" class="btn btn-primary btn-block">Register New Account</button>
 
             @Html.ActionLink("Already Have An Account? Login", "Login", null, new { @class = "text-center" })
         </div>
     }
-
-    @*<div class="margin text-center">
-            <span>Register using social networks</span>
-            <br />
-            <button class="btn bg-light-blue btn-circle"><i class="fa fa-facebook"></i></button>
-            <button class="btn bg-aqua btn-circle"><i class="fa fa-twitter"></i></button>
-            <button class="btn bg-red btn-circle"><i class="fa fa-google-plus"></i></button>
-        </div>*@
 </div>

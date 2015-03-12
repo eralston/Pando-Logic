@@ -5,14 +5,16 @@
     Layout = "~/Views/Shared/_PublicLayout.cshtml";
 }
 
-<div class="form-box" id="login-box">
-    <div class="header">@ViewBag.Title</div>
-
+<div class="box-header">
+    <i class="fa  fa-user-plus"></i>
+    <h2 class="box-title">@ViewBag.Title</h2>
+</div>
+<div class="box-body">
     @using (Html.BeginForm("Create", "Account", FormMethod.Post, new { enctype = "multipart/form-data" }))
     {
         @Html.AntiForgeryToken()
 
-        <div class="body bg-gray">
+        <div class="">
             @Html.ValidationSummary(true, "", new { @class = "" })
 
             @Html.Partial("_ApplicationUserProfile", Model)
