@@ -9,6 +9,9 @@ using System.Web.Security;
 
 namespace PandoLogic.Models
 {
+    /// <summary>
+    /// A model for linking goals and strategies together
+    /// </summary>
     public class StrategyGoal : BaseModel
     {
         [ForeignKey("Goal")]

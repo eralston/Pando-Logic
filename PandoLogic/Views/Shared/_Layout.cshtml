@@ -122,7 +122,8 @@
                     </div>
                 }
 
-                @Html.Partial("_CompanyChatBox")
+                @*TODO: Re-enable chat*@
+                @*@Html.Partial("_CompanyChatBox")*@
                 @RenderBody()
             </section>
 
@@ -156,7 +157,8 @@
     </script>
     <script src="~/Scripts/pandologic.js"></script>
     @RenderSection("scripts", required: false)
-    @Html.Partial("_CompanyChat")
+    @*TODO: Re-enable chat
+    @Html.Partial("_CompanyChat")*@
     @Html.Partial("_Analytics")
     @Html.Partial("_SupportChat")
 </body>

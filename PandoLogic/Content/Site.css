@@ -71,3 +71,7 @@ body > .header .logo {
 .company-chat-toggle {
     cursor: pointer;
 }
+
+.field-validation-error {
+    color: #dd4b39 !important;
+}
