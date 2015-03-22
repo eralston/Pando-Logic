@@ -52,15 +52,18 @@
                 @if (Html.IsInCompanyContext())
                 {
                     <li class="user-header bg-light-blue">
-                        <a href="@Url.Action("Details", "Companies", new { id = ViewBag.CurrentUserSelectedCompanyId })">
-                            @if (!string.IsNullOrEmpty(ViewBag.CurrentUserSelectedCompanyAvatarUrl))
-                            {
-                                <img src="@ViewBag.CurrentUserSelectedCompanyAvatarUrl" class="img-circle" alt="Company Image" />
-                            }
-                            <p>
-                                @ViewBag.CurrentUserSelectedCompanyName
-                            </p>
-                        </a>
+                        @if (!string.IsNullOrEmpty(ViewBag.CurrentUserSelectedCompanyAvatarUrl))
+                        {
+                            <img src="@ViewBag.CurrentUserSelectedCompanyAvatarUrl" class="img-circle" alt="Company Image" />
+                        }
+                        <p>
+                            @ViewBag.CurrentUserSelectedCompanyName
+                        </p>
+                    </li>
+                    <li class="user-footer">
+                        <div class="pull-right">
+                            @Html.ActionLink("Manage Company", "Details", "Companies", new { id = ViewBag.CurrentUserSelectedCompanyId }, new { @class = "btn btn-default btn-flat" })
+                        </div>
                     </li>
                 }
 
@@ -100,28 +103,33 @@
             <ul class="dropdown-menu">
                 <!-- User image -->
                 <li class="user-header bg-light-blue">
-                    <a href="@Url.Action("Details", "Users", new { id = ViewBag.CurrentUserId })">
 
 
-                        @if (!string.IsNullOrEmpty(ViewBag.CurrentUserAvatarUrl))
+                    @if (!string.IsNullOrEmpty(ViewBag.CurrentUserAvatarUrl))
+                    {
+                        <img src="@ViewBag.CurrentUserAvatarUrl" class="img-circle" alt="User Image" />
+                    }
+
+                    <p>
+                        @ViewBag.CurrentUserFirstName @ViewBag.CurrentUserLastName
+                        @if (!string.IsNullOrEmpty(ViewBag.CurrentUserJobTitle))
                         {
-                            <img src="@ViewBag.CurrentUserAvatarUrl" class="img-circle" alt="User Image" />
+                            <span> - </span>@ViewBag.CurrentUserJobTitle
                         }
+                    </p>
 
-                        <p>
-                            @ViewBag.CurrentUserFirstName @ViewBag.CurrentUserLastName
-                            @if (!string.IsNullOrEmpty(ViewBag.CurrentUserJobTitle))
-                            {
-                                <span> - </span>@ViewBag.CurrentUserJobTitle
-                            }
-                        </p>
-                    </a>
                 </li>
-                <!-- Menu Footer-->
                 <li class="user-footer">
+
                     <div class="pull-left">
+                        @Html.ActionLink("View Account", "Details", "Account", new { id = ViewBag.CurrentUserId }, new { @class = "btn btn-default btn-flat" })
+                    </div>
+                    <div class="pull-right">
                         @Html.ActionLink("Manage Account", "Manage", "Account", null, new { @class = "btn btn-default btn-flat" })
                     </div>
+                </li>
+                <li class="user-footer">
+
                     <div class="pull-right">
                         @using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new { id = "logoutForm", @class = "navbar-right" }))
                         {
@@ -132,7 +140,5 @@
                     </div>
                 </li>
             </ul>
-            @*Top-Right Company  Drop-down*@
-
     </ul>
 </div>
