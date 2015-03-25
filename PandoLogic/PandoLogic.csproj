@@ -281,11 +281,36 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\AdminLTE.css" />
-    <Content Include="Content\AdminLTE.min.css" />
+    <Content Include="Content\AdminLTE.min.css">
+      <DependentUpon>AdminLTE.css</DependentUpon>
+    </Content>
     <Content Include="Content\bootstrap.css" />
-    <Content Include="Content\bootstrap.min.css" />
+    <Content Include="Content\bootstrap.min.css">
+      <DependentUpon>bootstrap.css</DependentUpon>
+    </Content>
+    <Content Include="Content\favicon\apple-touch-icon-114x114.png" />
+    <Content Include="Content\favicon\apple-touch-icon-120x120.png" />
+    <Content Include="Content\favicon\apple-touch-icon-144x144.png" />
+    <Content Include="Content\favicon\apple-touch-icon-152x152.png" />
+    <Content Include="Content\favicon\apple-touch-icon-57x57.png" />
+    <Content Include="Content\favicon\apple-touch-icon-60x60.png" />
+    <Content Include="Content\favicon\apple-touch-icon-72x72.png" />
+    <Content Include="Content\favicon\apple-touch-icon-76x76.png" />
+    <Content Include="Content\favicon\favicon-128.png" />
+    <Content Include="Content\favicon\favicon-16x16.png" />
+    <Content Include="Content\favicon\favicon-196x196.png" />
+    <Content Include="Content\favicon\favicon-32x32.png" />
+    <Content Include="Content\favicon\favicon-96x96.png" />
+    <Content Include="Content\favicon\favicon.ico" />
+    <Content Include="Content\favicon\mstile-144x144.png" />
+    <Content Include="Content\favicon\mstile-150x150.png" />
+    <Content Include="Content\favicon\mstile-310x150.png" />
+    <Content Include="Content\favicon\mstile-310x310.png" />
+    <Content Include="Content\favicon\mstile-70x70.png" />
     <Content Include="Content\font-awesome.css" />
-    <Content Include="Content\font-awesome.min.css" />
+    <Content Include="Content\font-awesome.min.css">
+      <DependentUpon>font-awesome.css</DependentUpon>
+    </Content>
     <Content Include="Content\images\animated-overlay.gif" />
     <Content Include="Content\images\ui-bg_flat_0_aaaaaa_40x100.png" />
     <Content Include="Content\images\ui-bg_flat_55_fbec88_40x100.png" />
@@ -329,6 +354,9 @@
     <Content Include="Content\img\user6-128x128.jpg" />
     <Content Include="Content\img\user7-128x128.jpg" />
     <Content Include="Content\img\user8-128x128.jpg" />
+    <Content Include="Content\Site.min.css">
+      <DependentUpon>Site.css</DependentUpon>
+    </Content>
     <Content Include="Content\skins\skin-black.css" />
     <Content Include="Content\skins\skin-black.min.css" />
     <Content Include="Content\skins\skin-blue.css" />
@@ -352,7 +380,6 @@
     <Content Include="fonts\glyphicons-halflings-regular.woff" />
     <Content Include="fonts\glyphicons-halflings-regular.ttf" />
     <Content Include="fonts\glyphicons-halflings-regular.eot" />
-    <Content Include="Content\bootstrap.css.map" />
     <Content Include="fonts\fontawesome-webfont.eot" />
     <Content Include="fonts\fontawesome-webfont.ttf" />
     <Content Include="fonts\fontawesome-webfont.woff" />
@@ -388,7 +415,9 @@
     <None Include="Properties\PublishProfiles\PandoLogic-dev %282%29.pubxml" />
     <None Include="Properties\PublishProfiles\pandologic-prod - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\pandologic-prod - Web Deploy.pubxml" />
-    <Content Include="Scripts\app.min.js" />
+    <Content Include="Scripts\app.min.js">
+      <DependentUpon>app.js</DependentUpon>
+    </Content>
     <Content Include="Scripts\ckeditor\CHANGES.md" />
     <Content Include="Scripts\ckeditor\LICENSE.md" />
     <Content Include="Scripts\ckeditor\plugins\scayt\LICENSE.md" />
@@ -399,6 +428,9 @@
     <Content Include="Scripts\ckeditor\skins\moono\readme.md" />
     <Content Include="Scripts\input-mask\phone-codes\phone-be.json" />
     <Content Include="Scripts\input-mask\phone-codes\phone-codes.json" />
+    <Content Include="Scripts\app.min.js.map">
+      <DependentUpon>app.min.js</DependentUpon>
+    </Content>
     <None Include="Scripts\jquery-2.1.1.intellisense.js" />
     <Content Include="img\ajax-loader.gif" />
     <Content Include="img\ajax-loader1.gif" />
