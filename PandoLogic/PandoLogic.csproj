@@ -431,6 +431,7 @@
     <Content Include="Scripts\app.min.js.map">
       <DependentUpon>app.min.js</DependentUpon>
     </Content>
+    <None Include="Properties\PublishProfiles\pandologic-prod.pubxml" />
     <None Include="Scripts\jquery-2.1.1.intellisense.js" />
     <Content Include="img\ajax-loader.gif" />
     <Content Include="img\ajax-loader1.gif" />
@@ -463,9 +464,6 @@
     <Content Include="img\user.jpg" />
     <Content Include="img\user2.jpg" />
     <Content Include="newrelic\NewRelic.Profiler.dll" />
-    <Content Include="Scripts\AdminLTE\app.js" />
-    <Content Include="Scripts\AdminLTE\dashboard.js" />
-    <Content Include="Scripts\AdminLTE\demo.js" />
     <Content Include="Scripts\app.js" />
     <Content Include="Scripts\bootstrap-slider\bootstrap-slider.js" />
     <Content Include="Scripts\bootstrap-slider\slider.css" />
@@ -970,6 +968,9 @@
     <Content Include="Scripts\pages\dashboard.js" />
     <Content Include="Scripts\pages\dashboard2.js" />
     <Content Include="Scripts\pandologic.js" />
+    <Content Include="Scripts\pandologic.min.js">
+      <DependentUpon>pandologic.js</DependentUpon>
+    </Content>
     <Content Include="Scripts\plugins\bootstrap-slider\bootstrap-slider.js" />
     <Content Include="Scripts\plugins\bootstrap-wysihtml5\bootstrap3-wysihtml5.all.min.js" />
     <Content Include="Scripts\plugins\bootstrap-wysihtml5\bootstrap3-wysihtml5.js" />
@@ -1428,6 +1429,9 @@
     <Content Include="Views\Shared\_CompanyChatBox.cshtml" />
     <Content Include="Views\Strategies\EditorTemplates\ParentWorkItemViewModel.cshtml" />
     <Content Include="Views\Strategies\EditTasks.cshtml" />
+    <Content Include="Scripts\pandologic.min.js.map">
+      <DependentUpon>pandologic.min.js</DependentUpon>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Views\Shared\DisplayTemplates\" />

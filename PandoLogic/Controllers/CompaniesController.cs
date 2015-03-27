@@ -171,8 +171,11 @@ namespace PandoLogic.Controllers
             Company company = await Db.Companies.FindAsync(id);
             Subscription sub = await Db.Subscriptions.WhereCompany(id);
 
-            if (sub.UserId == UserCache.Id)
-                ViewBag.IsCompanyOwner = true;
+            if(sub != null)
+            {
+                if (sub.UserId == UserCache.Id)
+                    ViewBag.IsCompanyOwner = true;
+            }
 
             UnstashModelState();
 

@@ -1,16 +1,27 @@
 ﻿$(function () {
 
+    /*
+     * We are gonna initialize all checkbox and radio inputs to 
+     * iCheck plugin in.
+     * You can find the documentation at http://fronteed.com/iCheck/
+     */
+    $("input[type='checkbox'], input[type='radio']").iCheck({
+        checkboxClass: 'icheckbox_flat-blue',
+        radioClass: 'iradio_flat-blue'
+    });
+
+    // This is intended to interact with an iCheck active checkbox and does NOT work on vanilla checkboxes
     $(".iCheck-helper").click(function () {
         var wrapper = $(this).parent();
         var check = $(this).prev();
-        var value = wrapper.hasClass("checked");
+        var isNowChecked = wrapper.hasClass("checked");
         var id = check.attr("data-task-id");
 
-        if (value) {
-            check.parent().parent().parent().addClass("done");
+        if (isNowChecked) {
+            check.parents("tr").addClass("done");
             $.post("/Tasks/Complete/" + id, function (data) { });
         } else {
-            check.parent().parent().parent().removeClass("done");
+            check.parents("tr").removeClass("done");
             $.post("/Tasks/Uncomplete/" + id, function (data) { });
         }
     });
