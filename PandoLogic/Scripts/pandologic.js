@@ -25,6 +25,10 @@
             $.post("/Tasks/Uncomplete/" + id, function (data) { });
         }
     });
+
+    // localize time
+    $('time.time').localize('h:MMa');
+    $('time.date-time').localize('m/d/yyyy h:MMa');
 });
 
 function markIndices($container) {

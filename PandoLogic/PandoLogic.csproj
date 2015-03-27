@@ -959,6 +959,10 @@
     <Content Include="Scripts\jvectormap\jquery-jvectormap-1.2.2.min.js" />
     <Content Include="Scripts\jvectormap\jquery-jvectormap-world-mill-en.js" />
     <Content Include="Scripts\knob\jquery.knob.js" />
+    <Content Include="Scripts\localize\jquery.localize.js" />
+    <Content Include="Scripts\localize\jquery.localize.min.js">
+      <DependentUpon>jquery.localize.js</DependentUpon>
+    </Content>
     <Content Include="Scripts\modernizr-2.7.2.js" />
     <Content Include="Scripts\moment.min.js" />
     <Content Include="Scripts\morris\morris.css" />
@@ -1432,10 +1436,12 @@
     <Content Include="Scripts\pandologic.min.js.map">
       <DependentUpon>pandologic.min.js</DependentUpon>
     </Content>
+    <Content Include="Scripts\localize\jquery.localize.min.js.map">
+      <DependentUpon>jquery.localize.min.js</DependentUpon>
+    </Content>
+    <Content Include="Views\Shared\DisplayTemplates\DateTime.cshtml" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Views\Shared\DisplayTemplates\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <Content Include="packages.config" />
     <None Include="Project_Readme.html" />
