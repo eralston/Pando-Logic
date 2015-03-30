@@ -458,7 +458,7 @@ namespace PandoLogic.Controllers
         /// GET for payment page, enabling user to enter card information
         /// </summary>
         /// <returns></returns>
-        public async Task<ActionResult> PaymentChange()
+        public ActionResult PaymentChange()
         {
             ViewBag.PostTarget = "PaymentChange";
             return View("Payment");

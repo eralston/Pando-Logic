@@ -154,6 +154,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Stripe.net.2.8.0\lib\net40\Stripe.net.dll</HintPath>
     </Reference>
+    <Reference Include="StripeEntities, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\StripeEntities.1.0.0\lib\StripeEntities.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
@@ -1468,12 +1472,6 @@
   <ItemGroup>
     <Content Include="packages.config" />
     <None Include="Project_Readme.html" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\StripeEntities\StripeEntities.csproj">
-      <Project>{56e6088c-3a4b-4f08-a440-588f450d3721}</Project>
-      <Name>StripeEntities</Name>
-    </ProjectReference>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
