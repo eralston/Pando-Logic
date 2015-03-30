@@ -8,6 +8,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Security;
 
+using Masticore;
+
 namespace PandoLogic.Models
 {
     /// <summary>

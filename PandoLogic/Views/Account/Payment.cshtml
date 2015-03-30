@@ -9,7 +9,10 @@
     <h2 class="box-title">@ViewBag.Title</h2>
 </div>
 <div class="box-body">
-    @using (Html.BeginForm("Payment", "Account", FormMethod.Post, new { role = "form", id = "payment-form" }))
+    @{
+        string postTarget = ViewBag.PostTarget.ToString();
+    }
+    @using (Html.BeginForm(postTarget, "Account", FormMethod.Post, new { role = "form", id = "payment-form" }))
     {
         @Html.AntiForgeryToken()
         <div class="">

@@ -12,6 +12,9 @@ using PandoLogic.Models;
 
 namespace PandoLogic
 {
+    /// <summary>
+    /// Interface indicating an object can provide a valid application DbContext
+    /// </summary>
     public interface IPersistenceContext
     {
         string CurrentUsername { get; }

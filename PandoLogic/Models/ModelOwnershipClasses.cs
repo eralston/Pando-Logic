@@ -1,5 +1,8 @@
 ﻿using System;
 using System.Web;
+
+using Masticore;
+
 namespace PandoLogic.Models
 {
     /// <summary>

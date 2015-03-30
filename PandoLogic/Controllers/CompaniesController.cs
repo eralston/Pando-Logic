@@ -11,7 +11,11 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 
+using Masticore;
+
 using PandoLogic.Models;
+using StripeEntities;
+
 using Microsoft.WindowsAzure.Storage.Blob;
 
 namespace PandoLogic.Controllers
@@ -218,6 +222,7 @@ namespace PandoLogic.Controllers
                 // Create a new company and capture viewModel fields
                 ApplicationUser currentUser = await GetCurrentUserAsync();
                 Company company = Db.Companies.Create(currentUser);
+                
                 await UpdateCompany(companyViewModel, company);
 
                 // Creates a member to link to companies
@@ -322,7 +327,8 @@ namespace PandoLogic.Controllers
                 return HttpNotFound();
 
             // Unsubscribe and delete this subscription
-            StripeManager.Unsubscribe(sub);
+            ApplicationUser user = await GetCurrentUserAsync();
+            StripeManager.Unsubscribe(user, sub);
             sub.IsSoftDeleted = true;
             
             Company company = await Db.Companies.FindAsync(id);

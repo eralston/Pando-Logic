@@ -4,29 +4,29 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Data.Entity;
-using System.Globalization;
 using System.Linq;
-using System.Web.Security;
 
-namespace PandoLogic.Models
+using Masticore;
+
+namespace StripeEntities
 {
-    /// <summary>
-    /// Enumeration for the possible states of a subscription
-    /// </summary>
-    public enum SubscriptionState
-    {
-        Pending,
-        Available,
-        Retired
-    }
-
     /// <summary>
     /// A model for capturing available subscription plans in the system
     /// There should be one of these for each pricing/service tier in the system
     /// These are mirrored into the billing system by API integration
     /// </summary>
-    public class SubscriptionPlan : BaseModel
+    public class SubscriptionPlan : BaseModel, StripeEntities.IStripeSubscriptionPlan
     {
+        /// <summary>
+        /// Enumeration for the possible states of a subscription
+        /// </summary>
+        public enum SubscriptionState
+        {
+            Pending,
+            Available,
+            Retired
+        }
+
         [Required]
         public virtual string Title { get; set; }
 
@@ -52,9 +52,9 @@ namespace PandoLogic.Models
 
     public static class SubscriptionPlanExtensions
     {
-        public static IQueryable<SubscriptionPlan> AllAvailablePlans(this DbSet<SubscriptionPlan> plans)
+        public static IOrderedQueryable<SubscriptionPlan> AllAvailablePlans(this DbSet<SubscriptionPlan> plans)
         {
-            return plans.Where(p => p.State == SubscriptionState.Available)
+            return plans.Where(p => p.State == SubscriptionPlan.SubscriptionState.Available)
                                                     .OrderByDescending(p => p.Price);
         }
     }

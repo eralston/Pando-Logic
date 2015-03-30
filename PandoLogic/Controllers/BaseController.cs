@@ -444,7 +444,7 @@ namespace PandoLogic.Controllers
             SetupUserCacheAndApplyToViewBag();
 
             // Check for invites
-            CheckForInvites();            
+            CheckForInvites();
         }
 
         #endregion

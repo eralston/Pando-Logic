@@ -1,25 +1,20 @@
-﻿using System;
+﻿using InviteOnly;
+using Masticore;
+using Microsoft.AspNet.Identity;
+using Microsoft.AspNet.Identity.Owin;
+using Microsoft.Owin.Security;
+using Microsoft.WindowsAzure.Storage.Blob;
+using Owin;
+using PandoLogic.Models;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Data;
 using System.Data.Entity;
 using System.Linq;
-using System.Security.Claims;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
-
-using Microsoft.AspNet.Identity;
-using Microsoft.AspNet.Identity.EntityFramework;
-using Microsoft.AspNet.Identity.Owin;
-using Microsoft.Owin.Security;
-
-using Owin;
-
-using PandoLogic.Models;
-
-using InviteOnly;
-using Microsoft.WindowsAzure.Storage.Blob;
+using StripeEntities;
 
 namespace PandoLogic.Controllers
 {
@@ -269,15 +264,25 @@ namespace PandoLogic.Controllers
                 : "";
             ViewBag.HasLocalPassword = HasPassword();
             ViewBag.ReturnUrl = Url.Action("Manage");
-            ViewBag.CurrentApplicationUser = await GetCurrentUserAsync();
+            ApplicationUser user = await GetCurrentUserAsync();
+            ViewBag.CurrentApplicationUser = user;
 
             // Merge in any errors from redirecting actions
             UnstashModelState();
 
             // Find the list of companies the current user is a member of
             await LoadCompaniesForCurrentUserIntoViewBag();
+            await LoadSubscriptionsForCurrentUserIntoViewBag();
+
+            Stripe.StripeCustomer stripeCustomer = StripeManager.RetrieveCustomer(user);
+            ViewBag.DefaultCard = stripeCustomer.GetDefaultCard();
 
             return View();
+        }
+
+        private async Task LoadSubscriptionsForCurrentUserIntoViewBag()
+        {
+            ViewBag.Subscriptions = await Db.Subscriptions.WhereUser(UserCache.Id).Include(s => s.Plan).Include(s => s.Company).ToArrayAsync();
         }
 
         private async Task LoadCompaniesForCurrentUserIntoViewBag()
@@ -337,10 +342,15 @@ namespace PandoLogic.Controllers
                 }
             }
 
-            ViewBag.CurrentApplicationUser = await GetCurrentUserAsync();
+            ApplicationUser currentUser = await GetCurrentUserAsync();
+            ViewBag.CurrentApplicationUser = currentUser;
 
             // Find the list of companies the current user is a member of
             await LoadCompaniesForCurrentUserIntoViewBag();
+            await LoadSubscriptionsForCurrentUserIntoViewBag();
+
+            Stripe.StripeCustomer stripeCustomer = StripeManager.RetrieveCustomer(currentUser);
+            ViewBag.DefaultCard = stripeCustomer.GetDefaultCard();
 
             // If we got this far, something failed, redisplay form
             return View(model);
@@ -394,6 +404,18 @@ namespace PandoLogic.Controllers
             return new ChallengeResult(provider, Url.Action("LinkLoginCallback", "Account"), User.Identity.GetUserId());
         }
 
+        #region Payments
+
+        private async Task UpdatePaymentInfo(PaymentViewModel viewModel)
+        {
+            ApplicationUser currentUser = await GetCurrentUserAsync();
+
+            // Create the customer in stripe with this payment information
+            StripeManager.CreateOrUpdateCustomer(currentUser, viewModel.stripeToken);
+
+            await Db.SaveChangesAsync();
+        }
+
         /// <summary>
         /// GET for payment page, enabling user to enter card information
         /// </summary>
@@ -402,6 +424,8 @@ namespace PandoLogic.Controllers
         {
             // If the current user has payment info, then we can skip this, unless they are editing it
             ApplicationUser currentUser = await GetCurrentUserAsync();
+
+            ViewBag.PostTarget = "Payment";
 
             if (currentUser.HasPaymentInfo)
                 return RedirectToAction("Subscription");
@@ -420,18 +444,48 @@ namespace PandoLogic.Controllers
         {
             if (ModelState.IsValid)
             {
-                ApplicationUser currentUser = await GetCurrentUserAsync();
-
-                // Create the customer in stripe with this payment information
-                StripeManager.CreateOrUpdateCustomer(currentUser, viewModel.stripeToken);
-
-                await Db.SaveChangesAsync();
+                
+                await UpdatePaymentInfo(viewModel);
 
                 return RedirectToAction("Subscription");
             }
 
+            ViewBag.PostTarget = "PaymentChange";
             return View();
         }
+
+        /// <summary>
+        /// GET for payment page, enabling user to enter card information
+        /// </summary>
+        /// <returns></returns>
+        public async Task<ActionResult> PaymentChange()
+        {
+            ViewBag.PostTarget = "PaymentChange";
+            return View("Payment");
+        }
+
+        /// <summary>
+        /// POST for 
+        /// </summary>
+        /// <param name="viewModel"></param>
+        /// <returns></returns>
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> PaymentChange(PaymentViewModel viewModel)
+        {
+
+            if (ModelState.IsValid)
+            {
+                await UpdatePaymentInfo(viewModel);
+
+                return RedirectToAction("Manage");
+            }
+
+            ViewBag.PostTarget = "PaymentChange";
+            return View("Payment");
+        }
+
+        #endregion
 
         /// <summary>
         /// GET request for the page where the user selects subscription level
@@ -495,7 +549,8 @@ namespace PandoLogic.Controllers
                 if (oldSubscription != null && oldSubscription.PaymentSystemId != null)
                 {
                     // Transfer this user to the new plan
-                    StripeManager.ChangeSubscriptionPlan(oldSubscription, desiredPlan);
+                    oldSubscription.Plan = desiredPlan;
+                    StripeManager.ChangeSubscriptionPlan(currentUser, oldSubscription, desiredPlan);
                 }
                 else
                 {
@@ -505,7 +560,7 @@ namespace PandoLogic.Controllers
 
                     // Create new subscription based on selected plan
                     Subscription newSubscription = Db.Subscriptions.Create(currentUser, member.Company, desiredPlan);
-                    StripeManager.Subscribe(newSubscription);
+                    StripeManager.Subscribe(currentUser, newSubscription, desiredPlan);
                 }
 
                 // Save all changes

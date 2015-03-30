@@ -1,20 +1,15 @@
-﻿using System;
+﻿using StripeEntities;
+using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Data.Entity;
 using System.Linq;
-using System.Threading.Tasks;
 using System.Net;
-using System.Web;
+using System.Threading.Tasks;
 using System.Web.Mvc;
-
-using Stripe;
-
-using PandoLogic.Models;
 
 namespace PandoLogic.Controllers
 {
-    [AdminAuthorize]
+    [Authorize]
     public class SubscriptionPlansController : BaseController
     {
         // GET: SubscriptionPlans

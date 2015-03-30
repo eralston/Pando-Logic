@@ -5,6 +5,8 @@ using System.Linq;
 using PandoLogic.Models;
 using System.ComponentModel.DataAnnotations;
 
+using Masticore;
+
 namespace PandoLogic.Controllers
 {
     [NotMapped]

@@ -13,7 +13,7 @@ namespace PandoLogic.Models
     /// <summary>
     /// An organization using BizSprout to track its progress
     /// </summary>
-    public class Company : BaseModel, IUserOwnedModel
+    public class Company : Masticore.BaseModel, IUserOwnedModel
     {
         // To-One on ApplicationUser
         [ForeignKey("User")]
@@ -56,9 +56,6 @@ namespace PandoLogic.Models
         [Display(Name = "Founded Date")]
         [DataType(DataType.DateTime)]
         public DateTime? FoundedDateUtc { get; set; }
-
-        [DefaultValue(false)]
-        public bool IsSoftDeleted { get; set; }
     }
 
     public static class CompanyExtensions

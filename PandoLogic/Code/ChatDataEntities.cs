@@ -6,6 +6,8 @@ using System.Web;
 
 using Microsoft.WindowsAzure.Storage.Table;
 
+using Masticore;
+
 using PandoLogic.Models;
 
 namespace PandoLogic

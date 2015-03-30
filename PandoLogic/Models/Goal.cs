@@ -7,6 +7,8 @@ using System.Globalization;
 using System.Linq;
 using System.Web.Security;
 
+using Masticore;
+
 namespace PandoLogic.Models
 {
     /// <summary>

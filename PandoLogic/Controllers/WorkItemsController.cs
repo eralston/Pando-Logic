@@ -12,6 +12,8 @@ using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 
+using Masticore;
+
 namespace PandoLogic.Controllers
 {
     [NotMapped]

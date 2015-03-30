@@ -15,15 +15,8 @@ namespace PandoLogic.Models
     /// A model for connection users to their subscriptions
     /// There should be one instance for each payment relationship between PandoLogic and a customer (one for each company)
     /// </summary>
-    public class Subscription : BaseModel, IRequiredCompanyOwnedModel, IUserOwnedModel
+    public class Subscription : StripeEntities.SubscriptionBase , IRequiredCompanyOwnedModel, IUserOwnedModel
     {
-        [Display(Name = "Active Until")]
-        public DateTime? ActiveUntil { get; set; }
-
-        public string Notes { get; set; }
-
-        public string PaymentSystemId { get; set; }
-
         // To-One on Company
         [ForeignKey("Company")]
         public int CompanyId { get; set; }
@@ -33,14 +26,6 @@ namespace PandoLogic.Models
         [ForeignKey("User")]
         public string UserId { get; set; }
         public virtual ApplicationUser User { get; set; }
-
-        // To-One on SubscriptionPlan
-        [ForeignKey("Plan")]
-        public int PlanId { get; set; }
-        public virtual SubscriptionPlan Plan { get; set; }
-
-        [DefaultValue(false)]
-        public bool IsSoftDeleted { get; set; }
     }
 
     public static class SubscriptionExtensions
@@ -53,7 +38,7 @@ namespace PandoLogic.Models
         /// <param name="company"></param>
         /// <param name="plan"></param>
         /// <returns></returns>
-        public static Subscription Create(this DbSet<Subscription> subscriptions, ApplicationUser user, Company company, SubscriptionPlan plan)
+        public static Subscription Create(this DbSet<Subscription> subscriptions, ApplicationUser user, Company company, StripeEntities.SubscriptionPlan plan)
         {
             Subscription newSub = new Subscription();
 
@@ -90,6 +75,17 @@ namespace PandoLogic.Models
         public static Task<Subscription> WhereUserAndCompany(this DbSet<Subscription> subscriptions, string userId, int companyId)
         {
             return subscriptions.Where(s => s.UserId == userId && s.CompanyId == companyId && s.IsSoftDeleted == false).FirstOrDefaultAsync();
+        }
+
+        /// <summary>
+        /// Returns a queryable for subscriptions for the given user
+        /// </summary>
+        /// <param name="subscriptions"></param>
+        /// <param name="userId"></param>
+        /// <returns></returns>
+        public static IQueryable<Subscription> WhereUser(this DbSet<Subscription> subscriptions, string userId)
+        {
+            return subscriptions.Where(s => s.UserId == userId && s.IsSoftDeleted == false);
         }
     }
 }

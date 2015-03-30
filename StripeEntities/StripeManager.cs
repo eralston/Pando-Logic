@@ -1,14 +1,9 @@
-﻿using System;
+﻿using Stripe;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web;
 
-using Stripe;
-
-using PandoLogic.Models;
-using Microsoft.AspNet.Identity.EntityFramework;
-
-namespace PandoLogic
+namespace StripeEntities
 {
     /// <summary>
     /// Wraps all of the functionality for stripe into a helper class taking only models as input and out
@@ -21,11 +16,13 @@ namespace PandoLogic
     /// </summary>
     public class StripeManager
     {
+        #region Plans
+
         /// <summary>
         /// Creates a new plan inside of Stripe, using the given subscription plan's information
         /// </summary>
         /// <param name="plan"></param>
-        public static void CreatePlan(SubscriptionPlan plan)
+        public static void CreatePlan(IStripeSubscriptionPlan plan)
         {
             // Save it to Stripe
             StripePlanCreateOptions newStripePlanOptions = new StripePlanCreateOptions();
@@ -41,7 +38,7 @@ namespace PandoLogic
             StripePlan newPlan = planService.Create(newStripePlanOptions);
             plan.PaymentSystemId = newPlan.Id;
 
-            System.Diagnostics.Trace.TraceInformation("Created new in stripe: '{0}' with id {1}", plan.Title, plan.PaymentSystemId);
+            System.Diagnostics.Trace.TraceInformation("Created new plan in stripe: '{0}' with id {1}", plan.Title, plan.PaymentSystemId);
         }
 
         /// <summary>
@@ -49,7 +46,7 @@ namespace PandoLogic
         /// NOTE: Due to limitatons with Stripe, this can only update the name of the plan
         /// </summary>
         /// <param name="plan"></param>
-        public static void UpdatePlan(SubscriptionPlan plan)
+        public static void UpdatePlan(IStripeSubscriptionPlan plan)
         {
             StripePlanUpdateOptions options = new StripePlanUpdateOptions();
             options.Name = plan.Title;
@@ -65,7 +62,7 @@ namespace PandoLogic
         /// NOTE: Delete the model from the underlying context after calling this method
         /// </summary>
         /// <param name="plan"></param>
-        public static void DeletePlan(SubscriptionPlan plan)
+        public static void DeletePlan(IStripeSubscriptionPlan plan)
         {
             var planService = new StripePlanService();
             planService.Delete(plan.PaymentSystemId);
@@ -75,15 +72,19 @@ namespace PandoLogic
             plan.PaymentSystemId = null;
         }
 
+        #endregion
+
+        #region Customer
+
         /// <summary>
         /// Creates a new customer record in Stripe for the given user
         /// NOTE: Save changes on the underlying context for the model after calling this method
         /// </summary>
         /// <param name="user"></param>
-        public static void CreateCustomer(ApplicationUser user, string paymentToken = null)
+        public static void CreateCustomer(IStripeUser user, string paymentToken = null)
         {
             // Do not overwrite the user, ever
-            if (user.HasPaymentInfo)
+            if (user.HasPaymentInfo())
                 return;
 
             var newCustomer = new StripeCustomerCreateOptions();
@@ -91,7 +92,7 @@ namespace PandoLogic
             newCustomer.Email = user.Email;
 
             if (paymentToken != null)
-                newCustomer.TokenId = paymentToken;
+                newCustomer.Card = new StripeCreditCardOptions() { TokenId = paymentToken };
 
             var customerService = new StripeCustomerService();
             StripeCustomer stripeCustomer = customerService.Create(newCustomer);
@@ -103,18 +104,29 @@ namespace PandoLogic
         }
 
         /// <summary>
+        /// Retrieves the StripeCustomer associated with the given IStripeUser instance
+        /// </summary>
+        /// <param name="user"></param>
+        /// <returns></returns>
+        public static StripeCustomer RetrieveCustomer(IStripeUser user)
+        {
+            var customerService = new StripeCustomerService();
+            StripeCustomer stripeCustomer = customerService.Get(user.PaymentSystemId);
+            return stripeCustomer;
+        }
+
+        /// <summary>
         /// Updates a customer record, using the given payment token
         /// NOTE: Save changes on the underlying context for the model after calling this method
         /// </summary>
         /// <param name="user"></param>
         /// <param name="paymentToken"></param>
-        public static void UpdateCustomer(ApplicationUser user, string paymentToken = null)
+        public static void UpdateCustomer(IStripeUser user, string paymentToken = null)
         {
-            var customerUpdate = new StripeCustomerUpdateOptions();
+            var customerUpdate = new StripeCustomerUpdateOptions() { Email = user.Email };
 
-            // set these properties if it makes you happy
-            customerUpdate.Email = user.Email;
-            customerUpdate.TokenId = paymentToken;
+            // Create a token for this payment token
+            customerUpdate.Card = new StripeCreditCardOptions() { TokenId = paymentToken };
 
             var customerService = new StripeCustomerService();
             StripeCustomer stripeCustomer = customerService.Update(user.PaymentSystemId, customerUpdate);
@@ -127,29 +139,33 @@ namespace PandoLogic
         /// </summary>
         /// <param name="user"></param>
         /// <param name="paymentToken"></param>
-        public static void CreateOrUpdateCustomer(ApplicationUser user, string paymentToken = null)
+        public static void CreateOrUpdateCustomer(IStripeUser user, string paymentToken = null)
         {
-            if (user.HasPaymentInfo)
+            if (user.HasPaymentInfo())
                 UpdateCustomer(user, paymentToken);
             else
                 CreateCustomer(user, paymentToken);
         }
+
+        #endregion
+
+        #region Subscribing Customers to Plans
 
         /// <summary>
         /// Subscribes the given user to the given plan, using the payment information already in stripe for that user
         /// NOTE: Save changes on the underlying context for the model after calling this method
         /// </summary>
         /// <param name="subscription"></param>
-        public static void Subscribe(Subscription subscription)
+        public static void Subscribe(IStripeUser user, IStripeSubscription subscription, IStripeSubscriptionPlan plan)
         {
             if (!string.IsNullOrEmpty(subscription.PaymentSystemId))
                 return;
 
             var subscriptionService = new StripeSubscriptionService();
-            StripeSubscription stripeSubscription = subscriptionService.Create(subscription.User.PaymentSystemId, subscription.Plan.PaymentSystemId);
+            StripeSubscription stripeSubscription = subscriptionService.Create(user.PaymentSystemId, plan.PaymentSystemId);
             subscription.PaymentSystemId = stripeSubscription.Id;
 
-            System.Diagnostics.Trace.TraceInformation("Subscribed customer in stripe: '{0}' with new subscription id '{1}", subscription.User.Email, subscription.PaymentSystemId);
+            System.Diagnostics.Trace.TraceInformation("Subscribed customer in stripe: '{0}' with new subscription id '{1}", user.Email, subscription.PaymentSystemId);
         }
 
         /// <summary>
@@ -157,15 +173,14 @@ namespace PandoLogic
         /// </summary>
         /// <param name="subscription"></param>
         /// <param name="newPlan"></param>
-        public static void ChangeSubscriptionPlan(Subscription subscription, SubscriptionPlan newPlan)
+        public static void ChangeSubscriptionPlan(IStripeUser user, IStripeSubscription subscription, IStripeSubscriptionPlan newPlan)
         {
-            StripeSubscriptionUpdateOptions options = new StripeSubscriptionUpdateOptions();
-            options.PlanId = newPlan.PaymentSystemId;
-
-            subscription.Plan = newPlan;
+            StripeSubscriptionUpdateOptions options = new StripeSubscriptionUpdateOptions() { PlanId = newPlan.PaymentSystemId };
 
             var subscriptionService = new StripeSubscriptionService();
-            subscriptionService.Update(subscription.User.PaymentSystemId, subscription.PaymentSystemId, options);
+            subscriptionService.Update(user.PaymentSystemId, subscription.PaymentSystemId, options);
+
+            System.Diagnostics.Trace.TraceInformation("Changed subscription for customer in stripe: '{0}' with new subscription id '{1}", user.Email, subscription.PaymentSystemId);
         }
 
         /// <summary>
@@ -173,16 +188,18 @@ namespace PandoLogic
         /// NOTE: Save changes on the underlying context for the model after calling this method
         /// </summary>
         /// <param name="subscription"></param>
-        public static void Unsubscribe(Subscription subscription)
+        public static void Unsubscribe(IStripeUser user, IStripeSubscription subscription)
         {
-            if (string.IsNullOrEmpty(subscription.PaymentSystemId) || string.IsNullOrEmpty(subscription.User.PaymentSystemId))
+            if (string.IsNullOrEmpty(subscription.PaymentSystemId) || string.IsNullOrEmpty(user.PaymentSystemId))
                 return;
 
             var subscriptionService = new StripeSubscriptionService();
-            subscriptionService.Cancel(subscription.PaymentSystemId, subscription.User.PaymentSystemId);
+            subscriptionService.Cancel(subscription.PaymentSystemId, user.PaymentSystemId);
             subscription.PaymentSystemId = null;
 
-            System.Diagnostics.Trace.TraceInformation("Unsuscribed customer in stripe: '{0}' with new subscription id '{1}", subscription.User.Email, subscription.PaymentSystemId);
+            System.Diagnostics.Trace.TraceInformation("Unsuscribed customer in stripe: '{0}' with new subscription id '{1}", user.Email, subscription.PaymentSystemId);
         }
+
+        #endregion
     }
 }
