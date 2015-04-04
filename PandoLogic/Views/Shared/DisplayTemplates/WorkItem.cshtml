@@ -1,0 +1,38 @@
+﻿@model PandoLogic.Models.WorkItem
+
+@{
+    bool isDone = Model.CompletedDateUtc.HasValue;
+    string rowClass = isDone ? "done" : "";
+}
+
+<tr class="@rowClass">
+    <td>
+        @if (isDone)
+        {
+            <input type="checkbox" id="task-@Model.Id" data-task-id="@Model.Id" class="task-check iCheck-helper" checked />
+        }
+        else
+        {
+            <input type="checkbox" id="task-@Model.Id" data-task-id="@Model.Id" class="task-check iCheck-helper" />
+        }
+    </td>
+    <td>
+        <a href="@Url.Action("Details", "Tasks", new { id = Model.Id })">
+            @Model.Title
+        </a>
+    </td>
+    @*<td>
+        @if (Model.DueDateUtc < DateTime.Now)
+        {
+            <i class="fa fa-warning" title="This task is overdue"></i>
+        }
+        @if (Model.DueDateUtc.HasValue)
+        {
+            <span>@Model.DueDateUtc.Value.ToString("d")</span>
+        }
+        else
+        {
+            <span>Unassigned</span>
+        }
+    </td>*@
+</tr>

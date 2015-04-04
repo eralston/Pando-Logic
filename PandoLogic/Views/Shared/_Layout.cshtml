@@ -77,11 +77,11 @@
         <aside class="content-wrapper">
             <!-- Content Header (Page header) -->
             <section class="content-header">
-                <h1>
+                <h1 class="">
                     @ViewBag.Title
                     <small>@ViewBag.TitleMinor</small>
+                    @RenderSection("TitleArea", false)
                 </h1>
-
                 @if (ViewBag.Breadcrumb != null)
                 {
                     <ol class="breadcrumb">

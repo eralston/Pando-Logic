@@ -14,31 +14,7 @@
             Goal goal = Model[index];
 
             <div class="col-lg-3 col-xs-6">
-                <a href="@Url.Action("Details", "Goals", new { id = goal.Id })">
-                    <div class="small-box @goal.ColorClass">
-                        <div class="inner">
-                            @if (goal.DueDateUtc.HasValue)
-                            {
-                                <p class="pull-right">
-                                    @goal.DueDateUtc.Value.ToString("d")
-                                </p>
-                            }
-                            <h3>
-                                @goal.CalculateProgress()
-                                <sup style="font-size: 20px">%</sup>
-                            </h3>
-                            <p>
-                                @goal.Title
-                            </p>
-                        </div>
-                        <div class="icon">
-                            <i class="fa @goal.IconClass"></i>
-                        </div>
-                        <div class="small-box-footer">
-                            Goal Details <i class="fa fa-arrow-circle-right"></i>
-                        </div>
-                    </div>
-                </a>
+                @Html.Partial("~/Views/Shared/DisplayTemplates/Goal.cshtml", goal)
             </div>
         }
     </div>

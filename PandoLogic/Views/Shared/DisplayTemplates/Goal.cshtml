@@ -1,0 +1,37 @@
+﻿@model PandoLogic.Models.Goal
+
+<a href="@Url.Action("Details", "Goals", new { id = Model.Id })">
+    <div class="info-box @Model.ColorClass">
+        <span class="info-box-icon">
+            <i class="fa @Model.IconClass"></i>
+        </span>
+        <div class="info-box-content">
+            <span class="info-box-text">@Model.Title</span>
+            <span class="info-box-number">
+                @Model.CalculateProgress()%
+                @if (Model.DueDateUtc.HasValue)
+                {
+                    <span>
+                        - @Html.Partial("~/Views/Shared/DisplayTemplates/DateTime_Date.cshtml", Model.DueDateUtc)
+                    </span>
+                }
+            </span>
+            <div class="progress">
+                <div class="progress-bar" style="width: @Model.CalculateProgress()%"></div>
+            </div>
+
+            @if (Model.WorkItems != null && !Model.ArchiveDateUtc.HasValue)
+            {
+                <span class="progress-description">
+                    @Model.CompletedWorkItemCount() of @Model.WorkItems.Count Tasks
+                </span>
+            }
+            else if (Model.ArchiveDateUtc.HasValue)
+            {
+                <span class="progress-description">
+                    Archived on @Model.ArchiveDateUtc.Value.ToString()
+                </span>
+            }
+        </div>
+    </div>
+</a>

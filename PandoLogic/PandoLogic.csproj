@@ -1468,11 +1468,17 @@
       <DependentUpon>jquery.localize.min.js</DependentUpon>
     </Content>
     <Content Include="Views\Shared\DisplayTemplates\DateTime.cshtml" />
+    <Content Include="Views\Shared\DisplayTemplates\WorkItem.cshtml" />
+    <Content Include="Views\Goals\DisplayTemplates\Goal.cshtml" />
+    <Content Include="Views\Shared\DisplayTemplates\Goal.cshtml" />
+    <Content Include="Views\Shared\DisplayTemplates\DateTime_Date.cshtml" />
+    <Content Include="Views\Shared\DisplayTemplates\DateTime_Time.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />
     <None Include="Project_Readme.html" />
   </ItemGroup>
+  <ItemGroup />
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>

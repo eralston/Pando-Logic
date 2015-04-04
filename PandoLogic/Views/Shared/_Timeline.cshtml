@@ -66,10 +66,7 @@
 
                             @Html.ActionLink(activity.User.FirstName, "Details", "Users", new { id = activity.User.Id }, null)
                             <i class="fa fa-clock-o"></i>
-                            <time class="time" datetime="@activity.CreatedDateUtc.Value.ToString("yyyy-MM-dd hh:mm:ssZ")">
-                                @activity.CreatedDateUtc.Value.ToString("t")
-                            </time>
-
+                            @Html.Partial("~/Views/Shared/DisplayTemplates/DateTime_Time.cshtml", activity.CreatedDateUtc)
                         </span>
 
                         @if (ViewBag.ShowActivityTitle != null && ViewBag.ShowActivityTitle == true)

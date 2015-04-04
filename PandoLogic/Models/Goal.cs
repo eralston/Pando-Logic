@@ -110,6 +110,12 @@ namespace PandoLogic.Models
         {
             get
             {
+                if (this.ArchiveDateUtc.HasValue)
+                    return "bg-gray";
+
+                if (this.DueDateUtc.HasValue && this.DueDateUtc.Value < DateTime.Now)
+                    return "bg-red";
+
                 switch (Color)
                 {
                     case GoalColor.Aqua:

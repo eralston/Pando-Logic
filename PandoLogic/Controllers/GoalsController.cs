@@ -132,7 +132,13 @@ namespace PandoLogic.Controllers
                 ViewBag.GoalBoxShowAllTitle = "Hide Archived";
             }
 
-            var goals = await query.ToArrayAsync();
+            Goal[] goals = await query.ToArrayAsync();
+
+            goals = (from g in goals
+                     orderby
+                         g.ArchiveDateUtc.HasValue, g.ArchiveDateUtc,
+                         g.DueDateUtc.HasValue descending, g.DueDateUtc
+                     select g).ToArray();
 
             return View(goals);
         }

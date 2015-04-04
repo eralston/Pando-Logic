@@ -1,5 +1,5 @@
 ﻿@using PandoLogic.Models
-@model IEnumerable<PandoLogic.Models.Goal>
+@model PandoLogic.Models.Goal[]
 
 @{
     ViewBag.Title = "Goals";
@@ -11,10 +11,29 @@
     });
 }
 
-@Html.Action("WidgetBox", "Goals")
-<div class="row">
-    <div class="col-md-6">
-        <!-- general form elements -->
-        @Html.Partial("_GoalBox", Model)
+@section TitleArea
+{
+    <a class="btn btn-primary" href="@Url.Action("Create","Goals")">
+        <i class="fa fa-plus">
+        </i>
+        Create Goal
+    </a>
+
+    <a class="btn btn-default btn-flat" href="@ViewBag.GoalBoxShowAllUrl">
+        @ViewBag.GoalBoxShowAllTitle
+    </a>
+}
+
+@for (int i = 0; i < Math.Ceiling(((float)Model.Length / 4f)); ++i)
+{
+    <div class="row">
+        @for (int j = 0; j < 4 && ((i * 4) + j < Model.Length); ++j)
+        {
+            int index = (i * 4) + j;
+            Goal goal = Model[index];
+
+            @Html.Partial("~/Views/Goals/DisplayTemplates/Goal.cshtml", goal)
+        }
     </div>
-</div>
+}
+

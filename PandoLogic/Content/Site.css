@@ -12,8 +12,8 @@
 }
 
 .image > img, .img-circle {
-  width: 45px;
-  height: 45px;
+    width: 45px;
+    height: 45px;
 }
 
 .done td {
@@ -33,7 +33,6 @@
 }
 
 .logo, .main-header .logo {
-
     font-size: 20px !important;
     font-family: 'Varela Round', sans-serif;
     text-transform: none !important;
@@ -74,4 +73,40 @@ body > .header .logo {
 
 .field-validation-error {
     color: #dd4b39 !important;
+}
+
+.float-left {
+    float: left;
+}
+
+/*Horizontal Scroll CSS*/
+/*.horizontal-container {
+    padding: 60px 15px 0;
+}*/
+
+.horizontal-scroll > .row > [class*="col-lg"] {
+    top: 0;
+}
+
+@media (min-width:768px) {
+
+    .horizontal-scroll {
+        width: 100%;
+    }
+
+        .horizontal-scroll #main-content {
+            min-height: 100%;
+            height: auto;
+        }
+
+        .horizontal-scroll > .row {
+            overflow-x: scroll;
+            overflow-y: hidden;
+            white-space: nowrap;
+        }
+
+            .horizontal-scroll > .row [class*="col-lg"], .horizontal-scroll > .row [class*="col-md"], .horizontal-scroll > .row [class*="col-sm"] {
+                float: none;
+                display: inline-block;
+            }
 }

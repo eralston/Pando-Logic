@@ -33,42 +33,8 @@
                         <th>Due Date</th>
                     </tr>
 
-                    @foreach (WorkItem item in Model)
-                    {
-                        bool isDone = item.CompletedDateUtc.HasValue;
-                        string rowClass = isDone ? "done" : "";
-                        <tr class="@rowClass">
-                            <td>
-                                @if (isDone)
-                                {
-                                    <input type="checkbox" id="task-@item.Id" data-task-id="@item.Id" class="task-check iCheck-helper" checked />
-                                }
-                                else
-                                {
-                                    <input type="checkbox" id="task-@item.Id" data-task-id="@item.Id" class="task-check iCheck-helper" />
-                                }
-                            </td>
-                            <td>
-                                <a href="@Url.Action("Details", "Tasks", new { id = item.Id })">
-                                    @item.Title
-                                </a>
-                            </td>
-                            <td>
-                                @if (item.DueDateUtc < now)
-                                {
-                                    <i class="fa fa-warning" title="This task is overdue"></i>
-                                }
-                                @if (item.DueDateUtc.HasValue)
-                                {
-                                    <span>@item.DueDateUtc.Value.ToString("d")</span>
-                                }
-                                else
-                                {
-                                    <span>Unassigned</span>
-                                }
-                            </td>
-                        </tr>
-                    }
+                    @Html.DisplayForModel()
+
                     @{
                         bool? showAll = ViewBag.TaskBoxShowAll;
                     }
