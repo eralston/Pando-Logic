@@ -140,7 +140,7 @@ namespace PandoLogic.Controllers
                 if (file.ContentLength > 0)
                 {
                     // If we have one, then upload to Azure
-                    string blobName = StorageManager.GenerateUniqueName(file.FileName);
+                    string blobName = BlobStorageManager.GenerateUniqueName(file.FileName);
                     CloudBlobContainer container = await StorageManager.GetCompanyImagesAsync();
                     await container.UploadBlobAsync(blobName, file.InputStream);
 

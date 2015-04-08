@@ -757,7 +757,7 @@ namespace PandoLogic.Controllers
 
                 if (file.ContentLength > 0)
                 {
-                    string blobName = StorageManager.GenerateUniqueName(file.FileName);
+                    string blobName = BlobStorageManager.GenerateUniqueName(file.FileName);
 
                     CloudBlobContainer container = await StorageManager.GetUserImagesAsync();
                     await container.UploadBlobAsync(blobName, file.InputStream);

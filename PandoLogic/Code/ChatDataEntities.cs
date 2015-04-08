@@ -180,7 +180,7 @@ namespace PandoLogic
         public async Task<IEnumerable<ChatMessageEntity>> GetMessagesForRoomAsync(string chatRoomId)
         {
             CloudTable table = await GetRoomMessagesTableAsync();
-            return table.RetrieveAllEntitiesInPartitionAsync<ChatMessageEntity>(chatRoomId);
+            return await table.RetrieveEntitiesAsync<ChatMessageEntity>(chatRoomId);
         }
     }
 }
