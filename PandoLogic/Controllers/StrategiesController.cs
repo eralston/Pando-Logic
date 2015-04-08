@@ -123,7 +123,7 @@ namespace PandoLogic.Controllers
                         continue;
 
                     // If it's a brand new goal, then create a whole new one!
-                    Goal goal = Db.Goals.Create(companyId, userId);
+                    Goal goal = Db.Goals.Create(null, userId);
                     goal.Title = goalViewModel.Title;
                     goal.Description = goalViewModel.Description;
                     strategy.AddCopyOfGoalAsTemplate(goal);

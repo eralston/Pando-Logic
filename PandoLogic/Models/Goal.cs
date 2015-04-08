@@ -279,7 +279,7 @@ namespace PandoLogic.Models
                 .OrderBy(g => g.DueDateUtc);
         }
 
-        public static Goal Create(this DbSet<Goal> goals, int companyId, string userId)
+        public static Goal Create(this DbSet<Goal> goals, int? companyId, string userId)
         {
             Goal goal = goals.Create();
 
