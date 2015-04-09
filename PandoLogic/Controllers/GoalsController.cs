@@ -327,7 +327,7 @@ namespace PandoLogic.Controllers
         /// <returns></returns>
         public ActionResult Widget()
         {
-            var goals = QueryActiveGoals();
+            Goal[] goals = this.UserCache.Goals;
 
             if (goals == null)
                 return new EmptyResult();
