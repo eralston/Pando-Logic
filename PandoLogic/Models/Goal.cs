@@ -8,6 +8,7 @@ using System.Linq;
 using System.Web.Security;
 
 using Masticore;
+using System.ComponentModel;
 
 namespace PandoLogic.Models
 {
@@ -21,11 +22,48 @@ namespace PandoLogic.Models
         /// </summary>
         public enum GoalColor
         {
+            [Display(Name = "Light Blue")]
+            LightBlue,
             Aqua,
             Blue,
             Green,
             Yellow,
-            Purple
+            Purple,
+            Navy,
+            Teal,
+            Orange,
+        }
+
+        /// <summary>
+        /// A mapping of GoalColors into CSS classes
+        /// </summary>
+        /// <param name="color"></param>
+        /// <returns></returns>
+        public static string ClassForColor(GoalColor color)
+        {
+            switch (color)
+            {
+                case GoalColor.Aqua:
+                    return "bg-aqua";
+                case GoalColor.Blue:
+                    return "bg-blue";
+                case GoalColor.Green:
+                    return "bg-green";
+                case GoalColor.Yellow:
+                    return "bg-yellow";
+                case GoalColor.Purple:
+                    return "bg-purple";
+                case GoalColor.Navy:
+                    return "bg-navy";
+                case GoalColor.Teal:
+                    return "bg-teal";
+                case GoalColor.Orange:
+                    return "bg-orange";
+                case GoalColor.LightBlue:
+                    return "bg-light-blue";
+                default:
+                    return "bg-aqua";
+            }
         }
 
         /// <summary>
@@ -41,6 +79,31 @@ namespace PandoLogic.Models
             Strategy, // fa-puzzle-piece
             Task, // fa-check
             Goal // fa-tasks
+        }
+
+        public static string ClassForIcon(GoalIcon icon)
+        {
+            switch (icon)
+            {
+                case GoalIcon.Bars:
+                    return "fa-bar-chart-o";
+                case GoalIcon.Calendar:
+                    return "fa-calendar-o";
+                case GoalIcon.Dollar:
+                    return "fa-usd";
+                case GoalIcon.Chart:
+                    return "fa-signal";
+                case GoalIcon.Key:
+                    return "fa-key";
+                case GoalIcon.Strategy:
+                    return "fa-puzzle-piece";
+                case GoalIcon.Task:
+                    return "fa-check";
+                case GoalIcon.Goal:
+                    return "fa-tasks";
+                default:
+                    return "fa-tasks";
+            }
         }
 
         // To-One on ApplicationUser
@@ -110,24 +173,13 @@ namespace PandoLogic.Models
                 if (this.ArchiveDateUtc.HasValue)
                     return "bg-gray";
 
+                if (this.WorkItems.Count > 0 && this.CompletedWorkItemCount() == this.WorkItems.Count)
+                    return "bg-green";
+
                 if (this.DueDateUtc.HasValue && this.DueDateUtc.Value < DateTime.Now)
                     return "bg-red";
 
-                switch (Color)
-                {
-                    case GoalColor.Aqua:
-                        return "bg-aqua";
-                    case GoalColor.Blue:
-                        return "bg-blue";
-                    case GoalColor.Green:
-                        return "bg-green";
-                    case GoalColor.Yellow:
-                        return "bg-yellow";
-                    case GoalColor.Purple:
-                        return "bg-purple";
-                    default:
-                        return "bg-aqua";
-                }
+                return ClassForColor(Color);
             }
         }
 
@@ -136,27 +188,7 @@ namespace PandoLogic.Models
         {
             get
             {
-                switch (Icon)
-                {
-                    case GoalIcon.Bars:
-                        return "fa-bar-chart-o";
-                    case GoalIcon.Calendar:
-                        return "fa-calendar-o";
-                    case GoalIcon.Dollar:
-                        return "fa-usd";
-                    case GoalIcon.Chart:
-                        return "fa-signal";
-                    case GoalIcon.Key:
-                        return "fa-key";
-                    case GoalIcon.Strategy:
-                        return "fa-puzzle-piece";
-                    case GoalIcon.Task:
-                        return "fa-check";
-                    case GoalIcon.Goal:
-                        return "fa-tasks";
-                    default:
-                        return "fa-tasks";
-                }
+                return ClassForIcon(Icon);
             }
         }
 

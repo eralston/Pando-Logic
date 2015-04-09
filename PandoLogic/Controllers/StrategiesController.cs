@@ -471,6 +471,13 @@ namespace PandoLogic.Controllers
         /// <returns></returns>
         public async Task<ActionResult> Bookmark(int id)
         {
+            await BookmarkStrategyById(id);
+
+            return RedirectToAction("Details", new { id = id });
+        }
+
+        private async Task BookmarkStrategyById(int id)
+        {
             StrategyBookmark bookmark = await Db.StrategyBookmarks.FindBookmarkByUserAndStrategyAsync(UserCache.Id, id);
             if (bookmark == null)
             {
@@ -478,8 +485,6 @@ namespace PandoLogic.Controllers
 
                 await Db.SaveChangesAsync();
             }
-
-            return RedirectToAction("Details", new { id = id });
         }
 
         /// <summary>
@@ -527,7 +532,7 @@ namespace PandoLogic.Controllers
             Strategy strategy = await Db.Strategies.FindAsync(id);
 
             strategy.Adopt(Db, UserCache.Id, UserCache.SelectedCompanyId);
-
+            await BookmarkStrategyById(strategy.Id);
             await Db.SaveChangesAsync();
 
             // Setup the new activity and save
@@ -538,7 +543,7 @@ namespace PandoLogic.Controllers
             newActivity.SetTitle(strategy.Title, Url.Action("Details", "Strategies", new { id = strategy.Id }));
             newActivity.Description = "Strategy Adopted";
             newActivity.Type = ActivityType.WorkAdded;
-            ActivityRepository repo = ActivityRepository.CreateForStrategy(strategy);
+            ActivityRepository repo = ActivityRepository.CreateForCompany(member.CompanyId);
             await repo.InsertOrUpdate<Strategy>(strategy.Id, newActivity);
 
             // Clear current user goals cache, since we just added more

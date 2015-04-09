@@ -55,28 +55,18 @@ namespace PandoLogic.Controllers
     {
         #region Methods
 
-        private async Task ApplyGoalToViewBag(Goal goal, bool limited = true)
+        private async Task ApplyGoalToViewBag(Goal goal)
         {
             IQueryable<WorkItem> query = Db.WorkItems.WhereGoal(goal.Id).OrderBy(t => t.DueDateUtc);
-
-            if (limited)
-            {
-                query = query.Take(5).Where(w => w.CompletedDateUtc == null);
-            }
 
             ViewBag.Tasks = await query.ToArrayAsync();
             ViewBag.GoalId = goal.Id;
             ViewBag.IsMyGoal = goal.UserId == UserCache.Id;
 
-            if (limited)
+            ActivityRepository repo = await GetActivityRepositoryForCurrentCompany();
+            if (repo != null)
             {
-                ViewBag.TaskBoxShowAll = true;
-                ViewBag.TaskBoxShowAllUrl = Url.Action("Tasks", "Goals", new { id = goal.Id });
-                ActivityRepository repo = await GetActivityRepositoryForCurrentCompany();
-                if(repo != null)
-                {
-                    await goal.LoadComments<Goal>(this, "CreateGoal", repo);
-                }
+                await goal.LoadComments<Goal>(this, "CreateGoal", repo);
             }
         }
 
@@ -179,7 +169,7 @@ namespace PandoLogic.Controllers
 
             ViewBag.TaskBoxTitle = "Goal Tasks";
 
-            await ApplyGoalToViewBag(goal, false);
+            await ApplyGoalToViewBag(goal);
 
             return View(goal);
         }

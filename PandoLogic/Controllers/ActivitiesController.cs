@@ -58,11 +58,13 @@ namespace PandoLogic.Controllers
                 companyId = company.Id;
             }
 
+            // TODO: Optimize this to NOT pull the whole table into memory
             ActivityRepository repo = await controller.GetActivityRepositoryForCurrentCompany();
             var activities = await repo.RetrieveAll();
             IEnumerable<Activity> sort = activities.OrderByDescending(a => a.Timestamp);
             if(limit.HasValue)
                 sort = sort.Take(limit.Value);
+
             controller.TempData["Activities"] = sort;
         }
 

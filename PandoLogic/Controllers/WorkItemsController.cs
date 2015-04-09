@@ -97,7 +97,7 @@ namespace PandoLogic.Controllers
             }
 
             // filter on querystring logic 
-            var showAll = (Request.QueryString["ShowAll"] ?? "").ToUpper() == "TRUE";
+            var showAll = (Request.QueryString["ShowAll"] ?? "").ToUpper() == "FALSE";
 
             if (!showAll)
             {
