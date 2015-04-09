@@ -1,2 +1,27 @@
-﻿
-<h1>Verified!</h1>
+﻿@{
+    ViewBag.Title = "Verified";
+    ViewBag.TitleMinor = "User E-Mail Verification";
+
+    ViewBag.Breadcrumb = new Breadcrumb(new Crumb[] {
+        new Crumb("Dashboard", Url.Action("Index","Home"), "fa-dashboard")
+    });
+}
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="box box-primary">
+            <div class="box-header">
+                <i class="fa fa-check"></i>
+                <h3 class="box-title">@ViewBag.Title</h3>
+            </div>
+            <div class="box-body">
+                <p class="text-muted">
+                    Your e-mail address is now verified. Now, get started growing with BizSprout!
+                </p>
+                @Html.ActionLink("Go To Dashboard", "Index", "Home", new { @class = "btn btn-primary" })
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+    </div>
+</div>

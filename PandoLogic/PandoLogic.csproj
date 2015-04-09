@@ -444,7 +444,8 @@
     <None Include="newrelic\newrelic.xsd">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Properties\PublishProfiles\PandoLogic-dev %282%29.pubxml" />
+    <None Include="Properties\PublishProfiles\pandologic-dev - FTP.pubxml" />
+    <None Include="Properties\PublishProfiles\pandologic-dev - Web Deploy.pubxml" />
     <None Include="Properties\PublishProfiles\pandologic-prod - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\pandologic-prod - Web Deploy.pubxml" />
     <Content Include="newrelic\NewRelic.Profiler.dll" />

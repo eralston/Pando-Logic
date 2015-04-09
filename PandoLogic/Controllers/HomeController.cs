@@ -27,6 +27,7 @@ namespace PandoLogic.Controllers
         /// Called when a user verifies their e-mail address, confirming their BizSprout account
         /// </summary>
         /// <returns></returns>
+        [Authorize]
         [InviteOnly]
         public async Task<ActionResult> Verify()
         {
