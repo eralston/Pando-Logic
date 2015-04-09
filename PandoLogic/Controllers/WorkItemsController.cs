@@ -136,7 +136,8 @@ namespace PandoLogic.Controllers
 
             ViewBag.IsMyTask = workItem.AssigneeId == UserCache.Id || workItem.AssigneeId == null;
 
-            workItem.LoadComments(this, "CreateTask");
+            ActivityRepository repo = ActivityRepository.CreateForCompany(workItem.CompanyId.Value);
+            await workItem.LoadComments(this, "CreateTask", repo);
             UnstashModelState();
 
             return View(workItem);
@@ -168,18 +169,23 @@ namespace PandoLogic.Controllers
         [Route("Complete/{id}")]
         public async Task<ActionResult> Complete(int id)
         {
+            // Find the work item and complete it in the db
             WorkItem workItem = await Db.WorkItems.FindAsync(id);
             workItem.CompletedDateUtc = DateTime.UtcNow;
+            await Db.SaveChangesAsync();
 
             Member currentMember = await GetCurrentMemberAsync();
 
-            Activity newActivity = Db.Activities.Create(currentMember.UserId, currentMember.Company, workItem.Title);
+            // Save activity for this completion
+            Activity newActivity = new Activity(currentMember.UserId, workItem.Title);
+            newActivity.CompanyId = currentMember.CompanyId;
             newActivity.SetTitle(workItem.Title, Url.Action("Details", "Tasks", new { id = workItem.Id }));
             newActivity.Description = "Task Completed";
             newActivity.Type = ActivityType.WorkCompleted;
-
-            await Db.SaveChangesAsync();
-
+            ActivityRepository repo = ActivityRepository.CreateForCompany(currentMember.CompanyId);
+            await repo.InsertOrUpdate<WorkItem>(workItem.Id, newActivity);
+            
+            // Update goal cache to reflect progress
             await UpdateCurrentUserCacheGoalsAsync();
 
             return new HttpStatusCodeResult(200);
@@ -191,15 +197,18 @@ namespace PandoLogic.Controllers
         {
             WorkItem workItem = await Db.WorkItems.FindAsync(id);
             workItem.CompletedDateUtc = null;
+            await Db.SaveChangesAsync();
 
             Member currentMember = await GetCurrentMemberAsync();
 
-            Activity newActivity = Db.Activities.Create(currentMember.UserId, currentMember.Company, workItem.Title);
+            // Save activity for the undo of completion
+            Activity newActivity = new Activity(currentMember.UserId, workItem.Title);
+            newActivity.CompanyId = workItem.CompanyId.Value;
             newActivity.SetTitle(workItem.Title, Url.Action("Details", "Tasks", new { id = workItem.Id }));
             newActivity.Description = "Undo Task Completed";
             newActivity.Type = ActivityType.WorkUndoArchived;
-
-            await Db.SaveChangesAsync();
+            ActivityRepository repo = ActivityRepository.CreateForCompany(workItem.CompanyId.Value);
+            await repo.InsertOrUpdate<WorkItem>(workItem.Id, newActivity);
 
             await UpdateCurrentUserCacheGoalsAsync();
 
@@ -248,12 +257,13 @@ namespace PandoLogic.Controllers
                 await Db.SaveChangesAsync();
 
                 // Add an activity model
-                Activity newActivity = Db.Activities.Create(currentMember.UserId, currentMember.Company, workItem.Title);
+                Activity newActivity = new Activity(currentMember.UserId, workItem.Title);
+                newActivity.CompanyId = workItem.CompanyId.Value;
                 newActivity.SetTitle(workItem.Title, Url.Action("Details", "Tasks", new { id = workItem.Id }));
                 newActivity.Description = "Task Created";
                 newActivity.Type = ActivityType.WorkAdded;
-
-                await Db.SaveChangesAsync();
+                ActivityRepository repo = ActivityRepository.CreateForCompany(workItem.CompanyId.Value);
+                await repo.InsertOrUpdate<WorkItem>(workItem.Id, newActivity);
 
                 if (id.HasValue)
                 {
@@ -263,7 +273,6 @@ namespace PandoLogic.Controllers
                 {
                     return RedirectToAction("Index");
                 }
-
             }
 
             await LoadAssigneeOptions(workItemViewModel.AssigneeId);
@@ -344,16 +353,17 @@ namespace PandoLogic.Controllers
         {
             WorkItem workItem = await Db.WorkItems.FindAsync(id);
             int? goalId = workItem.GoalId;
-            Db.Activities.RemoveComments(workItem);
             Db.WorkItems.Remove(workItem);
+            await Db.SaveChangesAsync();
 
             // Add an activity model
             Member currentMember = await GetCurrentMemberAsync();
-            Activity newActivity = Db.Activities.Create(currentMember.UserId, currentMember.Company, workItem.Title);
+            Activity newActivity = new Activity(currentMember.UserId, workItem.Title);
+            newActivity.CompanyId = workItem.CompanyId.Value;
             newActivity.Description = "Task Deleted";
             newActivity.Type = ActivityType.WorkDeleted;
-
-            await Db.SaveChangesAsync();
+            ActivityRepository repo = ActivityRepository.CreateForCompany(workItem.CompanyId.Value);
+            await repo.InsertOrUpdate<WorkItem>(workItem.Id, newActivity);
 
             if (goalId.HasValue)
             {

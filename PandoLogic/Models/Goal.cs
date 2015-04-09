@@ -78,9 +78,6 @@ namespace PandoLogic.Models
         // To-Many on WorkItems
         public virtual ICollection<WorkItem> WorkItems { get; set; }
 
-        // To-Many on Activity
-        public virtual ICollection<Activity> Comments { get; set; }
-
         [Display(Name = "Archive Date")]
         public DateTime? ArchiveDateUtc { get; set; }
 

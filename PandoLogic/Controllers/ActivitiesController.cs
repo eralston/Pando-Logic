@@ -14,40 +14,42 @@ namespace PandoLogic.Controllers
     public class ActivitiesController : BaseController
     {
         #region Methods
+
         private async Task<bool> IsActivityFromCurrentCompany(Activity activity)
         {
             // Pull out the current company to compare to the activity
             Member member = await GetCurrentMemberAsync();
-            Company currentCompany = member.Company;
-            bool isActivitySafe = activity.CompanyId == currentCompany.Id;
+            bool isActivitySafe = activity.CompanyId == member.CompanyId;
             return isActivitySafe;
         }
 
-        private async Task<Activity> FindSafeActivity(int id)
+        //private async Task<Activity> FindSafeActivity(int companyId, string rowKey)
+        //{
+        //    // Pull the activity from the database
+        //    ActivityRepository repo = ActivityRepository.CreateForCompany(companyId);
+
+        //    Activity activity = await repo.RetrieveComment<
+
+        //    // Ensure it exists
+        //    if (activity == null)
+        //    {
+        //        return null;
+        //    }
+
+        //    bool isActivitySafe = await IsActivityFromCurrentCompany(activity);
+
+        //    // If this activity it not for the current company
+        //    if (!isActivitySafe)
+        //    {
+        //        return null;
+        //    }
+
+        //    return activity;
+        //}
+
+        public static async Task LoadFeedActivities(BaseController controller, int? limit = null)
         {
-            // Pull the activity from the database
-            Activity activity = await Db.Activities.FindAsync(id);
-
-            // Ensure it exists
-            if (activity == null)
-            {
-                return null;
-            }
-
-            bool isActivitySafe = await IsActivityFromCurrentCompany(activity);
-
-            // If this activity it not for the current company
-            if (!isActivitySafe)
-            {
-                return null;
-            }
-
-            return activity;
-        }
-
-        private async Task LoadFeedActivities()
-        {
-            Member member = await GetCurrentMemberAsync();
+            Member member = await controller.GetCurrentMemberAsync();
             int? companyId = null;
 
             if (member != null)
@@ -56,52 +58,59 @@ namespace PandoLogic.Controllers
                 companyId = company.Id;
             }
 
-            ViewBag.FeedActivities = await Db.Activities.WhereCompanyOrAuthor(companyId, this.UserCache.Id).ToArrayAsync();
+            ActivityRepository repo = await controller.GetActivityRepositoryForCurrentCompany();
+            var activities = await repo.RetrieveAll();
+            IEnumerable<Activity> sort = activities.OrderByDescending(a => a.Timestamp);
+            if(limit.HasValue)
+                sort = sort.Take(limit.Value);
+            controller.TempData["Activities"] = sort;
         }
 
-        private async Task<ActionResult> Delete(Activity activity, ActionResult result)
-        {
-            Db.Activities.Remove(activity);
+        //private async Task<ActionResult> Delete(Activity activity, ActionResult result)
+        //{
+        //    Db.Activities.Remove(activity);
 
-            await Db.SaveChangesAsync();
+        //    await Db.SaveChangesAsync();
 
-            return result;
-        }
+        //    return result;
+        //}
 
-        private ActionResult ResultForActivity(Activity activity)
-        {
-            if (activity.GoalId.HasValue)
-            {
-                return RedirectToAction("Details", "Goals", new { id = activity.GoalId.Value });
-            }
-            else if (activity.WorkItemId.HasValue)
-            {
-                return RedirectToAction("Details", "Tasks", new { id = activity.WorkItemId.Value });
-            }
-            else
-            {
-                return RedirectToAction("Index");
-            }
-        }
+        //private ActionResult ResultForActivity(Activity activity)
+        //{
+        //    if (activity.GoalId.HasValue)
+        //    {
+        //        return RedirectToAction("Details", "Goals", new { id = activity.GoalId.Value });
+        //    }
+        //    else if (activity.WorkItemId.HasValue)
+        //    {
+        //        return RedirectToAction("Details", "Tasks", new { id = activity.WorkItemId.Value });
+        //    }
+        //    else
+        //    {
+        //        return RedirectToAction("Index");
+        //    }
+        //}
 
-        private async Task EditActivity(Activity activityViewModel, Activity activity)
-        {
-            activity.Title = activityViewModel.Title;
-            activity.Description = activityViewModel.Description;
-            Db.Entry(activity).State = EntityState.Modified;
+        //private async Task EditActivity(Activity activityViewModel, Activity activity)
+        //{
+        //    activity.Title = activityViewModel.Title;
+        //    activity.Description = activityViewModel.Description;
+        //    Db.Entry(activity).State = EntityState.Modified;
 
-            await Db.SaveChangesAsync();
-        }
+        //    await Db.SaveChangesAsync();
+        //}
 
         #endregion
 
         // GET: Activities
         public async Task<ActionResult> Index()
         {
-            await LoadFeedActivities();
+            await LoadFeedActivities(this);
 
             ViewBag.IsFromActivityFeed = true;
             ViewBag.ShowActivityTitle = true;
+
+            ViewBag.FeedActivities = TempData["Activities"] as IEnumerable<Activity>;
 
             return View();
         }
@@ -120,173 +129,176 @@ namespace PandoLogic.Controllers
 
                 // Setup the new activity and save
                 string title = string.Format("Team Notification for {0}: {1}", member.Company.Name, activity.Title);
-                Activity newActivity = Db.Activities.Create(member.UserId, member.Company, title);
+
+                Activity newActivity = new Activity(member.UserId, title);
+                newActivity.CompanyId = member.CompanyId;
                 newActivity.Description = activity.Description;
                 newActivity.Type = ActivityType.TeamNotification;
-                await Db.SaveChangesAsync();
+                ActivityRepository repo = await GetActivityRepositoryForCurrentCompany();
+                await repo.InsertOrUpdate(newActivity);
 
                 // Return to the list action for this 
                 return RedirectToAction("Index");
             }
 
-            await LoadFeedActivities();
+            await LoadFeedActivities(this);
 
             return View(activity);
         }
 
         // GET: Activities/Edit/5
-        public async Task<ActionResult> EditActivity(int id)
-        {
-            // Pull the activity from the database
-            Activity activity = await FindSafeActivity(id);
+        //public async Task<ActionResult> EditActivity(int id)
+        //{
+        //    // Pull the activity from the database
+        //    Activity activity = await FindSafeActivity(id);
 
-            // Ensure it exists
-            if (activity == null)
-            {
-                return HttpNotFound();
-            }
+        //    // Ensure it exists
+        //    if (activity == null)
+        //    {
+        //        return HttpNotFound();
+        //    }
 
-            ViewBag.IsFromActivityFeed = true;
+        //    ViewBag.IsFromActivityFeed = true;
 
-            // Send down the edit form
-            return View("Edit", activity);
-        }
+        //    // Send down the edit form
+        //    return View("Edit", activity);
+        //}
 
-        // POST: Activities/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<ActionResult> EditActivity([Bind(Include = "Id,Title,Description")] Activity activityViewModel)
-        {
-            if (!ModelState.IsValid)
-            {
-                ViewBag.IsFromActivityFeed = true;
-                return View("Edit", activityViewModel);
-            }
+        //// POST: Activities/Edit/5
+        //// To protect from overposting attacks, please enable the specific properties you want to bind to, for 
+        //// more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        //[HttpPost]
+        //[ValidateAntiForgeryToken]
+        //public async Task<ActionResult> EditActivity([Bind(Include = "Id,Title,Description")] Activity activityViewModel)
+        //{
+        //    if (!ModelState.IsValid)
+        //    {
+        //        ViewBag.IsFromActivityFeed = true;
+        //        return View("Edit", activityViewModel);
+        //    }
 
-            // Pull the activity from the database
-            Activity activity = await FindSafeActivity(activityViewModel.Id);
-            // Ensure it exists
-            if (activity == null)
-            {
-                return HttpNotFound();
-            }
+        //    // Pull the activity from the database
+        //    Activity activity = await FindSafeActivity(activityViewModel.Id);
+        //    // Ensure it exists
+        //    if (activity == null)
+        //    {
+        //        return HttpNotFound();
+        //    }
 
-            ActionResult result = RedirectToAction("Index");
-            await EditActivity(activityViewModel, activity);
-            return result;
-        }
+        //    ActionResult result = RedirectToAction("Index");
+        //    await EditActivity(activityViewModel, activity);
+        //    return result;
+        //}
 
-        // GET: Activities/Edit/5
-        public async Task<ActionResult> Edit(int id)
-        {
-            // Pull the activity from the database
-            Activity activity = await FindSafeActivity(id);
+        //// GET: Activities/Edit/5
+        //public async Task<ActionResult> Edit(int id)
+        //{
+        //    // Pull the activity from the database
+        //    Activity activity = await FindSafeActivity(id);
 
-            // Ensure it exists
-            if (activity == null)
-            {
-                return HttpNotFound();
-            }
+        //    // Ensure it exists
+        //    if (activity == null)
+        //    {
+        //        return HttpNotFound();
+        //    }
 
-            // Send down the edit form
-            return View(activity);
-        }
+        //    // Send down the edit form
+        //    return View(activity);
+        //}
 
-        // POST: Activities/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Edit([Bind(Include = "Id,Title,Description")] Activity activityViewModel)
-        {
-            if (!ModelState.IsValid)
-            {
-                return View(activityViewModel);
-            }
+        //// POST: Activities/Edit/5
+        //// To protect from overposting attacks, please enable the specific properties you want to bind to, for 
+        //// more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        //[HttpPost]
+        //[ValidateAntiForgeryToken]
+        //public async Task<ActionResult> Edit([Bind(Include = "Id,Title,Description")] Activity activityViewModel)
+        //{
+        //    if (!ModelState.IsValid)
+        //    {
+        //        return View(activityViewModel);
+        //    }
 
-            // Pull the activity from the database
-            Activity activity = await FindSafeActivity(activityViewModel.Id);
-            // Ensure it exists
-            if (activity == null)
-            {
-                return HttpNotFound();
-            }
+        //    // Pull the activity from the database
+        //    Activity activity = await FindSafeActivity(activityViewModel.Id);
+        //    // Ensure it exists
+        //    if (activity == null)
+        //    {
+        //        return HttpNotFound();
+        //    }
 
-            ActionResult result = ResultForActivity(activity);
-            await EditActivity(activityViewModel, activity);
-            return result;
-        }
+        //    ActionResult result = ResultForActivity(activity);
+        //    await EditActivity(activityViewModel, activity);
+        //    return result;
+        //}
 
-        // GET: Activities/DeleteActivity/5
-        public async Task<ActionResult> DeleteActivity(int id)
-        {
-            // Pull the activity from the database
-            Activity activity = await FindSafeActivity(id);
+        //// GET: Activities/DeleteActivity/5
+        //public async Task<ActionResult> DeleteActivity(int id)
+        //{
+        //    // Pull the activity from the database
+        //    Activity activity = await FindSafeActivity(id);
 
-            // Ensure it exists
-            if (activity == null)
-            {
-                return HttpNotFound();
-            }
+        //    // Ensure it exists
+        //    if (activity == null)
+        //    {
+        //        return HttpNotFound();
+        //    }
 
-            ViewBag.IsFromActivityFeed = true;
+        //    ViewBag.IsFromActivityFeed = true;
 
-            return View("Delete", activity);
-        }
+        //    return View("Delete", activity);
+        //}
 
-        // POST: Activities/DeleteActivity/5
-        [HttpPost, ActionName("DeleteActivity")]
-        [ValidateAntiForgeryToken]
-        public async Task<ActionResult> DeleteActivityConfirmed(int id)
-        {
-            // Pull the activity from the database
-            Activity activity = await FindSafeActivity(id);
-            // Ensure it exists
-            if (activity == null)
-            {
-                return HttpNotFound();
-            }
+        //// POST: Activities/DeleteActivity/5
+        //[HttpPost, ActionName("DeleteActivity")]
+        //[ValidateAntiForgeryToken]
+        //public async Task<ActionResult> DeleteActivityConfirmed(int id)
+        //{
+        //    // Pull the activity from the database
+        //    Activity activity = await FindSafeActivity(id);
+        //    // Ensure it exists
+        //    if (activity == null)
+        //    {
+        //        return HttpNotFound();
+        //    }
 
-            ActionResult result = RedirectToAction("Index");
+        //    ActionResult result = RedirectToAction("Index");
 
-            return await Delete(activity, result);
-        }
+        //    return await Delete(activity, result);
+        //}
 
-        // GET: Activities/Delete/5
-        public async Task<ActionResult> Delete(int id)
-        {
-            // Pull the activity from the database
-            Activity activity = await FindSafeActivity(id);
+        //// GET: Activities/Delete/5
+        //public async Task<ActionResult> Delete(int id)
+        //{
+        //    // Pull the activity from the database
+        //    Activity activity = await FindSafeActivity(id);
 
-            // Ensure it exists
-            if (activity == null)
-            {
-                return HttpNotFound();
-            }
+        //    // Ensure it exists
+        //    if (activity == null)
+        //    {
+        //        return HttpNotFound();
+        //    }
 
-            return View("Delete", activity);
-        }
+        //    return View("Delete", activity);
+        //}
 
-        // POST: Activities/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<ActionResult> DeleteConfirmed(int id)
-        {
-            // Pull the activity from the database
-            Activity activity = await FindSafeActivity(id);
+        //// POST: Activities/Delete/5
+        //[HttpPost, ActionName("Delete")]
+        //[ValidateAntiForgeryToken]
+        //public async Task<ActionResult> DeleteConfirmed(int id)
+        //{
+        //    // Pull the activity from the database
+        //    Activity activity = await FindSafeActivity(id);
 
-            // Ensure it exists
-            if (activity == null)
-            {
-                return HttpNotFound();
-            }
+        //    // Ensure it exists
+        //    if (activity == null)
+        //    {
+        //        return HttpNotFound();
+        //    }
 
-            ActionResult result = ResultForActivity(activity);
+        //    ActionResult result = ResultForActivity(activity);
 
-            return await Delete(activity, result);
-        }
+        //    return await Delete(activity, result);
+        //}
 
         /// <summary>
         /// GET action for the activities widget
@@ -304,7 +316,8 @@ namespace PandoLogic.Controllers
 
             ViewBag.ShowActivityTitle = true;
 
-            IEnumerable<Activity> activities = Db.Activities.WhereCompanyOrAuthor(companyId, this.UserCache.Id).Take(5).ToArray();
+            var activities = this.TempData["Activities"] as IEnumerable<Activity>;
+
             return View(activities);
         }
     }

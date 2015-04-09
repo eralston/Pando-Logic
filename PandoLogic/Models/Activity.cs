@@ -8,6 +8,7 @@ using System.Linq;
 using System.Web.Mvc;
 
 using Masticore;
+using Microsoft.WindowsAzure.Storage.Table;
 
 namespace PandoLogic.Models
 {
@@ -30,8 +31,33 @@ namespace PandoLogic.Models
     /// <summary>
     /// A model for saving a historic record of actions in the system, in particular to review actions of a team
     /// </summary>
-    public class Activity : BaseModel, IUserOwnedModel, IOptionalCompanyOwnedModel
+    public class Activity : TableEntity, IUserOwnedModel
     {
+        /// <summary>
+        /// Default constructor for serialization
+        /// </summary>
+        public Activity() { }
+
+        /// <summary>
+        /// Creation constructor
+        /// </summary>
+        /// <param name="authorUserId"></param>
+        /// <param name="title"></param>
+        public Activity(string authorUserId, string title)
+        {
+            this.UserId = authorUserId;
+            this.Title = title;
+            GenerateRowKey();
+        }
+
+        /// <summary>
+        /// Generates and applies the rowkey
+        /// </summary>
+        public void GenerateRowKey()
+        {
+            this.RowKey = TableStorageManager.GenerateTicksDescendingRowKey();
+        }
+
         /// <summary>
         /// Returns the class names for the given activity type
         /// </summary>
@@ -95,7 +121,20 @@ namespace PandoLogic.Models
         [DataType(DataType.MultilineText)]
         public string Description { get; set; }
 
+        [IgnoreProperty]
         public ActivityType Type { get; set; }
+
+        public int TypeId 
+        {
+            get
+            {
+                return (int)Type;
+            }
+            set
+            {
+                Type = (ActivityType)value;
+            }
+        }
 
         [DefaultValue(true)]
         public bool IsAbleToBeEdited { get; set; }
@@ -103,66 +142,16 @@ namespace PandoLogic.Models
         [DefaultValue(true)]
         public bool IsAbleToBeDeleted { get; set; }
 
-        [NotMapped]
+        [IgnoreProperty]
         public string IconClass
         {
             get { return Activity.ClassesForActivityType(this.Type); }
         }
 
         // To-One on User Who Originated this action
-        // This is optional, since some activities are done by the system
-        [ForeignKey("User")]
         public string UserId { get; set; }
-        public virtual ApplicationUser User { get; set; }
 
-        // To-One on Company
-        [ForeignKey("Company")]
-        public int? CompanyId { get; set; }
-        public virtual Company Company { get; set; }
-
-        public int? GoalId { get; set; }
-        public int? WorkItemId { get; set; }
+        public int CompanyId { get; set; }
     }
 
-    public static class ActivityExtensions
-    {
-
-        public static Activity Create(this DbSet<Activity> activities, string authorUserId, string title)
-        {
-            Activity activity = activities.Create();
-
-            activity.CreatedDateUtc = DateTime.UtcNow;
-            activity.UserId = authorUserId;
-            activity.Company = null;
-            activity.Title = title;
-
-            activities.Add(activity);
-
-            return activity;
-        }
-
-        public static Activity Create(this DbSet<Activity> activities, string authorUserId, Company company, string title)
-        {
-            Activity activity = activities.Create();
-
-            activity.CreatedDateUtc = DateTime.UtcNow;
-            activity.UserId = authorUserId;
-            activity.Company = company;
-            activity.Title = title;
-
-            activities.Add(activity);
-
-            return activity;
-        }
-
-        public static IOrderedQueryable<Activity> WhereCompanyOrAuthor(this DbSet<Activity> activities, int? companyId, string authorId)
-        {
-            return activities
-                        .Include(a => a.User)
-                        .Include(a => a.Company)
-                        .Where(a => a.CompanyId == companyId || a.UserId == authorId)
-                        .Where(a => a.Company.IsSoftDeleted == false)
-                        .OrderByDescending(a => a.CreatedDateUtc);
-        }
-    }
 }

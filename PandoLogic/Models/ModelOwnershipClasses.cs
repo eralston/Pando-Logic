@@ -8,9 +8,8 @@ namespace PandoLogic.Models
     /// <summary>
     /// Int3erface for any object that is owned by a single user
     /// </summary>
-    public interface IUserOwnedModel : IBaseModel
+    public interface IUserOwnedModel
     {
-        ApplicationUser User { get; set; }
         string UserId { get; set; }
     }
 

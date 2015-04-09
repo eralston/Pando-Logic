@@ -17,8 +17,9 @@ namespace PandoLogic.Controllers
     public class HomeController : BaseController
     {
         [Authorize]
-        public ActionResult Index()
+        public async Task<ActionResult> Index()
         {
+            await ActivitiesController.LoadFeedActivities(this, 5);
             return View();
         }
 
@@ -80,12 +81,15 @@ namespace PandoLogic.Controllers
 
             if (Request.IsAuthenticated)
             {
-                // Save an activity for this user
                 ApplicationUser currentUser = await GetCurrentUserAsync();
-                Activity newActivity = Db.Activities.Create(currentUser.Id, "");
+
+                // Save an activity for this user
+                Activity newActivity = new Activity(currentUser.Id, "");
                 string linkTitle = string.Format("{0} joined {1}", currentUser.FullName, invite.Company.Name);
                 newActivity.SetTitle(linkTitle, Url.Action("Details", "Users", currentUser.Id));
                 newActivity.Type = ActivityType.TeamNotification;
+                ActivityRepository repo = ActivityRepository.CreateForCompany(invite.CompanyId);
+                await repo.InsertOrUpdate<MemberInvite>(invite.Id, newActivity);
 
                 // Add them to the company (and refresh user info)
                 Member membership = Db.Members.Create(currentUser, invite.Company);
@@ -124,10 +128,12 @@ namespace PandoLogic.Controllers
             {
                 // Save an activity for this user
                 ApplicationUser currentUser = await GetCurrentUserAsync();
-                Activity newActivity = Db.Activities.Create(currentUser.Id, "");
+                Activity newActivity = new Activity(currentUser.Id, "");
                 string linkTitle = string.Format("{0} declined to join {1}", currentUser.FullName, invite.Company.Name);
                 newActivity.SetTitle(linkTitle, Url.Action("Details", "Users", currentUser.Id));
                 newActivity.Type = ActivityType.TeamNotification;
+                ActivityRepository repo = ActivityRepository.CreateForCompany(invite.CompanyId);
+                await repo.InsertOrUpdate<MemberInvite>(invite.Id, newActivity);
             }
 
             // clear the invite

@@ -168,6 +168,21 @@ namespace PandoLogic.Controllers
             }
         }
 
+        private ActivityRepository _repo = null;
+        public async Task<ActivityRepository> GetActivityRepositoryForCurrentCompany()
+        {
+            if(_repo == null)
+            {
+                Member currentMember = await GetCurrentMemberAsync();
+                if (currentMember == null)
+                    return null;
+
+                _repo = ActivityRepository.CreateForCompany(currentMember.CompanyId);
+            }
+
+            return _repo;
+        }
+
         private string _username = null;
         /// <summary>
         /// Gets the currently logged in user's name
@@ -328,7 +343,7 @@ namespace PandoLogic.Controllers
             return _member;
         }
 
-        protected async Task<Member> GetCurrentMemberAsync()
+        public async Task<Member> GetCurrentMemberAsync()
         {
             if (_member != null)
                 return _member;

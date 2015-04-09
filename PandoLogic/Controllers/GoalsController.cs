@@ -72,7 +72,11 @@ namespace PandoLogic.Controllers
             {
                 ViewBag.TaskBoxShowAll = true;
                 ViewBag.TaskBoxShowAllUrl = Url.Action("Tasks", "Goals", new { id = goal.Id });
-                goal.LoadComments(this, "CreateGoal");
+                ActivityRepository repo = await GetActivityRepositoryForCurrentCompany();
+                if(repo != null)
+                {
+                    await goal.LoadComments<Goal>(this, "CreateGoal", repo);
+                }
             }
         }
 
@@ -217,12 +221,13 @@ namespace PandoLogic.Controllers
                 await Db.SaveChangesAsync();
 
                 // Add an activity model
-                Activity newActivity = Db.Activities.Create(currentMember.UserId, currentMember.Company, "");
+                Activity newActivity = new Activity(currentMember.UserId, "");
+                newActivity.CompanyId = goal.CompanyId.Value;
                 newActivity.SetTitle(goal.Title, Url.Action("Details", "Goals", new { id = goal.Id }));
                 newActivity.Description = "Goal Created";
                 newActivity.Type = ActivityType.WorkAdded;
-
-                await Db.SaveChangesAsync();
+                ActivityRepository repo = ActivityRepository.CreateForCompany(goal.CompanyId.Value);
+                await repo.InsertOrUpdate<Goal>(goal.Id, newActivity);
 
                 await UpdateCurrentUserCacheGoalsAsync();
 
@@ -306,18 +311,20 @@ namespace PandoLogic.Controllers
         {
             // Remove the goal
             Goal goal = await Db.Goals.FindAsync(id);
-            Db.Activities.RemoveComments(goal);
             Db.Goals.Remove(goal);
 
             await Db.RemoveWorkItemsForGoal(goal.Id);
 
+            await Db.SaveChangesAsync();
+
             // Add an activity model
             Member currentMember = await GetCurrentMemberAsync();
-            Activity newActivity = Db.Activities.Create(currentMember.UserId, currentMember.Company, goal.Title);
+            Activity newActivity = new Activity(currentMember.UserId, goal.Title);
+            newActivity.CompanyId = currentMember.CompanyId;
             newActivity.Description = "Goal Deleted";
             newActivity.Type = ActivityType.WorkDeleted;
-
-            await Db.SaveChangesAsync();
+            ActivityRepository repo = ActivityRepository.CreateForCompany(goal.CompanyId.Value);
+            await repo.InsertOrUpdate<Goal>(goal.Id, newActivity);
 
             await UpdateCurrentUserCacheGoalsAsync();
 
@@ -376,10 +383,13 @@ namespace PandoLogic.Controllers
 
             // Setup the new activity and save
             Member member = await GetCurrentMemberAsync();
-            Activity newActivity = Db.Activities.Create(member.UserId, member.Company, "");
+            Activity newActivity = new Activity(member.UserId, "");
+            newActivity.CompanyId = goal.CompanyId.Value;
             newActivity.SetTitle(goal.Title, Url.Action("Details", "Goals", new { id = goal.Id }));
             newActivity.Description = "Goal Archived";
             newActivity.Type = ActivityType.WorkArchived;
+            ActivityRepository repo = ActivityRepository.CreateForCompany(goal.CompanyId.Value);
+            await repo.InsertOrUpdate<Goal>(goal.Id, newActivity);
 
             await Db.SaveChangesAsync();
 
@@ -411,10 +421,13 @@ namespace PandoLogic.Controllers
 
             // Setup the new activity and save
             Member member = await GetCurrentMemberAsync();
-            Activity newActivity = Db.Activities.Create(member.UserId, member.Company, "");
+            Activity newActivity = new Activity(member.UserId, "");
+            newActivity.CompanyId = goal.CompanyId.Value;
             newActivity.SetTitle(goal.Title, Url.Action("Details", "Goals", new { id = goal.Id }));
             newActivity.Description = "Goal Unarchived";
             newActivity.Type = ActivityType.WorkUndoArchived;
+            ActivityRepository repo = ActivityRepository.CreateForCompany(goal.CompanyId.Value);
+            await repo.InsertOrUpdate<Goal>(goal.Id, newActivity);
 
             await Db.SaveChangesAsync();
 

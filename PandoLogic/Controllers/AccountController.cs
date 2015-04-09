@@ -442,16 +442,25 @@ namespace PandoLogic.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Payment(PaymentViewModel viewModel)
         {
-            if (ModelState.IsValid)
+            try
             {
-                
-                await UpdatePaymentInfo(viewModel);
+                if (ModelState.IsValid)
+                {
 
-                return RedirectToAction("Subscription");
+                    await UpdatePaymentInfo(viewModel);
+
+                    return RedirectToAction("Subscription");
+                }
+
+                ViewBag.PostTarget = "Payment";
+                return View();
             }
-
-            ViewBag.PostTarget = "PaymentChange";
-            return View();
+            catch (Stripe.StripeException ex)
+            {
+                // In the event of stripe exception, assume it's the user's problem
+                ModelState.AddModelError("Custom", ex);
+                return View();
+            }
         }
 
         /// <summary>

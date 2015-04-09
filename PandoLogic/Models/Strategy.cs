@@ -60,6 +60,11 @@ namespace PandoLogic.Models
 
         public virtual ICollection<StrategyAdoption> Adoptions { get; set; }
 
+        // To-One on Company
+        [ForeignKey("Company")]
+        public int? CompanyId { get; set; }
+        public virtual Company Company { get; set; }
+
         #region Methods
 
         public void UpdateSearchText()
@@ -230,8 +235,6 @@ namespace PandoLogic.Models
         #endregion
 
         #region ICommentable
-
-        public virtual ICollection<Activity> Comments { get; set; }
 
         [NotMapped]
         public string CommentControllerName { get { return "Strategies"; } }

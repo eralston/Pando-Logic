@@ -62,9 +62,6 @@ namespace PandoLogic.Models
 
         #region ICommentable
 
-        // To-Many on Activity
-        public virtual ICollection<Activity> Comments { get; set; }
-
         [NotMapped]
         public string CommentControllerName { get { return "Tasks"; } }
 
@@ -98,10 +95,9 @@ namespace PandoLogic.Models
 
         public static async Task RemoveWorkItemsForGoal(this ApplicationDbContext context, int goalId)
         {
-            WorkItem[] workItems = await context.WorkItems.WhereGoal(goalId).Include(i => i.Comments).ToArrayAsync();
+            WorkItem[] workItems = await context.WorkItems.WhereGoal(goalId).ToArrayAsync();
             foreach (WorkItem item in workItems)
             {
-                context.Activities.RemoveComments(item);
                 context.WorkItems.Remove(item);
             }
         }

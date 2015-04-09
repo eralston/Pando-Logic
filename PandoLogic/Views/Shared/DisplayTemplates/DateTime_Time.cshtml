@@ -2,7 +2,7 @@
 
 @if(Model.HasValue)
 {
-    <time class="date-time" datetime="@Model.Value.ToString("yyyy-MM-dd HH:mm:ssZ")">
+    <time class="localized-time" datetime="@Model.Value.ToString("yyyy-MM-dd HH:mm:ssZ")">
         @Model.Value.ToString("t")
     </time>
 }

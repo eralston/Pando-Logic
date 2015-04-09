@@ -31,8 +31,6 @@ namespace PandoLogic.Models
 
         public DbSet<Member> Members { get; set; }
 
-        public DbSet<Activity> Activities { get; set; }
-
         public DbSet<Invite> Invites { get; set; }
 
         public DbSet<Goal> Goals { get; set; }

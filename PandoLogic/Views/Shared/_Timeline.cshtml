@@ -9,16 +9,16 @@
     DateTime yesterday = today.AddDays(-1);
 }
 
-@if (Model.Count() > 0)
+@if (Model != null && Model.Count() > 0)
 {
     <div style="position: relative">
         <ul class="timeline">
 
             @foreach (Activity activity in Model)
             {
-                if (!currentDateTime.HasValue || currentDateTime.Value.Date != activity.CreatedDateUtc.Value.Date)
+                if (!currentDateTime.HasValue || currentDateTime.Value.Date != activity.Timestamp.Date)
                 {
-                    currentDateTime = activity.CreatedDateUtc;
+                    currentDateTime = activity.Timestamp.DateTime;
                     <li class="time-label">
                         <span class="bg-aqua">
                             @if (currentDateTime.Value.Date == today.Date)
@@ -50,7 +50,7 @@
                 string editActionName = isFomActivityFeed.HasValue && isFomActivityFeed.Value ? "EditActivity" : "Edit";
                             }
 
-                            @if (activity.IsAbleToBeEdited)
+                            @*@if (activity.IsAbleToBeEdited)
                             {
                                 <a href="@Url.Action(editActionName, "Activities", new { id = activity.Id })">
                                     <i class="fa fa-pencil"></i>
@@ -62,11 +62,11 @@
                                 <a href="@Url.Action(deleteActionName, "Activities", new { id = activity.Id })">
                                     <i class="fa fa-trash-o"></i>
                                 </a>
-                            }
+                            }*@
 
-                            @Html.ActionLink(activity.User.FirstName, "Details", "Users", new { id = activity.User.Id }, null)
+                            @*@Html.ActionLink(activity.User.FirstName, "Details", "Users", new { id = activity.User.Id }, null)*@
                             <i class="fa fa-clock-o"></i>
-                            @Html.Partial("~/Views/Shared/DisplayTemplates/DateTime_Time.cshtml", activity.CreatedDateUtc)
+                            @Html.Partial("~/Views/Shared/DisplayTemplates/DateTime_Time.cshtml", activity.Timestamp.DateTime)
                         </span>
 
                         @if (ViewBag.ShowActivityTitle != null && ViewBag.ShowActivityTitle == true)

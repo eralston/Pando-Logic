@@ -60,7 +60,6 @@ namespace PandoLogic.Controllers
                     if (workItemViewModel.IsMarkedForDelete)
                     {
                         // If we're nuking this task
-                        Db.Activities.RemoveComments(workItem);
                         Db.WorkItems.Remove(workItem);
                     }
                     else
@@ -105,7 +104,6 @@ namespace PandoLogic.Controllers
                     if (goalViewModel.IsMarkedForDelete)
                     {
                         // If we're nuking this goal
-                        Db.Activities.RemoveComments(sGoal.Goal);
                         Db.Goals.Remove(sGoal.Goal);
                         Db.StrategyGoals.Remove(sGoal);
                     }
@@ -198,7 +196,8 @@ namespace PandoLogic.Controllers
             ViewBag.StrategyRating = rating;
 
             // Setup comments
-            strategy.LoadComments(this, "CreateStrategy");
+            ActivityRepository repo = ActivityRepository.CreateForStrategy(strategy);
+            await strategy.LoadComments(this, "CreateStrategy", repo);
 
             // Setup goals
             strategy.MarkOrder();
@@ -529,15 +528,20 @@ namespace PandoLogic.Controllers
 
             strategy.Adopt(Db, UserCache.Id, UserCache.SelectedCompanyId);
 
+            await Db.SaveChangesAsync();
+
             // Setup the new activity and save
             Member member = await GetCurrentMemberAsync();
-            Activity newActivity = Db.Activities.Create(member.UserId, member.Company, "");
+            Activity newActivity = new Activity(member.UserId, "");
+            if (strategy.CompanyId.HasValue)
+                newActivity.CompanyId = strategy.CompanyId.Value;
             newActivity.SetTitle(strategy.Title, Url.Action("Details", "Strategies", new { id = strategy.Id }));
             newActivity.Description = "Strategy Adopted";
             newActivity.Type = ActivityType.WorkAdded;
+            ActivityRepository repo = ActivityRepository.CreateForStrategy(strategy);
+            await repo.InsertOrUpdate<Strategy>(strategy.Id, newActivity);
 
-            await Db.SaveChangesAsync();
-
+            // Clear current user goals cache, since we just added more
             await UpdateCurrentUserCacheGoalsAsync();
 
             return RedirectToAction("Index", "Goals");

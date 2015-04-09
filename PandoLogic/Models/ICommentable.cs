@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Web.Mvc;
 
 using Masticore;
@@ -13,8 +14,7 @@ namespace PandoLogic.Models
     /// </summary>
     public interface ICommentable : IBaseModel
     {
-        ICollection<Activity> Comments { get; set; }
-
+        int? CompanyId { get; }
         string CommentControllerName { get; }
         string CommentActionName { get; }
 
@@ -23,24 +23,21 @@ namespace PandoLogic.Models
 
     public static class ICommentableExtensions
     {
-        public static void LoadComments(this ICommentable commentable, Controller controller, string commentAction)
+        /// <summary>
+        /// Extension method on a commentale that
+        /// </summary>
+        /// <typeparam name="ParentType"></typeparam>
+        /// <param name="commentable"></param>
+        /// <param name="controller"></param>
+        /// <param name="commentAction"></param>
+        /// <param name="repo"></param>
+        /// <returns></returns>
+        public static async Task LoadComments<ParentType>(this ParentType commentable, Controller controller, string commentAction, ActivityRepository repo) where ParentType : ICommentable
         {
-            if(commentable.Comments != null)
-            {
-                controller.ViewBag.Comments = commentable.Comments.OrderByDescending(c => c.CreatedDateUtc);
-            }
-            else
-            {
-                controller.ViewBag.Comments = new List<Activity>();
-            }
-            
+            controller.ViewBag.Comments = await repo.Retrieve<ParentType>(commentable.Id);
+
             controller.ViewBag.CommentId = commentable.Id;
             controller.ViewBag.CommentAction = commentAction;
-        }
-
-        public static void RemoveComments(this DbSet<Activity> activites, ICommentable commentable)
-        {
-            activites.RemoveRange(commentable.Comments);
         }
     }
 }
