@@ -327,6 +327,10 @@ namespace PandoLogic.Controllers
         /// <returns></returns>
         public ActionResult Widget()
         {
+            Member currentMember = GetCurrentMember();
+            if (currentMember == null)
+                return new EmptyResult();
+
             Goal[] goals = this.UserCache.Goals;
 
             if (goals == null)

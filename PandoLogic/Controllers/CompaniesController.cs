@@ -205,6 +205,7 @@ namespace PandoLogic.Controllers
         // GET: Companies/Create
         public ActionResult Create()
         {
+            ViewBag.IsRegistration = Request.QueryString["CreateNew"] != "True";
             ViewBag.IndustryId = new SelectList(Db.Industries, "Id", "Title");
             CompanyViewModel viewModel = new CompanyViewModel();
             return View(viewModel);

@@ -79,6 +79,10 @@ body > .header .logo {
     float: left;
 }
 
+.btn {
+    text-decoration: none !important;
+}
+
 /*Horizontal Scroll CSS*/
 /*.horizontal-container {
     padding: 60px 15px 0;

@@ -61,12 +61,15 @@
 }
 else
 {
-    <div class="form-box" id="login-box">
-        <div class="header">Accept Invite to @Model.Company.Name</div>
+    <div class="form-box">
+        <div class="box-header">
+            <i class="fa fa-user"></i>
+            <h2 class="box-title">Accept Invite to @Model.Company.Name</h2>
+        </div>
 
-        @using (Html.BeginForm("Login", "Account", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, new { role = "form" }))
-        {
-            <div class="body bg-gray">
+        <div class="box-body">
+            @using (Html.BeginForm("Login", "Account", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, new { role = "form" }))
+            {
                 <p class="text-muted">
                     You are invited to join the company @Model.Company.Name on BizSprout. Please login or register to accept this invite.
                 </p>
@@ -79,12 +82,13 @@ else
                 <div class="form-group">
                     @Html.Password("Password", null, new { @class = "form-control", placeholder = "Password" })
                 </div>
-            </div>
-            <div class="footer">
-                <button type="submit" class="btn btn-primary btn-block">Sign Me In &amp; Accept Invite</button>
 
-                @Html.ActionLink("No Account? Register", "Register", "Account", null, new { @class = "text-center" })
-            </div>
-        }
+                <div class="footer">
+                    <button type="submit" class="btn btn-primary btn-block">Sign Me In &amp; Accept Invite</button>
+
+                    @Html.ActionLink("No Account? Register", "Register", "Account", null, new { @class = "text-center" })
+                </div>
+            }
+        </div>
     </div>
 }

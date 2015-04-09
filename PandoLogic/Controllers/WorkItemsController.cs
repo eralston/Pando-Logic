@@ -384,8 +384,11 @@ namespace PandoLogic.Controllers
         [Route("Widget")]
         public ActionResult Widget()
         {
-            ApplicationUser user = GetCurrentUser();
-            WorkItem[] workItems = Db.WorkItems.WhereAssignedUser(user.Id).Where(w => w.CompletedDateUtc == null).OrderBy(w => w.DueDateUtc).Take(5).ToArray();
+            Member currentMember = GetCurrentMember();
+            if (currentMember == null)
+                return new EmptyResult();
+
+            WorkItem[] workItems = Db.WorkItems.WhereAssignedUser(currentMember.UserId).Where(w => w.CompletedDateUtc == null).OrderBy(w => w.DueDateUtc).Take(5).ToArray();
 
             ViewBag.TaskBoxShowAll = true;
             ViewBag.TaskBoxShowAllUrl = Url.Action("Index");

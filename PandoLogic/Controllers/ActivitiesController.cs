@@ -50,6 +50,12 @@ namespace PandoLogic.Controllers
         public static async Task LoadFeedActivities(BaseController controller, int? limit = null)
         {
             Member member = await controller.GetCurrentMemberAsync();
+            if (member == null)
+            {
+                controller.TempData["Activities"] = new Activity[0];
+                return;
+            }
+                
             int? companyId = null;
 
             if (member != null)

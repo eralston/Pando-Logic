@@ -274,8 +274,11 @@ namespace PandoLogic.Controllers
             await LoadCompaniesForCurrentUserIntoViewBag();
             await LoadSubscriptionsForCurrentUserIntoViewBag();
 
-            Stripe.StripeCustomer stripeCustomer = StripeManager.RetrieveCustomer(user);
-            ViewBag.DefaultCard = stripeCustomer.GetDefaultCard();
+            if(user.HasPaymentInfo)
+            {
+                Stripe.StripeCustomer stripeCustomer = StripeManager.RetrieveCustomer(user);
+                ViewBag.DefaultCard = stripeCustomer.GetDefaultCard();
+            }
 
             return View();
         }
