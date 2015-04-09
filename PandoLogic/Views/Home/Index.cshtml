@@ -17,6 +17,12 @@
     <div class="col-md-6">
         @Html.Action("Widget", "WorkItems")
         @Html.Action("Widget", "Goals")
-        @Html.Action("Team", "Companies", new { id = ViewBag.CurrentUserSelectedCompanyId })
+        @{
+            int? companyId = ViewBag.CurrentUserSelectedCompanyId != null ? ViewBag.CurrentUserSelectedCompanyId : null;
+        }
+        @if (companyId.HasValue)
+        {
+            Html.RenderAction("Team", "Companies", new { id = companyId.Value });
+        }
     </div>
 </div>
