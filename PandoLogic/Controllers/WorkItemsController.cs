@@ -351,10 +351,8 @@ namespace PandoLogic.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> DeleteConfirmed(int id)
         {
+            // Find the workitem
             WorkItem workItem = await Db.WorkItems.FindAsync(id);
-            int? goalId = workItem.GoalId;
-            Db.WorkItems.Remove(workItem);
-            await Db.SaveChangesAsync();
 
             // Add an activity model
             Member currentMember = await GetCurrentMemberAsync();
@@ -364,6 +362,11 @@ namespace PandoLogic.Controllers
             newActivity.Type = ActivityType.WorkDeleted;
             ActivityRepository repo = ActivityRepository.CreateForCompany(workItem.CompanyId.Value);
             await repo.InsertOrUpdate<WorkItem>(workItem.Id, newActivity);
+
+            // Remove it
+            int? goalId = workItem.GoalId;
+            Db.WorkItems.Remove(workItem);
+            await Db.SaveChangesAsync();
 
             if (goalId.HasValue)
             {

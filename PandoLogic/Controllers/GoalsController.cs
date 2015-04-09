@@ -208,8 +208,6 @@ namespace PandoLogic.Controllers
 
                 Db.Goals.Add(goal);
 
-                await Db.SaveChangesAsync();
-
                 // Add an activity model
                 Activity newActivity = new Activity(currentMember.UserId, "");
                 newActivity.CompanyId = goal.CompanyId.Value;
@@ -218,6 +216,8 @@ namespace PandoLogic.Controllers
                 newActivity.Type = ActivityType.WorkAdded;
                 ActivityRepository repo = ActivityRepository.CreateForCompany(goal.CompanyId.Value);
                 await repo.InsertOrUpdate<Goal>(goal.Id, newActivity);
+
+                await Db.SaveChangesAsync();
 
                 await UpdateCurrentUserCacheGoalsAsync();
 
@@ -299,13 +299,8 @@ namespace PandoLogic.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> DeleteConfirmed(int id)
         {
-            // Remove the goal
+            // Find the goal
             Goal goal = await Db.Goals.FindAsync(id);
-            Db.Goals.Remove(goal);
-
-            await Db.RemoveWorkItemsForGoal(goal.Id);
-
-            await Db.SaveChangesAsync();
 
             // Add an activity model
             Member currentMember = await GetCurrentMemberAsync();
@@ -315,6 +310,11 @@ namespace PandoLogic.Controllers
             newActivity.Type = ActivityType.WorkDeleted;
             ActivityRepository repo = ActivityRepository.CreateForCompany(goal.CompanyId.Value);
             await repo.InsertOrUpdate<Goal>(goal.Id, newActivity);
+
+            // Remove the goal
+            await Db.RemoveWorkItemsForGoal(goal.Id);
+            Db.Goals.Remove(goal);
+            await Db.SaveChangesAsync();
 
             await UpdateCurrentUserCacheGoalsAsync();
 
