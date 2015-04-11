@@ -2,6 +2,7 @@
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
 using StripeEntities;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -95,6 +96,8 @@ namespace PandoLogic.Models
         /// Customer ID for the charging system
         /// </summary>
         public string PaymentSystemId { get; set; }
+
+        public DateTime? CreatedDate { get; set; }
 
         /// <summary>
         /// Returns true if this application user has payment information; otherwise, returns false

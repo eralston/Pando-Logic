@@ -8,6 +8,7 @@ using System.Web.Mvc;
 using System.Web.Mvc.Html;
 
 using PandoLogic.Controllers;
+using PandoLogic.Models;
 
 namespace PandoLogic
 {

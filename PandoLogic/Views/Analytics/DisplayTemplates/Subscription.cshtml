@@ -1,0 +1,20 @@
+﻿@model PandoLogic.Models.Subscription
+
+<tr>
+    <td>
+        @Html.DisplayFor(s => s.Company.Name)
+    </td>
+    <td>
+        @Html.DisplayFor(s => s.User.FullName)
+        (<a href='mailto:@Model.User.Email'>@Model.User.Email</a>)
+    </td>
+    <td>
+        @Html.DisplayFor(s => s.Plan.Title)
+    </td>
+    <td>
+        @Html.DisplayFor(s => s.Plan.Price)
+    </td>
+    <td>
+        @Html.DisplayFor(s => s.CreatedDateUtc)
+    </td>
+</tr>

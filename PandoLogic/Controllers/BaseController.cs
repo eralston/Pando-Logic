@@ -50,7 +50,7 @@ namespace PandoLogic.Controllers
         public NotificationType Type { get; set; }
     }
 
-    public class BaseController : Controller, IInviteContextProvider, IPersistenceContext
+    public class BaseController : Controller, IInviteContextProvider, IPersistenceContext, PandoLogic.Controllers.IDataProvider
     {
         #region Constants
 
@@ -79,7 +79,7 @@ namespace PandoLogic.Controllers
         {
             public UserInfoCache() { }
 
-            public UserInfoCache(ApplicationUser user, Company[] userCompanies, Member selectedMember, Goal[] goals)
+            public UserInfoCache(ApplicationUser user, Company[] userCompanies, Member selectedMember, Goal[] goals, bool isAdmin)
             {
                 // Load user data
                 FirstName = user.FirstName;
@@ -90,6 +90,8 @@ namespace PandoLogic.Controllers
                     AvatarUrl = user.Avatar.Url;
                 else
                     AvatarUrl = null;
+
+                IsAdmin = isAdmin;
 
                 this.Goals = goals;
 
@@ -114,7 +116,7 @@ namespace PandoLogic.Controllers
                     Company company = userCompanies[i];
                     companies[i] = new CompanyInfoCache(company);
                 }
-                Companies = companies;                
+                Companies = companies;    
             }
 
             public string FirstName { get; set; }
@@ -129,6 +131,8 @@ namespace PandoLogic.Controllers
             public string SelectedCompanyName { get; set; }
             public string SelectedCompanyAvatarUrl { get; set; }
             public CompanyInfoCache[] Companies { get; set; }
+
+            public bool IsAdmin { get; set; }
 
             public Goal[] Goals { get; set; }
         }
@@ -274,7 +278,10 @@ namespace PandoLogic.Controllers
                 goals = new Goal[] { };
             }
 
-            _userCache = new UserInfoCache(user, userCompanies, selectedMember, goals);
+            Adjudicator adjudicator = new Adjudicator(Db);
+            bool isAdmin = adjudicator.IsInAdminRole(user);
+
+            _userCache = new UserInfoCache(user, userCompanies, selectedMember, goals, isAdmin);
             HttpContext.Session[UserInfoCacheId] = _userCache;
         }
 
@@ -306,7 +313,10 @@ namespace PandoLogic.Controllers
             
             _member = selectedMember;
 
-            _userCache = new UserInfoCache(user, companies, selectedMember, goals);
+            Adjudicator adjudicator = new Adjudicator(Db);
+            bool isAdmin = adjudicator.IsInAdminRole(user);
+
+            _userCache = new UserInfoCache(user, companies, selectedMember, goals, isAdmin);
             HttpContext.Session[UserInfoCacheId] = _userCache;
         }
 
@@ -397,6 +407,7 @@ namespace PandoLogic.Controllers
                 ViewBag.CurrentUserEmail = cache.Email;
                 ViewBag.CurrentUserId = cache.Id;
                 ViewBag.CurrentUserAvatarUrl = cache.AvatarUrl;
+                ViewBag.CurrentUserIsAdmin = cache.IsAdmin;
 
                 // Select member properties
                 ViewBag.CurrentUserJobTitle = cache.JobTitle;

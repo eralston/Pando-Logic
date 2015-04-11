@@ -1,0 +1,14 @@
+﻿@model PandoLogic.Models.ApplicationUser
+<tr>
+    <td>
+        @Model.FullName
+    </td>
+    <td>
+        <a href='mailto:@Model.Email'>
+            @Model.Email
+        </a>
+    </td>
+    <td>
+        @Html.DisplayFor(m => m.CreatedDate)
+    </td>
+</tr>

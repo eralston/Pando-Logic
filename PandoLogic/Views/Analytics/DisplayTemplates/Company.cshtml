@@ -1,0 +1,13 @@
+﻿@model PandoLogic.Models.Company
+
+<tr>
+    <td>
+        @Html.DisplayFor(c => c.Name)
+    </td>
+    <td>
+        @Model.Members.Count
+    </td>
+    <td>
+        @Html.DisplayFor(c => c.CreatedDateUtc)
+    </td>
+</tr>

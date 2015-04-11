@@ -246,6 +246,8 @@
     <Compile Include="Controllers\ActivitiesController.cs" />
     <Compile Include="Controllers\AddressesController.cs" />
     <Compile Include="Code\IPersistenceContext.cs" />
+    <Compile Include="Controllers\AnalyticsController.cs" />
+    <Compile Include="Controllers\IDataProvider.cs" />
     <Compile Include="Controllers\MembersController.cs" />
     <Compile Include="Controllers\ParentWorkItemViewModel.cs" />
     <Compile Include="Controllers\SubscriptionPlansController.cs" />
@@ -1478,6 +1480,10 @@
     <Content Include="Views\Shared\DisplayTemplates\Goal.cshtml" />
     <Content Include="Views\Shared\DisplayTemplates\DateTime_Date.cshtml" />
     <Content Include="Views\Shared\DisplayTemplates\DateTime_Time.cshtml" />
+    <Content Include="Views\Analytics\Index.cshtml" />
+    <Content Include="Views\Analytics\DisplayTemplates\ApplicationUser.cshtml" />
+    <Content Include="Views\Analytics\DisplayTemplates\Company.cshtml" />
+    <Content Include="Views\Analytics\DisplayTemplates\Subscription.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />

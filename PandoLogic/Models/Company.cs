@@ -36,6 +36,9 @@ namespace PandoLogic.Models
         // To-Many on PhoneNumber
         public virtual ICollection<PhoneNumber> PhoneNumbers { get; set; }
 
+        // To-Many on PhoneNumber
+        public virtual ICollection<Member> Members { get; set; }
+
         // To-One on Address
         [ForeignKey("Address")]
         public int? AddressId { get; set; }

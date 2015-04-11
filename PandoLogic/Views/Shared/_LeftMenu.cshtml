@@ -45,27 +45,37 @@
                 </a>
             </li>
             @*<li class="">
-                <a href="@Url.Action("Index","Strategies")">
-                    <i class="fa fa-puzzle-piece"></i> <span>Strategies</span>
-                </a>
-            </li>
-            <li class="">
-                <a href="@Url.Action("Exchange","Strategies")">
-                    <i class="fa fa-exchange"></i> <span>Strategy Exchange</span>
-                </a>
-            </li>*@
-            @*@if (Html.IsInCompanyContext())
-            {
-                <li class="header">CHAT</li>
-                <li class="">
-                    <a class="company-chat-toggle" data-toggle="">
-                        <i class="fa fa-comments-o"></i>
-                        Team Chat
+                    <a href="@Url.Action("Index","Strategies")">
+                        <i class="fa fa-puzzle-piece"></i> <span>Strategies</span>
                     </a>
                 </li>
-            }*@
+                <li class="">
+                    <a href="@Url.Action("Exchange","Strategies")">
+                        <i class="fa fa-exchange"></i> <span>Strategy Exchange</span>
+                    </a>
+                </li>*@
+            @*@if (Html.IsInCompanyContext())
+                {
+                    <li class="header">CHAT</li>
+                    <li class="">
+                        <a class="company-chat-toggle" data-toggle="">
+                            <i class="fa fa-comments-o"></i>
+                            Team Chat
+                        </a>
+                    </li>
+                }*@
+            @if (ViewBag.CurrentUserIsAdmin == true)
+            {
+                <li class="header">ADMIN</li>
+                <li class="">
+                    <a href="@Url.Action("Index","Analytics")">
+                        <i class="fa fa-area-chart"></i> <span>Analytics</span>
+                    </a>
+                </li>
+            }
         </ul>
 
     </section>
+
     <!-- /.sidebar -->
 </aside>

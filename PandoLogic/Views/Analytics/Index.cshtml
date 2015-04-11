@@ -1,0 +1,119 @@
+﻿@using PandoLogic.Models
+@model PandoLogic.Controllers.AnalyticsViewModel
+
+@{
+    ViewBag.Title = "Analytics";
+    ViewBag.TitleMinor = "Statistics Dashboard for BizSprout";
+
+    ViewBag.Breadcrumb = new Breadcrumb(new Crumb[] {
+        new Crumb("Dashboard", Url.Action("Index","Home"), "fa-dashboard"),
+        new Crumb("Analytics", "", "fa-area-chart")
+    });
+}
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="info-box">
+            <span class="info-box-icon bg-light-blue">
+                <i class="fa fa-users"></i>
+            </span>
+            <div class="info-box-content">
+                <span class="info-box-text">User Count</span>
+                <span class="info-box-number">@Model.NumberOfUsers</span>
+            </div>
+        </div>
+        <div class="box">
+            <div class="box-header">
+                <i class="fa fa-users"></i>
+                Recently Added Users
+            </div>
+            <div class="box-body no-padding">
+                <div class="table-responsive">
+                    <table class="table table-condensed">
+                        <tbody>
+                            <tr>
+                                <th>Name</th>
+                                <th>E-Mail</th>
+                                <th>Signup Date</th>
+                            </tr>
+
+                           @Html.DisplayFor(m => m.NewUsers)
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="info-box">
+            <span class="info-box-icon bg-blue">
+                <i class="fa fa-building"></i>
+            </span>
+            <div class="info-box-content">
+                <span class="info-box-text">Company Count</span>
+                <span class="info-box-number">@Model.NumberOfCompanies</span>
+            </div>
+        </div>
+        <div class="box">
+            <div class="box-header">
+                <i class="fa fa-building"></i>
+                Recently Added Companies
+            </div>
+            <div class="box-body no-padding">
+                <div class="table-responsive">
+                    <table class="table table-condensed">
+                        <tbody>
+                            <tr>
+                                <th>Name</th>
+                                <th>Member Count</th>
+                                <th>Created Date</th>
+                            </tr>
+
+                            @Html.DisplayFor(m => m.NewCompanies)
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="info-box">
+            <span class="info-box-icon bg-teal">
+                <i class="fa fa-credit-card"></i>
+            </span>
+            <div class="info-box-content">
+                <span class="info-box-text">Subscription Count</span>
+                <span class="info-box-number">@Model.NumberOfSubscriptions</span>
+            </div>
+        </div>
+        <div class="box">
+            <div class="box-header">
+                <i class="fa fa-credit-card"></i>
+                Recently Added Subscriptions
+            </div>
+            <div class="box-body no-padding">
+                <div class="table-responsive">
+                    <table class="table table-condensed">
+                        <tbody>
+                            <tr>
+                                <th>Company Name</th>
+                                <th>Subscriber Name</th>
+                                <th>Plan Name</th>
+                                <th>Plan Price</th>
+                                <th>Subscribe Date</th>
+                            </tr>
+
+                            @Html.DisplayFor(m => m.NewSubscriptions)
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+   
+</div>
