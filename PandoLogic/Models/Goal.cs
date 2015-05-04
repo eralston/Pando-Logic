@@ -25,13 +25,13 @@ namespace PandoLogic.Models
             [Display(Name = "Light Blue")]
             LightBlue,
             Aqua,
-            Blue,
             Green,
             Yellow,
             Purple,
             Navy,
             Teal,
             Orange,
+            Blue
         }
 
         /// <summary>
