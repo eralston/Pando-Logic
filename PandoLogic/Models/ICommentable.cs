@@ -12,7 +12,7 @@ namespace PandoLogic.Models
     /// <summary>
     /// This interface should be implemented by any model object that wishes to accept comments
     /// </summary>
-    public interface ICommentable : IBaseModel
+    public interface ICommentable : IModelBase
     {
         int? CompanyId { get; }
         string CommentControllerName { get; }

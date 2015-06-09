@@ -10,7 +10,7 @@ namespace PandoLogic.Models
     /// <summary>
     /// A model for linking goals and strategies together
     /// </summary>
-    public class StrategyGoal : BaseModel
+    public class StrategyGoal : ModelBase
     {
         [ForeignKey("Goal")]
         public int GoalId { get; set; }

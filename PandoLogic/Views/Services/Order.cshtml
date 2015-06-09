@@ -1,0 +1,16 @@
+﻿@using PandoLogic.Models
+@model ServiceRequest
+
+@{
+    Service service = ViewBag.Service as Service;
+    
+    ViewBag.Title = "Service - ";
+    ViewBag.TitleMinor = "On-Demand Consulting";
+
+    ViewBag.Breadcrumb = new Breadcrumb(new Crumb[] {
+        new Crumb("Dashboard", Url.Action("Index","Home"), "fa-dashboard"),
+        new Crumb("Services", Url.Action("Index", "Services"), "fa-phone"),
+        new Crumb(service.Title, Url.Action("Index", "Services"), "fa-phone")
+    });
+}
+

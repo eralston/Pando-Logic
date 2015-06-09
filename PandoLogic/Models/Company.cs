@@ -13,7 +13,7 @@ namespace PandoLogic.Models
     /// <summary>
     /// An organization using BizSprout to track its progress
     /// </summary>
-    public class Company : Masticore.BaseModel, IUserOwnedModel
+    public class Company : Masticore.ModelBase, IUserOwnedModel
     {
         // To-One on ApplicationUser
         [ForeignKey("User")]

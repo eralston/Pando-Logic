@@ -544,7 +544,7 @@ namespace PandoLogic.Controllers
             newActivity.Description = "Strategy Adopted";
             newActivity.Type = ActivityType.WorkAdded;
             ActivityRepository repo = ActivityRepository.CreateForCompany(member.CompanyId);
-            await repo.InsertOrUpdate<Strategy>(strategy.Id, newActivity);
+            await repo.InsertOrReplace<Strategy>(strategy.Id, newActivity);
 
             // Clear current user goals cache, since we just added more
             await UpdateCurrentUserCacheGoalsAsync();

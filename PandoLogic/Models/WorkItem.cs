@@ -16,7 +16,7 @@ namespace PandoLogic.Models
     /// These are called "Tasks" in the UIs
     /// A single unit of work, usually under a goal
     /// </summary>
-    public class WorkItem : BaseModel, ICommentable, IUserOwnedModel, IOptionalCompanyOwnedModel
+    public class WorkItem : ModelBase, ICommentable, IUserOwnedModel, IOptionalCompanyOwnedModel
     {
         // To-One on ApplicationUser
         [ForeignKey("User")]

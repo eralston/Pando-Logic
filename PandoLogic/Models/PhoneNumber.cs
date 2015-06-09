@@ -21,7 +21,7 @@ namespace PandoLogic.Models
     /// <summary>
     /// Model for tracking a phone number (for an individual or company)
     /// </summary>
-    public class PhoneNumber : BaseModel
+    public class PhoneNumber : ModelBase
     {
         [Display(Name = "Phone Number")]
         [Required]

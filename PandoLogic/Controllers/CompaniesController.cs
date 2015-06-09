@@ -140,19 +140,19 @@ namespace PandoLogic.Controllers
                 if (file.ContentLength > 0)
                 {
                     // If we have one, then upload to Azure
-                    string blobName = BlobStorageManager.GenerateUniqueName(file.FileName);
+                    string blobName = BlobStorageManagerBase.GenerateUniqueName(file.FileName);
                     CloudBlobContainer container = await StorageManager.GetCompanyImagesAsync();
                     await container.UploadBlobAsync(blobName, file.InputStream);
 
                     // Set the URL
                     string fileUrl = StorageManager.GetCompanyImageUrl(blobName);
 
-                    CloudFile newFile = Db.CloudFiles.Create(PandoStorageManager.CompanyImageContainerName, blobName, fileUrl, file.FileName);
+                    CloudFile newCloudFile = Db.CloudFiles.Create(PandoStorageManager.CompanyImageContainerName, blobName, fileUrl, file.FileName);
 
                     if (origCompany.Avatar != null)
                         await Db.CloudFiles.DeleteAsync(origCompany.Avatar, StorageManager);
 
-                    origCompany.Avatar = newFile;
+                    origCompany.Avatar = newCloudFile;
                 }
             }
         }

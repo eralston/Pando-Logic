@@ -90,7 +90,7 @@ namespace PandoLogic.Controllers
                 newActivity.SetTitle(linkTitle, Url.Action("Details", "Users", currentUser.Id));
                 newActivity.Type = ActivityType.TeamNotification;
                 ActivityRepository repo = ActivityRepository.CreateForCompany(invite.CompanyId);
-                await repo.InsertOrUpdate<MemberInvite>(invite.Id, newActivity);
+                await repo.InsertOrReplace<MemberInvite>(invite.Id, newActivity);
 
                 // Add them to the company (and refresh user info)
                 Member membership = Db.Members.Create(currentUser, invite.Company);
@@ -134,7 +134,7 @@ namespace PandoLogic.Controllers
                 newActivity.SetTitle(linkTitle, Url.Action("Details", "Users", currentUser.Id));
                 newActivity.Type = ActivityType.TeamNotification;
                 ActivityRepository repo = ActivityRepository.CreateForCompany(invite.CompanyId);
-                await repo.InsertOrUpdate<MemberInvite>(invite.Id, newActivity);
+                await repo.InsertOrReplace<MemberInvite>(invite.Id, newActivity);
             }
 
             // clear the invite

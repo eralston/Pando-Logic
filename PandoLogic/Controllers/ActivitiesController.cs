@@ -143,7 +143,7 @@ namespace PandoLogic.Controllers
                 newActivity.Description = activity.Description;
                 newActivity.Type = ActivityType.TeamNotification;
                 ActivityRepository repo = await GetActivityRepositoryForCurrentCompany();
-                await repo.InsertOrUpdate(newActivity);
+                await repo.InsertOrReplace(newActivity);
 
                 // Return to the list action for this 
                 return RedirectToAction("Index");

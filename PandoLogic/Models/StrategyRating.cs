@@ -12,7 +12,7 @@ using Masticore;
 
 namespace PandoLogic.Models
 {
-    public class StrategyRating : BaseModel, IUserOwnedModel
+    public class StrategyRating : ModelBase, IUserOwnedModel
     {
         [Range(0.0f, 5.0f)]
         public float Rating { get; set; }

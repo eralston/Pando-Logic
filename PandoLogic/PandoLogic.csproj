@@ -53,8 +53,9 @@
     <Reference Include="InviteOnly">
       <HintPath>..\packages\InviteOnly.1.3.0.0\lib\net45\InviteOnly.dll</HintPath>
     </Reference>
-    <Reference Include="Masticore">
-      <HintPath>..\packages\Masticore.1.0.6\lib\Masticore.dll</HintPath>
+    <Reference Include="Masticore, Version=1.0.3.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Masticore.1.0.10\lib\Masticore.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.AspNet.Identity.Core, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -133,29 +134,25 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\WindowsAzure.Storage.4.3.0\lib\net40\Microsoft.WindowsAzure.Storage.dll</HintPath>
     </Reference>
-    <Reference Include="NewRelic.Api.Agent, Version=4.2.185.0, Culture=neutral, PublicKeyToken=06552fced0b33d87, processorArchitecture=MSIL">
+    <Reference Include="NewRelic.Api.Agent, Version=4.4.60.0, Culture=neutral, PublicKeyToken=06552fced0b33d87, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\NewRelic.Azure.WebSites.4.2.185.0\lib\NewRelic.Api.Agent.dll</HintPath>
+      <HintPath>..\packages\NewRelic.Azure.WebSites.4.4.60.0\lib\NewRelic.Api.Agent.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Newtonsoft.Json.6.0.8\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
-    <Reference Include="SendGrid.SmtpApi, Version=1.2.1.0, Culture=neutral, PublicKeyToken=2ae73662c35d80e4, processorArchitecture=MSIL">
+    <Reference Include="SendGrid.SmtpApi, Version=1.3.1.0, Culture=neutral, PublicKeyToken=2ae73662c35d80e4, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\SendGrid.SmtpApi.1.2.1\lib\net40\SendGrid.SmtpApi.dll</HintPath>
+      <HintPath>..\packages\SendGrid.SmtpApi.1.3.1\lib\net40\SendGrid.SmtpApi.dll</HintPath>
     </Reference>
-    <Reference Include="SendGridMail, Version=5.1.0.0, Culture=neutral, PublicKeyToken=2ae73662c35d80e4, processorArchitecture=MSIL">
+    <Reference Include="SendGridMail, Version=6.1.0.0, Culture=neutral, PublicKeyToken=2ae73662c35d80e4, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Sendgrid.5.1.0\lib\SendGridMail.dll</HintPath>
+      <HintPath>..\packages\Sendgrid.6.1.0\lib\SendGridMail.dll</HintPath>
     </Reference>
-    <Reference Include="Stripe.net, Version=2.8.0.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="Stripe.net, Version=2.9.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Stripe.net.2.8.0\lib\net40\Stripe.net.dll</HintPath>
-    </Reference>
-    <Reference Include="StripeEntities, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\StripeEntities.1.0.0\lib\StripeEntities.dll</HintPath>
+      <HintPath>..\packages\Stripe.net.2.9.0\lib\net40\Stripe.net.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
@@ -250,6 +247,7 @@
     <Compile Include="Controllers\IDataProvider.cs" />
     <Compile Include="Controllers\MembersController.cs" />
     <Compile Include="Controllers\ParentWorkItemViewModel.cs" />
+    <Compile Include="Controllers\ServicesController.cs" />
     <Compile Include="Controllers\SubscriptionPlansController.cs" />
     <Compile Include="Controllers\SubscriptionsController.cs" />
     <Compile Include="Controllers\UsersController.cs" />
@@ -284,6 +282,8 @@
     <Compile Include="Models\Member.cs" />
     <Compile Include="Models\MemberInvite.cs" />
     <Compile Include="Models\PhoneNumber.cs" />
+    <Compile Include="Models\Service.cs" />
+    <Compile Include="Models\ServiceRequest.cs" />
     <Compile Include="Models\Strategy.cs" />
     <Compile Include="Models\StrategyAdoption.cs" />
     <Compile Include="Models\StrategyBookmark.cs" />
@@ -440,9 +440,9 @@
     <Content Include="newrelic\NewRelic.Agent.Core.dll" />
     <Content Include="newrelic\NewRelic.Agent.Extensions.dll" />
     <Content Include="newrelic\newrelic.config" />
-    <Content Include="newrelic\Extensions\extension.xsd">
+    <None Include="newrelic\Extensions\extension.xsd">
       <SubType>Designer</SubType>
-    </Content>
+    </None>
     <None Include="newrelic\newrelic.xsd">
       <SubType>Designer</SubType>
     </None>
@@ -1484,10 +1484,25 @@
     <Content Include="Views\Analytics\DisplayTemplates\ApplicationUser.cshtml" />
     <Content Include="Views\Analytics\DisplayTemplates\Company.cshtml" />
     <Content Include="Views\Analytics\DisplayTemplates\Subscription.cshtml" />
+    <Content Include="Views\Services\Create.cshtml" />
+    <Content Include="Views\Services\Delete.cshtml" />
+    <Content Include="Views\Services\Details.cshtml" />
+    <Content Include="Views\Services\Edit.cshtml" />
+    <Content Include="Views\Services\Index.cshtml" />
+    <Content Include="Views\Services\EditorTemplates\Service.cshtml" />
+    <Content Include="Views\Services\List.cshtml" />
+    <Content Include="Views\Services\DisplayTemplates\Service.cshtml" />
+    <Content Include="Views\Services\Order.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />
     <None Include="Project_Readme.html" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\StripeEntities\StripeEntities.csproj">
+      <Project>{56e6088c-3a4b-4f08-a440-588f450d3721}</Project>
+      <Name>StripeEntities</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup />
   <PropertyGroup>

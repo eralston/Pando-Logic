@@ -10,7 +10,7 @@ namespace PandoLogic.Models
     /// <summary>
     /// A type for companies, representing a dozen or so possibilities from the database from an owner to choose
     /// </summary>
-    public class Industry : BaseModel
+    public class Industry : ModelBase
     {
         // Required Field
         [Required]

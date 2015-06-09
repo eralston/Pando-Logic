@@ -17,7 +17,7 @@ namespace PandoLogic.Models
         Other
     }
 
-    public class Address : BaseModel
+    public class Address : ModelBase
     {
         [Display(Name = "Updated Date")]
         public DateTime? LastUpdateUtc { get; set; }

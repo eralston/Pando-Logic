@@ -1,0 +1,38 @@
+﻿@using PandoLogic.Models;
+
+@model Service[]
+
+@{
+    ViewBag.Title = "Services";
+    ViewBag.TitleMinor = "On-Demand Consulting";
+
+    ViewBag.Breadcrumb = new Breadcrumb(new Crumb[] {
+        new Crumb("Dashboard", Url.Action("Index","Home"), "fa-dashboard"),
+        new Crumb("Services", "", "fa-phone")
+    });
+}
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="callout callout-info">
+            <h4>On-Demand Consulting For Your Small Business</h4>
+            <p>
+                BizSprout offers a variety of consulting options that will help your team reach the next level.
+            </p>
+        </div>
+    </div>
+</div>
+
+
+@for (int i = 0; i < Math.Ceiling(((float)Model.Length / 3f)); ++i)
+{
+    <div class="row">
+        @for (int j = 0; j < 3 && ((i * 3) + j < Model.Length); ++j)
+        {
+            int index = (i * 3) + j;
+            Service goal = Model[index];
+
+            @Html.Partial("~/Views/Services/DisplayTemplates/Service.cshtml", goal)
+        }
+    </div>
+}

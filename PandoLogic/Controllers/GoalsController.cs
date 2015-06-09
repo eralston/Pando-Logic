@@ -215,7 +215,7 @@ namespace PandoLogic.Controllers
                 newActivity.Description = "Goal Created";
                 newActivity.Type = ActivityType.WorkAdded;
                 ActivityRepository repo = ActivityRepository.CreateForCompany(goal.CompanyId.Value);
-                await repo.InsertOrUpdate<Goal>(goal.Id, newActivity);
+                await repo.InsertOrReplace<Goal>(goal.Id, newActivity);
 
                 await Db.SaveChangesAsync();
 
@@ -309,7 +309,7 @@ namespace PandoLogic.Controllers
             newActivity.Description = "Goal Deleted";
             newActivity.Type = ActivityType.WorkDeleted;
             ActivityRepository repo = ActivityRepository.CreateForCompany(goal.CompanyId.Value);
-            await repo.InsertOrUpdate<Goal>(goal.Id, newActivity);
+            await repo.InsertOrReplace<Goal>(goal.Id, newActivity);
 
             // Remove the goal
             await Db.RemoveWorkItemsForGoal(goal.Id);
@@ -383,7 +383,7 @@ namespace PandoLogic.Controllers
             newActivity.Description = "Goal Archived";
             newActivity.Type = ActivityType.WorkArchived;
             ActivityRepository repo = ActivityRepository.CreateForCompany(goal.CompanyId.Value);
-            await repo.InsertOrUpdate<Goal>(goal.Id, newActivity);
+            await repo.InsertOrReplace<Goal>(goal.Id, newActivity);
 
             await Db.SaveChangesAsync();
 
@@ -421,7 +421,7 @@ namespace PandoLogic.Controllers
             newActivity.Description = "Goal Unarchived";
             newActivity.Type = ActivityType.WorkUndoArchived;
             ActivityRepository repo = ActivityRepository.CreateForCompany(goal.CompanyId.Value);
-            await repo.InsertOrUpdate<Goal>(goal.Id, newActivity);
+            await repo.InsertOrReplace<Goal>(goal.Id, newActivity);
 
             await Db.SaveChangesAsync();
 

@@ -7,7 +7,6 @@ using System.Data.Entity;
 using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Web.Security;
 
 using Masticore;
 
@@ -16,7 +15,7 @@ namespace PandoLogic.Models
     /// <summary>
     /// Record for tracking a file uploaded to the cloud
     /// </summary>
-    public class CloudFile : BaseModel
+    public class CloudFile : ModelBase
     {
         public string Url { get; set; }
 
@@ -63,7 +62,7 @@ namespace PandoLogic.Models
         /// <param name="file"></param>
         /// <param name="storageManager"></param>
         /// <returns></returns>
-        public static async Task DeleteAsync(this DbSet<CloudFile> files, CloudFile file, BlobStorageManager storageManager)
+        public static async Task DeleteAsync(this DbSet<CloudFile> files, CloudFile file, BlobStorageManagerBase storageManager)
         {
             if(file.ContainerName != null && file.BlobName != null)
             {

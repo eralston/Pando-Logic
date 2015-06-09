@@ -15,7 +15,7 @@ namespace PandoLogic
     /// <summary>
     /// Storage manager for 
     /// </summary>
-    public class PandoStorageManager : BlobStorageManager
+    public class PandoStorageManager : BlobStorageManagerBase
     {
         #region Constants
 

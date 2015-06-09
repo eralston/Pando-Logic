@@ -711,6 +711,7 @@ namespace PandoLogic.Controllers
                     await Db.SaveChangesAsync();
 
                     EmailTemplates.SendWelcomeEmail(user, this);
+                    EmailTemplates.SendNewUserNotification(user, this);
 
                     // For more information on how to enable account confirmation and password reset please visit http://go.microsoft.com/fwlink/?LinkID=320771
                     // Send an email with this link
@@ -769,7 +770,7 @@ namespace PandoLogic.Controllers
 
                 if (file.ContentLength > 0)
                 {
-                    string blobName = BlobStorageManager.GenerateUniqueName(file.FileName);
+                    string blobName = BlobStorageManagerBase.GenerateUniqueName(file.FileName);
 
                     CloudBlobContainer container = await StorageManager.GetUserImagesAsync();
                     await container.UploadBlobAsync(blobName, file.InputStream);

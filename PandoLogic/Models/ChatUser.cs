@@ -12,7 +12,7 @@ namespace PandoLogic.Models
     /// Model for tracking users in chat rooms
     /// These are updated continuously as user enter and leave rooms in the system
     /// </summary>
-    public class ChatUser : BaseModel
+    public class ChatUser : ModelBase
     {
         public string ChatRoomId { get; set; }
         public string ConnectionId { get; set; }

@@ -12,7 +12,7 @@ namespace PandoLogic.Models
     /// <summary>
     /// Repository for storing comments into Azure Table Storage
     /// </summary>
-    public class ActivityRepository : TableRepository
+    public class ActivityRepository : TableRepositoryBase
     {
         /// <summary>
         /// Creates a repo for the given strategy ID
@@ -61,9 +61,9 @@ namespace PandoLogic.Models
         /// <param name="parentId"></param>
         /// <param name="activity"></param>
         /// <returns></returns>
-        public Task<TableResult> InsertOrUpdate<ParentType>(int parentId, Activity activity)
+        public Task<TableResult> InsertOrReplace<ParentType>(int parentId, Activity activity)
         {
-            return this.InsertOrUpdateEntityAsync<ParentType, Activity>(parentId, activity);
+            return this.InsertOrReplaceEntityAsync<ParentType, Activity>(parentId, activity);
         }
         
         /// <summary>
@@ -71,10 +71,10 @@ namespace PandoLogic.Models
         /// </summary>
         /// <param name="activity"></param>
         /// <returns></returns>
-        public Task<TableResult> InsertOrUpdate(Activity activity)
+        public Task<TableResult> InsertOrReplace(Activity activity)
         {
             // Use a default partition for non-assigned comments
-            return this.InsertOrUpdateEntityAsync<Activity, Activity>(0, activity);
+            return this.InsertOrReplaceEntityAsync<Activity, Activity>(0, activity);
         }
 
         /// <summary>

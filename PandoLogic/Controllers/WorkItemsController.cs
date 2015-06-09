@@ -183,7 +183,7 @@ namespace PandoLogic.Controllers
             newActivity.Description = "Task Completed";
             newActivity.Type = ActivityType.WorkCompleted;
             ActivityRepository repo = ActivityRepository.CreateForCompany(currentMember.CompanyId);
-            await repo.InsertOrUpdate<WorkItem>(workItem.Id, newActivity);
+            await repo.InsertOrReplace<WorkItem>(workItem.Id, newActivity);
             
             // Update goal cache to reflect progress
             await UpdateCurrentUserCacheGoalsAsync();
@@ -208,7 +208,7 @@ namespace PandoLogic.Controllers
             newActivity.Description = "Undo Task Completed";
             newActivity.Type = ActivityType.WorkUndoArchived;
             ActivityRepository repo = ActivityRepository.CreateForCompany(workItem.CompanyId.Value);
-            await repo.InsertOrUpdate<WorkItem>(workItem.Id, newActivity);
+            await repo.InsertOrReplace<WorkItem>(workItem.Id, newActivity);
 
             await UpdateCurrentUserCacheGoalsAsync();
 
@@ -263,7 +263,7 @@ namespace PandoLogic.Controllers
                 newActivity.Description = "Task Created";
                 newActivity.Type = ActivityType.WorkAdded;
                 ActivityRepository repo = ActivityRepository.CreateForCompany(workItem.CompanyId.Value);
-                await repo.InsertOrUpdate<WorkItem>(workItem.Id, newActivity);
+                await repo.InsertOrReplace<WorkItem>(workItem.Id, newActivity);
 
                 if (id.HasValue)
                 {
@@ -361,7 +361,7 @@ namespace PandoLogic.Controllers
             newActivity.Description = "Task Deleted";
             newActivity.Type = ActivityType.WorkDeleted;
             ActivityRepository repo = ActivityRepository.CreateForCompany(workItem.CompanyId.Value);
-            await repo.InsertOrUpdate<WorkItem>(workItem.Id, newActivity);
+            await repo.InsertOrReplace<WorkItem>(workItem.Id, newActivity);
 
             // Remove it
             int? goalId = workItem.GoalId;

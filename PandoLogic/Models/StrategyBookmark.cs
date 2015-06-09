@@ -15,7 +15,7 @@ namespace PandoLogic.Models
     /// <summary>
     /// Bookmark for the user, enabling them to save a working list of strategies
     /// </summary>
-    public class StrategyBookmark : BaseModel, IUserOwnedModel
+    public class StrategyBookmark : ModelBase, IUserOwnedModel
     {
         // To-One on ApplicationUser
         [ForeignKey("User")]

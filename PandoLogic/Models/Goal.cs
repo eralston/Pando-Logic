@@ -15,7 +15,7 @@ namespace PandoLogic.Models
     /// <summary>
     /// A unit of high-level planning for an organization
     /// </summary>
-    public class Goal : BaseModel, ICommentable, IOptionalCompanyOwnedModel, IUserOwnedModel
+    public class Goal : ModelBase, ICommentable, IOptionalCompanyOwnedModel, IUserOwnedModel
     {
         /// <summary>
         /// List of configurable colors for goals

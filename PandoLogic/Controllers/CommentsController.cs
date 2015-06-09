@@ -30,7 +30,7 @@ namespace PandoLogic.Controllers
                 repo = await this.GetActivityRepositoryForCurrentCompany();
             if (repo != null)
             {
-                await repo.InsertOrUpdate<CommentableType>(commentable.Id, comment);
+                await repo.InsertOrReplace<CommentableType>(commentable.Id, comment);
             }
         }
 

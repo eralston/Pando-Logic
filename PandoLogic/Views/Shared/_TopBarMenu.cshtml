@@ -49,7 +49,6 @@
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                     <i class="fa fa-building"></i>
                     <span class="hidden-xs">@ViewBag.CurrentUserSelectedCompanyName</span>
-                    <i class="caret"></i>
                 </a>
             }
 
@@ -105,7 +104,6 @@
             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                 <i class="glyphicon glyphicon-user"></i>
                 <span class="hidden-xs">@ViewBag.CurrentUserFirstName @ViewBag.CurrentUserLastName </span>
-                <i class="caret"></i>
             </a>
             <ul class="dropdown-menu">
                 <!-- User image -->
@@ -129,7 +127,7 @@
                 <li class="user-footer">
 
                     <div class="pull-left">
-                        @Html.ActionLink("View Account", "Details", "Users", new { id = ViewBag.CurrentUserId }, new { @class = "btn btn-default btn-flat" })
+                        @Html.ActionLink("View Profile", "Details", "Users", new { id = ViewBag.CurrentUserId }, new { @class = "btn btn-default btn-flat" })
                     </div>
                     <div class="pull-right">
                         @Html.ActionLink("Manage Account", "Manage", "Account", null, new { @class = "btn btn-default btn-flat" })

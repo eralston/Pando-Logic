@@ -56,5 +56,7 @@ namespace PandoLogic.Models
         public DbSet<CloudFile> CloudFiles { get; set; }
 
         public DbSet<ChatUser> ChatUsers { get; set; }
+
+        public System.Data.Entity.DbSet<PandoLogic.Models.Service> Services { get; set; }
     }
 }

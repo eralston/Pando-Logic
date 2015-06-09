@@ -55,7 +55,7 @@ namespace PandoLogic.Models
         /// </summary>
         public void GenerateRowKey()
         {
-            this.RowKey = TableStorageManager.GenerateTicksDescendingRowKey();
+            this.RowKey = TableStorageManager.GenerateNextTicksDescendingRowKey();
         }
 
         /// <summary>

@@ -11,7 +11,7 @@ namespace PandoLogic
 {
     public class EmailTemplates
     {
-        const string FromEmailAddress = "Support@PandoLogic.Com";
+        const string FromEmailAddress = "Support@BizSprout.Net";
 
         /// <summary>
         /// Sends an e-mail to the target user
@@ -21,7 +21,7 @@ namespace PandoLogic
         /// <param name="subject"></param>
         /// <param name="emailViewName"></param>
         /// <param name="model"></param>
-        static void SendEmail(string toEmail, Controller controller, string subject, 
+        static void SendEmail(string toEmail, Controller controller, string subject,
                                     string emailViewName, object model = null)
         {
             string body = controller.RenderRazorViewToString(emailViewName, model);
@@ -77,6 +77,31 @@ namespace PandoLogic
             string subject = "You're Invited to BizSprout";
 
             SendEmail(invite.Email, controller, subject, viewName);
+        }
+
+        internal static void SendNewUserNotification(ApplicationUser user, Controllers.AccountController controller)
+        {
+            string joinedHeadline = string.Format("{0} has joined BizSprout", user.FullName);
+
+            controller.ViewBag.Title = joinedHeadline;
+            controller.ViewBag.Teaser = joinedHeadline;
+            controller.ViewBag.H1 = joinedHeadline;
+            controller.ViewBag.Lead = "Someone is ready to get Focused. Get Results. Collaborate.";
+            controller.ViewBag.Body = "Send them an e-mail and welcome them!";
+
+            controller.ViewBag.Link = string.Format("mailto:{0}", user.Email);
+            controller.ViewBag.LinkText = "Send a Welcome E-Mail";
+
+            string viewName = "~/Views/Email/Invite.cshtml";
+            string subject = string.Format("A New User On BizSprout: {0}", user.FullName);
+
+            string notificationEmails = System.Configuration.ConfigurationManager.AppSettings["New-User-Notificaton-Addresses"];
+
+            string[] addresses = notificationEmails.Split(new char[] { ';' });
+            foreach(string addr in addresses)
+            {
+                SendEmail(addr, controller, subject, viewName);
+            }
         }
     }
 }

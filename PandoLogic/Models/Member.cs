@@ -15,7 +15,7 @@ namespace PandoLogic.Models
     /// <summary>
     /// Maps from an ApplicationUser to a Company model
     /// </summary>
-    public class Member : BaseModel, IRequiredCompanyOwnedModel, IUserOwnedModel
+    public class Member : ModelBase, IRequiredCompanyOwnedModel, IUserOwnedModel
     {
         // To-One on Company
         [ForeignKey("Company")]

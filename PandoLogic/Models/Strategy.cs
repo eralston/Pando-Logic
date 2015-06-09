@@ -23,7 +23,7 @@ namespace PandoLogic.Models
     /// <summary>
     /// Modelo for repeatable collections of goals with related tasks underneath them
     /// </summary>
-    public class Strategy : BaseModel, ICommentable, IUserOwnedModel
+    public class Strategy : ModelBase, ICommentable, IUserOwnedModel
     {
         [Required]
         [MaxLength(100)]

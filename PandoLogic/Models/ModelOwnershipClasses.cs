@@ -16,7 +16,7 @@ namespace PandoLogic.Models
     /// <summary>
     /// Interface for an object that is optionally owned by a company (IE can be null)
     /// </summary>
-    public interface IOptionalCompanyOwnedModel : IBaseModel
+    public interface IOptionalCompanyOwnedModel : IModelBase
     {
         int? CompanyId { get; set; }
         Company Company { get; set; }
@@ -25,7 +25,7 @@ namespace PandoLogic.Models
     /// <summary>
     /// Interface for an object that is required to be owned by a company
     /// </summary>
-    public interface IRequiredCompanyOwnedModel : IBaseModel
+    public interface IRequiredCompanyOwnedModel : IModelBase
     {
         int CompanyId { get; set; }
         Company Company { get; set; }
