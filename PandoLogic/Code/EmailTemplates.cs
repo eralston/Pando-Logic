@@ -42,6 +42,32 @@ namespace PandoLogic
         /// </summary>
         /// <param name="targetUser"></param>
         /// <param name="controller"></param>
+        public static void SendPasswordResetEmail(ApplicationUser targetUser, Controller controller, string resetLink)
+        {
+            string viewName = "~/Views/Email/Generic.cshtml";
+            string subject = "BizSprout Password Reset";
+
+            ApplyPasswordResetEmailToViewBag(targetUser, controller, resetLink);
+
+            SendEmail(targetUser.Email, controller, subject, viewName);
+        }
+
+        public static void ApplyPasswordResetEmailToViewBag(ApplicationUser targetUser, Controller controller, string resetLink)
+        {
+            controller.ViewBag.Title = "Password Reset Request";
+            controller.ViewBag.Teaser = "Password Reset";
+            controller.ViewBag.H1 = "Password Reset";
+            controller.ViewBag.Lead = "Click the link to reset password";
+            controller.ViewBag.Body = "We received your request for a password reset. Please click this link to choose a new password.";
+            controller.ViewBag.Link = resetLink;
+            controller.ViewBag.LinkText = "Click to Reset Password";
+        }
+
+        /// <summary>
+        /// Sends a welcome e-mail to the given user, using the given controller to render the e-mail view
+        /// </summary>
+        /// <param name="targetUser"></param>
+        /// <param name="controller"></param>
         public static void SendWelcomeEmail(ApplicationUser targetUser, Controller controller)
         {
             string viewName = "~/Views/Email/Generic.cshtml";

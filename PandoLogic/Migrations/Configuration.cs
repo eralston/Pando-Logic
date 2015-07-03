@@ -82,6 +82,7 @@ namespace PandoLogic.Migrations
 
             AddToAdminRole(context, "erik.ralston@gmail.com");
             AddToAdminRole(context, "erik@bizsprout.net");
+            AddToAdminRole(context, "simon@bizsprout.net");
 
             CreateOrUpdateIndustries(context);
         }

@@ -9,7 +9,6 @@
     <i class="fa fa-user"></i>
     <h2 class="box-title">Sign In</h2>
 </div>
-
 <div class="box-body">
     @using (Html.BeginForm("Login", "Account", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, new { role = "form" }))
     {
@@ -31,7 +30,8 @@
         </div>
         <div class="footer">
             <button type="submit" class="btn btn-primary btn-block">Sign In</button>
-            @Html.ActionLink("No Account? Register", "Register", null, new { @class = "text-center" })
+            @Html.ActionLink("No Account? Register", "Register", null, new { @class = "text-center" })<br />
+            @Html.ActionLink("Forgot Your Password? Password Reset", "ForgotPassword", null, new { @class = "text-center" })
         </div>
     }
 </div>
