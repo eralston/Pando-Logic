@@ -78,7 +78,7 @@ namespace PandoLogic.Controllers
             ApplyToProperties(company);
         }
 
-        public CompanyViewModel(Company company, Subscription subscription) 
+        public CompanyViewModel(Company company, Subscription subscription)
         {
             ApplyToProperties(company);
             this.Subscription = subscription;
@@ -164,7 +164,7 @@ namespace PandoLogic.Controllers
         {
             return RedirectToAction("Manage", "Account");
         }
-            
+
         // GET: Companies/Details/5
         public async Task<ActionResult> Details(int id)
         {
@@ -175,10 +175,9 @@ namespace PandoLogic.Controllers
             Company company = await Db.Companies.FindAsync(id);
             Subscription sub = await Db.Subscriptions.WhereCompany(id);
 
-            if(sub != null)
+            if (company.UserId == UserCache.Id || (sub != null && sub.UserId == UserCache.Id))
             {
-                if (sub.UserId == UserCache.Id)
-                    ViewBag.IsCompanyOwner = true;
+                ViewBag.IsCompanyOwner = true;
             }
 
             UnstashModelState();
@@ -223,7 +222,7 @@ namespace PandoLogic.Controllers
                 // Create a new company and capture viewModel fields
                 ApplicationUser currentUser = await GetCurrentUserAsync();
                 Company company = Db.Companies.Create(currentUser);
-                
+
                 await UpdateCompany(companyViewModel, company);
 
                 // Creates a member to link to companies
@@ -306,7 +305,7 @@ namespace PandoLogic.Controllers
 
             // If this is the subscriber, then we're good
             Company company = await Db.Companies.FindAsync(id);
-            
+
             if (company == null)
             {
                 return HttpNotFound();
@@ -331,7 +330,7 @@ namespace PandoLogic.Controllers
             ApplicationUser user = await GetCurrentUserAsync();
             StripeManager.Unsubscribe(user, sub);
             sub.IsSoftDeleted = true;
-            
+
             Company company = await Db.Companies.FindAsync(id);
             company.IsSoftDeleted = true;
 

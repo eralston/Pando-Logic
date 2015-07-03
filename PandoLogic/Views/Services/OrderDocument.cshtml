@@ -1,0 +1,33 @@
+﻿@model PandoLogic.Controllers.OrderDocumentViewModel
+
+@{
+    ViewBag.Title = "Services";
+    ViewBag.TitleMinor = "On-Demand Consulting";
+
+    ViewBag.Breadcrumb = new Breadcrumb(new Crumb[] {
+        new Crumb("Dashboard", Url.Action("Index","Home"), "fa-dashboard"),
+        new Crumb("Services", Url.Action("Index","Services"), "fa-phone"),
+        new Crumb("Services", "", "fa-phone")
+    });
+}
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-horizontal">
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        
+        @Html.EditorForModel()
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Create" class="btn btn-default" />
+            </div>
+        </div>
+    </div>
+}
+
+<div>
+    @Html.ActionLink("Back to List", "Index")
+</div>

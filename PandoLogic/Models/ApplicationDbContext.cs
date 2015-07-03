@@ -4,6 +4,8 @@ using StripeEntities;
 using System.Collections.Generic;
 using System.Data.Entity;
 
+using Masticore;
+
 namespace PandoLogic.Models
 {
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser>, IInviteContext
@@ -58,5 +60,7 @@ namespace PandoLogic.Models
         public DbSet<ChatUser> ChatUsers { get; set; }
 
         public System.Data.Entity.DbSet<PandoLogic.Models.Service> Services { get; set; }
+
+        public System.Data.Entity.DbSet<PandoLogic.Models.ServiceRequest> ServiceRequests { get; set; }
     }
 }

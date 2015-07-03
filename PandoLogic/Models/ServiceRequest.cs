@@ -26,7 +26,7 @@ namespace PandoLogic.Models
 
         // To-One on User (The person who ordered the service)
         [ForeignKey("User")]
-        public int UserId { get; set; }
+        public string UserId { get; set; }
         public virtual ApplicationUser User { get; set; }
 
         // To-One on Service (The product purchased)

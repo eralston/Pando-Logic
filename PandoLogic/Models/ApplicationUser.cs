@@ -10,6 +10,8 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 
+using Masticore;
+
 namespace PandoLogic.Models
 {
     /// <summary>

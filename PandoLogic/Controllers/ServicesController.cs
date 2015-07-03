@@ -13,6 +13,12 @@ using Masticore;
 
 namespace PandoLogic.Controllers
 {
+    public class OrderDocumentViewModel
+    {
+        public string Title { get; private set; }
+        public string SubTitle { get; set; }
+    }
+
     /// <summary>
     /// Controller for administration of the available services in the system, plus:
     /// End-user ability to order them (Create service requests)
@@ -162,5 +168,37 @@ namespace PandoLogic.Controllers
             await Db.SaveChangesAsync();
             return RedirectToAction("Index");
         }
+
+        #region Methods for Specific Services
+
+        /// <summary>
+        /// Retrieves the order form for a service around document handling
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public async Task<ActionResult> OrderDocument(int id)
+        {
+            Service service = await Db.Services.FindAsync(id);
+            ViewBag.Service = service;
+            return View();
+        }
+
+        /// <summary>
+        /// Submits the order for a document service
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpPost, ActionName("OrderDocument")]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> PostOrderDocument(ServiceRequest request)
+        {
+            if (ModelState.IsValid)
+            {
+
+            }
+            return View(request);
+        }
+
+        #endregion
     }
 }
