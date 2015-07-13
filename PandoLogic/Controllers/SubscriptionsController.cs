@@ -40,7 +40,7 @@ namespace PandoLogic.Controllers
         public ActionResult Create()
         {
             ViewBag.CompanyId = new SelectList(Db.Companies, "Id", "CreatorId");
-            ViewBag.PlanId = new SelectList(Db.SubscriptionPlans, "Id", "Title");
+            ViewBag.PlanId = new SelectList(Db.Plans, "Id", "Title");
             ViewBag.UserId = new SelectList(Db.Users, "Id", "FirstName");
             return View();
         }
@@ -63,7 +63,7 @@ namespace PandoLogic.Controllers
             }
 
             ViewBag.CompanyId = new SelectList(Db.Companies, "Id", "CreatorId", subscription.CompanyId);
-            ViewBag.PlanId = new SelectList(Db.SubscriptionPlans, "Id", "Title", subscription.PlanId);
+            ViewBag.PlanId = new SelectList(Db.Plans, "Id", "Title", subscription.PlanId);
             ViewBag.UserId = new SelectList(Db.Users, "Id", "FirstName", subscription.UserId);
             return View(subscription);
         }
@@ -81,7 +81,7 @@ namespace PandoLogic.Controllers
                 return HttpNotFound();
             }
             ViewBag.CompanyId = new SelectList(Db.Companies, "Id", "CreatorId", subscription.CompanyId);
-            ViewBag.PlanId = new SelectList(Db.SubscriptionPlans, "Id", "Title", subscription.PlanId);
+            ViewBag.PlanId = new SelectList(Db.Plans, "Id", "Title", subscription.PlanId);
             ViewBag.UserId = new SelectList(Db.Users, "Id", "FirstName", subscription.UserId);
             return View(subscription);
         }
@@ -100,7 +100,7 @@ namespace PandoLogic.Controllers
                 return RedirectToAction("Index");
             }
             ViewBag.CompanyId = new SelectList(Db.Companies, "Id", "CreatorId", subscription.CompanyId);
-            ViewBag.PlanId = new SelectList(Db.SubscriptionPlans, "Id", "Title", subscription.PlanId);
+            ViewBag.PlanId = new SelectList(Db.Plans, "Id", "Title", subscription.PlanId);
             ViewBag.UserId = new SelectList(Db.Users, "Id", "FirstName", subscription.UserId);
             return View(subscription);
         }

@@ -51,7 +51,7 @@ namespace PandoLogic.Models
 
         public DbSet<MemberInvite> MemberInvites { get; set; }
 
-        public DbSet<SubscriptionPlan> SubscriptionPlans { get; set; }
+        public DbSet<Plan> Plans { get; set; }
 
         public DbSet<Subscription> Subscriptions { get; set; }
 

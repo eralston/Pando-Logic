@@ -30,13 +30,13 @@ namespace PandoLogic.Controllers
 
     public class SubscriptionViewModel
     {
-        public SubscriptionViewModel(SubscriptionPlan[] plans, Company company)
+        public SubscriptionViewModel(Plan[] plans, Company company)
         {
             this.Plans = plans;
             this.Company = company;
         }
 
-        public SubscriptionPlan[] Plans { get; set; }
+        public Plan[] Plans { get; set; }
 
         public Company Company { get; set; }
     }
@@ -161,7 +161,7 @@ namespace PandoLogic.Controllers
                 // For more information on how to enable account confirmation and password reset please visit http://go.microsoft.com/fwlink/?LinkID=320771
                 // Send an email with this link
                 string code = await UserManager.GeneratePasswordResetTokenAsync(user.Id);
-                var callbackUrl = Url.Action("ResetPassword", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);		
+                var callbackUrl = Url.Action("ResetPassword", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
                 // await UserManager.SendEmailAsync(user.Id, "BizSprout Password Reset", "Please reset your BizSprout password by clicking <a href=\"" + callbackUrl + "\">here</a>");
                 EmailTemplates.SendPasswordResetEmail(user, this, callbackUrl);
                 return RedirectToAction("ForgotPasswordConfirmation", "Account");
@@ -275,7 +275,7 @@ namespace PandoLogic.Controllers
             await LoadCompaniesForCurrentUserIntoViewBag();
             await LoadSubscriptionsForCurrentUserIntoViewBag();
 
-            if(user.HasPaymentInfo)
+            if (user.HasPaymentInfo)
             {
                 Stripe.StripeCustomer stripeCustomer = StripeManager.RetrieveCustomer(user);
                 ViewBag.DefaultCard = stripeCustomer.GetDefaultCard();
@@ -506,7 +506,7 @@ namespace PandoLogic.Controllers
         /// <returns></returns>
         public async Task<ActionResult> Subscription()
         {
-            SubscriptionPlan[] plans = await Db.SubscriptionPlans.AllAvailablePlans().ToArrayAsync();
+            Plan[] plans = await Db.Plans.AllAvailablePlans().ToArrayAsync();
 
             // If we are entering this page, then double-check consistency of member state
             await UpdateCurrentUserCacheAsync();
@@ -526,12 +526,12 @@ namespace PandoLogic.Controllers
             {
                 return RedirectToAction("Details", "Companies", new { id = member.CompanyId });
             }
-           
+
             // If the current company has a subscription and it's owned by the current user, then indicate with the from
-            if(companySubscription != null)
+            if (companySubscription != null)
             {
                 ViewBag.HasExistingSubscription = true;
-            }           
+            }
 
             SubscriptionViewModel viewModel = new SubscriptionViewModel(plans, member.Company);
 
@@ -557,7 +557,7 @@ namespace PandoLogic.Controllers
                 StripeManager.CreateOrUpdateCustomer(currentUser);
 
                 // If there is an existing subscription, then unsubscibe and delete it
-                SubscriptionPlan desiredPlan = await Db.SubscriptionPlans.FindAsync(viewModel.PlanId);
+                Plan desiredPlan = await Db.Plans.FindAsync(viewModel.PlanId);
                 Subscription oldSubscription = await Db.Subscriptions.WhereUserAndCompany(currentUser.Id, member.CompanyId);
                 if (oldSubscription != null && oldSubscription.PaymentSystemId != null)
                 {
@@ -685,11 +685,31 @@ namespace PandoLogic.Controllers
 
         #region Account Register
 
+        /// <summary>
+        /// A public view that allows an unregistered user to pick their subscription plan
+        /// </summary>
+        /// <returns></returns>
+        [AllowAnonymous]
+        public async Task<ActionResult> SubscriptionPlan()
+        {
+            var plans = await Db.Plans.AllAvailablePlans().OrderByDescending(p => p.Price).ToArrayAsync();
+
+            return View(plans);
+        }
+
         //
         // GET: /Account/Register
         [AllowAnonymous]
         public ActionResult Register()
         {
+            string productId = Request.QueryString["ProductId"];
+            string subscriptionPlanId = Request.QueryString["SubscriptPlanId"];
+
+            if (string.IsNullOrEmpty(productId) && string.IsNullOrEmpty(subscriptionPlanId))
+            {
+                return RedirectToAction("SubscriptionPlan");
+            }
+
             return View();
         }
 

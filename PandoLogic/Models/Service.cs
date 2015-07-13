@@ -9,16 +9,33 @@ using System.Threading.Tasks;
 using System.Web.Security;
 
 using Masticore;
+using System.ComponentModel;
+using System.Web.Mvc;
 
 namespace PandoLogic.Models
 {
+    public enum ServiceCategory
+    {
+        Public,
+        SproutUniversity
+    }
+
     /// <summary>
     /// A type of service offered in the system, which is a one-time purchased consulting opportunity
     /// </summary>
     public class Service : StripeEntities.Product
     {
         [Display(Name = "Action Name")]
+        [Editable(true)]
         public string ActionName { get; set; }
+
+        [Editable(true)]
+        public ServiceCategory Category { get; set; }
+
+        [Display(Name = "Offer HTML")]
+        [Editable(true)]
+        [AllowHtml]
+        public string OfferHtml { get; set; }
     }
 
     /// <summary>
@@ -44,9 +61,9 @@ namespace PandoLogic.Models
             return newService;
         }
 
-        public static IQueryable<Service> WhereActive(this DbSet<Service> services)
+        public static IQueryable<Service> WhereActiveAndPublic(this DbSet<Service> services)
         {
-            return services.Where(s => s.State == StripeEntities.Product.ProductState.Available).OrderByDescending(s => s.Price);
+            return services.Where(s => s.State == StripeEntities.Product.ProductState.Available && s.Category == ServiceCategory.Public).OrderByDescending(s => s.Price);
         }
     }
 }

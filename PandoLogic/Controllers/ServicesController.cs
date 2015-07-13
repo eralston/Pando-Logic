@@ -30,7 +30,7 @@ namespace PandoLogic.Controllers
         // GET: Services
         public async Task<ActionResult> Index()
         {
-            Service[] services = await Db.Services.WhereActive().ToArrayAsync();
+            Service[] services = await Db.Services.WhereActiveAndPublic().ToArrayAsync();
             return View(services);
         }
 
@@ -92,7 +92,7 @@ namespace PandoLogic.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [AdminAuthorize]
-        public async Task<ActionResult> Create([Bind(Include = "Id,State,Title,Description,Price,CreatedDateUtc,IsSoftDeleted")] Service service)
+        public async Task<ActionResult> Create(Service service)
         {
             if (ModelState.IsValid)
             {
@@ -128,7 +128,7 @@ namespace PandoLogic.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [AdminAuthorize]
-        public async Task<ActionResult> Edit([Bind(Include = "Id,State,Title,Description,Price,IsSoftDeleted")] Service service)
+        public async Task<ActionResult> Edit(Service service)
         {
             if (ModelState.IsValid)
             {

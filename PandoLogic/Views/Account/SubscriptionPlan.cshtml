@@ -1,0 +1,35 @@
+﻿@using PandoLogic.Models
+
+@model IEnumerable<Plan>
+@{
+    ViewBag.Title = "Choose Plan";
+    Layout = "~/Views/Shared/_PublicLayout.cshtml";
+}
+
+<div class="box-header">
+    <i class="fa  fa-users"></i>
+    <h2 class="box-title">@ViewBag.Title</h2>
+</div>
+<div class="box-body">
+    <div class="">
+        <p class="text-muted">Pick the plan that's right for you</p>
+        @foreach (Plan plan in Model)
+        {
+            @Html.Hidden("PlanId", plan.Id)
+            <div class="box">
+                <div class="box-header">
+                    <h3 class="box-title">@plan.Title</h3>
+                </div>
+                <div class="box-body">
+                    <p>
+                        @plan.Description
+                    </p>
+                    <button class="btn btn-primary btn-block">
+                        <strong>@plan.Title </strong>
+                        $@plan.Price
+                    </button>
+                </div>
+            </div>
+        }
+    </div>
+</div>

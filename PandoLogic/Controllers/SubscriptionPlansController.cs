@@ -1,11 +1,14 @@
-﻿using StripeEntities;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using System.Web.Mvc;
+
+using PandoLogic.Models;
+
+using StripeEntities;
 
 namespace PandoLogic.Controllers
 {
@@ -15,7 +18,7 @@ namespace PandoLogic.Controllers
         // GET: SubscriptionPlans
         public async Task<ActionResult> Index()
         {
-            return View(await Db.SubscriptionPlans.ToListAsync());
+            return View(await Db.Plans.ToListAsync());
         }
 
         // GET: SubscriptionPlans/Details/5
@@ -25,7 +28,7 @@ namespace PandoLogic.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            SubscriptionPlan subscriptionPlan = await Db.SubscriptionPlans.FindAsync(id);
+            Plan subscriptionPlan = await Db.Plans.FindAsync(id);
             if (subscriptionPlan == null)
             {
                 return HttpNotFound();
@@ -44,7 +47,7 @@ namespace PandoLogic.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Create([Bind(Include = "Id,Title,Note,Description,Price,State,CreatedDate,TrialDays")] SubscriptionPlan subscriptionPlan)
+        public async Task<ActionResult> Create([Bind(Include = "Id,Title,Note,Description,Price,State,CreatedDate,TrialDays")] Plan subscriptionPlan)
         {
             if (ModelState.IsValid)
             {
@@ -54,7 +57,7 @@ namespace PandoLogic.Controllers
 
                 // Save to our database
                 subscriptionPlan.CreatedDateUtc = DateTime.UtcNow;
-                Db.SubscriptionPlans.Add(subscriptionPlan);
+                Db.Plans.Add(subscriptionPlan);
                 await Db.SaveChangesAsync();
 
                 return RedirectToAction("Index");
@@ -70,7 +73,7 @@ namespace PandoLogic.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            SubscriptionPlan subscriptionPlan = await Db.SubscriptionPlans.FindAsync(id);
+            Plan subscriptionPlan = await Db.Plans.FindAsync(id);
             if (subscriptionPlan == null)
             {
                 return HttpNotFound();
@@ -88,7 +91,7 @@ namespace PandoLogic.Controllers
             if (ModelState.IsValid)
             {
                 // Pull out the original
-                SubscriptionPlan plan = await Db.SubscriptionPlans.FindAsync(subscriptionPlan.Id);
+                Plan plan = await Db.Plans.FindAsync(subscriptionPlan.Id);
 
                 // Save editable fields
                 plan.Description = subscriptionPlan.Description;
@@ -114,7 +117,7 @@ namespace PandoLogic.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            SubscriptionPlan subscriptionPlan = await Db.SubscriptionPlans.FindAsync(id);
+            Plan subscriptionPlan = await Db.Plans.FindAsync(id);
             if (subscriptionPlan == null)
             {
                 return HttpNotFound();
@@ -127,12 +130,12 @@ namespace PandoLogic.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> DeleteConfirmed(int id)
         {
-            SubscriptionPlan subscriptionPlan = await Db.SubscriptionPlans.FindAsync(id);
+            Plan subscriptionPlan = await Db.Plans.FindAsync(id);
 
             // Remove from Stripe
             StripeManager.DeletePlan(subscriptionPlan);
 
-            Db.SubscriptionPlans.Remove(subscriptionPlan);
+            Db.Plans.Remove(subscriptionPlan);
             await Db.SaveChangesAsync();
             return RedirectToAction("Index");
         }

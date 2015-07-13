@@ -1,55 +1,26 @@
-﻿@model StripeEntities.SubscriptionPlan
+﻿@model PandoLogic.Models.Plan
 
 @{
-    ViewBag.Title = "Edit";
+    ViewBag.Title = "Edit Subscription";
 }
-
-<h2>Edit</h2>
 
 @using (Html.BeginForm())
 {
     @Html.AntiForgeryToken()
     
     <div class="form-horizontal">
-        <h4>SubscriptionPlan</h4>
+        <h4>Subscription Plan</h4>
         <p>
             Not all fields of a plan can be modified due to limitations imposed by Stripe
+        </p>
+        <p>
+            The price must be edited from stripe, then updated directly in the database
         </p>
         <hr />
         @Html.ValidationSummary(true, "", new { @class = "" })
         @Html.HiddenFor(model => model.Id)
 
-        <div class="form-group">
-            @Html.LabelFor(model => model.Title, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.Title, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.Title, "", new { @class = "" })
-            </div>
-        </div>
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.Note, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.Note, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.Note, "", new { @class = "" })
-            </div>
-        </div>
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.Description, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.Description, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.Description, "", new { @class = "" })
-            </div>
-        </div>
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.State, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EnumDropDownListFor(model => model.State, htmlAttributes: new { @class = "form-control" })
-                @Html.ValidationMessageFor(model => model.State, "", new { @class = "" })
-            </div>
-        </div>
+        @Html.EditorForModel()
 
         <div class="form-group">
             <div class="col-md-offset-2 col-md-10">
