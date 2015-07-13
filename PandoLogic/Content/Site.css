@@ -32,6 +32,10 @@
     cursor: pointer;
 }
 
+.logo-text {
+    font-family: 'Varela Round', sans-serif;
+}
+
 .logo, .main-header .logo {
     font-size: 20px !important;
     font-family: 'Varela Round', sans-serif;
@@ -43,7 +47,6 @@
     font-family: 'Varela Round', sans-serif;
     text-transform: none;
     text-align: center;
-    color: gray;
 }
 
 .bottom-banner {

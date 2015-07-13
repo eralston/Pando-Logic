@@ -236,7 +236,9 @@ namespace PandoLogic.Controllers
                 await UpdateCurrentUserCacheAsync();
 
                 // Continue to setting the company address
-                return RedirectToAction("Payment", "Account");
+                // TODO: Restore demanding credit cards when the time is right
+                // return RedirectToAction("Payment", "Account");
+                return RedirectToAction("Index", "Home");
             }
 
             ViewBag.IndustryId = new SelectList(Db.Industries, "Id", "Title", companyViewModel.IndustryId);
